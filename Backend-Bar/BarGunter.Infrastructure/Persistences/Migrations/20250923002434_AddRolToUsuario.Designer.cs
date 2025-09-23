@@ -3,6 +3,7 @@ using System;
 using BarGunter.Infrastructure.Persistences;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BarGunter.Infrastructure.Persistences.Migrations
 {
     [DbContext(typeof(BarGunterDbContext))]
-    partial class BarGunterDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250923002434_AddRolToUsuario")]
+    partial class AddRolToUsuario
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

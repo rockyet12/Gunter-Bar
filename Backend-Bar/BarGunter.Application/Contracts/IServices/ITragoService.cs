@@ -1,10 +1,7 @@
 using BarGunter.Domain.Entities;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+namespace BarGunter.Application.Contracts.IServices;
 
-namespace BarGunter.Application.Contracts.IRepositories;
-
-public interface ITragoRepository
+public interface ITragoService
 {
     Task<List<Tragos>> GetAllTragos();
     Task<Tragos> GetTragoById(int id);

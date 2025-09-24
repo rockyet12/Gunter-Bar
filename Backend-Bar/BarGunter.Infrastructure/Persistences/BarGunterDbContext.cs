@@ -5,23 +5,21 @@ namespace BarGunter.Infrastructure.Persistences;
 
 public class BarGunterDbContext : DbContext
 {
-    public BarGunterDbContext(DbContextOptions<BarGunterDbContext> options)
-        : base(options)
+    public BarGunterDbContext(DbContextOptions<BarGunterDbContext> options) : base(options)
     {
     }
-
-    // Define tus DbSet para las entidades
     public DbSet<Usuario> Usuarios { get; set; }
+    public DbSet<Producto> Productos { get; set; }
+    public DbSet<Tipo> Tipos { get; set; }
+    public DbSet<Tragos> Tragos { get; set; }
+    public DbSet<Ticket> Tickets { get; set; }
+    public DbSet<Categoria> Categorias { get; set; }
+    public DbSet<Carrito> Carritos { get; set; }
+    public DbSet<Login> Logins { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfiguration(new UsuarioConfiguration());
-
-        // Configuración adicional de las entidades (si es necesario)
     }
 }
-
-
-//dotnet ef migrations  add firstmigration --context BarGunterDbContext --project .\BarGunter.Infrastructure\ --startup-project .\BarGunter.API\ --output-dir Persistences/Migrations
-//dotnet ef database update --context BarGunterDbContext --project .\BarGunter.Infrastructure\ --startup-project .\BarGunter.API\

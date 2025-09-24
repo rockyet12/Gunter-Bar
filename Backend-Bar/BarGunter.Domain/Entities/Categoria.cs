@@ -1,5 +1,3 @@
-using System.Diagnostics.Contracts;
-
 namespace BarGunter.Domain.Entities;
 
 public class Categoria

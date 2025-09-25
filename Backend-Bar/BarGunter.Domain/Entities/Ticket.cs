@@ -14,7 +14,7 @@ public class Ticket
     {
         IdTicket = Id;
         IdUsuario = Idusuario;
-        Fecha = Fecha;
+        this.Fecha = Fecha;
         this.precio = precio;
         Total = total;
         Cantidad = cantidad;

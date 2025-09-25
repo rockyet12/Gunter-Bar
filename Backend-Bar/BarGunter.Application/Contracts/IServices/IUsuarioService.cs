@@ -1,9 +1,7 @@
 using BarGunter.Domain.Entities;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using BarGunter.Application.DTOs;
 
-namespace BarGunter.Application.Contracts.IServices; // <-- Asegúrate de que el namespace sea este
+namespace BarGunter.Application.Contracts.IServices; 
 
 public interface IUsuarioService
 {

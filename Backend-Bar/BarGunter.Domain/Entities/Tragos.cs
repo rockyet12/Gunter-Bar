@@ -10,4 +10,15 @@ public class Tragos
     public int IdTipo { get; set; }
     public Producto producto { get; set; }
     public Tipo tipo { get; set; }
+    public Tragos(int IdTragos, string Nombre, string Descripcion, string Ingredientes, int CDProducto, int IdTipo, Producto producto, Tipo tipo)
+    {
+        this.IdTragos = IdTragos;
+        this.Nombre = Nombre;
+        this.Descripcion = Descripcion;
+        this.Ingredientes = Ingredientes;
+        this.CDproducto = CDproducto;
+        this.IdTipo = IdTipo;
+        this.producto = producto;
+        this.tipo = tipo;
+    }
 }

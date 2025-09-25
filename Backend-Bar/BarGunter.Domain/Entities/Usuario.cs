@@ -22,7 +22,7 @@ public class Usuario
         Dni = 0;
         NickName = string.Empty;
         Email = string.Empty;
-        Password = string.Empty; // <-- Inicializa la contraseña
+        Password = string.Empty;
         Nombre = string.Empty;
         Apellido = string.Empty;
         Direccion = string.Empty;
@@ -37,7 +37,7 @@ public class Usuario
         Dni = dni;
         NickName = nickName;
         Email = email;
-        Password = password; // <-- Agrega la contraseña al constructor
+        Password = password; 
         Nombre = nombre;
         Apellido = apellido;
         Direccion = direccion;

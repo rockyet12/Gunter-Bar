@@ -12,8 +12,8 @@ public class Producto
     {
         this.CDProducto = CDProducto;
         this.idCarrito = idcarrito;
-        this.Nombre = Nombre;
-        this.Descripcion = Descripcion;
+        Nombre = string.Empty;
+        Descripcion =string.Empty ;
         this.Precio = Precio;
     }
 }

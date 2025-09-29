@@ -1,22 +1,18 @@
-using System.Collections;
+using System;
 
 namespace BarGunter.Domain.Entities;
 
 public class Ticket
 {
     public int IdTicket { get; set; }
-    public Usuario IdUsuario { get; set; }
-    public DateTime Fecha { get; set; }
-    public Producto precio { get; set; }
+    public int IdUsuario { get; set; }
+    public int IdPedido { get; set; } // Enlace a la orden de logística (Pedido)
+    public DateTime FechaCompra { get; set; }
     public decimal Total { get; set; }
-    public int Cantidad { get; set; }
-    public Ticket (int Id, Usuario Idusuario, DateTime Fecha, Producto precio, decimal total, int cantidad)
+
+    public Ticket()
     {
-        IdTicket = Id;
-        IdUsuario = Idusuario;
-        this.Fecha = Fecha;
-        this.precio = precio;
-        Total = total;
-        Cantidad = cantidad;
+        FechaCompra = DateTime.Now;
+        Total = 0;
     }
 }

@@ -12,6 +12,8 @@ public class BarGunterDbContext : DbContext
     public DbSet<Tragos>Tragos{ get; set; }
     public DbSet<Pedido>Pedidos{ get; set; }
     public DbSet<Ticket>Tickets{ get; set; }
+    public DbSet<Tipo>Tipos{ get; set; }
+    public DbSet<Categoria>Categorias{ get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

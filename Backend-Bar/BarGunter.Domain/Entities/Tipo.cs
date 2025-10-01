@@ -5,9 +5,8 @@ public class Tipo
     public int IdTipo { get; set; }
     public string Nombre { get; set; }
 
-    public Tipo(int idTipo, string nombre)
+    public Tipo()
     {
-        IdTipo = idTipo;
-        Nombre = nombre;
+        Nombre = string.Empty;
     }
 }

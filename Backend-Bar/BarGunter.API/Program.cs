@@ -32,8 +32,8 @@ builder.Services.AddDbContext<BarGunterDbContext>(options =>
 
 //---------------------Inyeccion de dependencias------------------------------------------------
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
-builder.Services.AddScoped<IUsuarioService, UsuarioServices>();
-// Es importante que el nombre de la clase de implementación sea "UsuarioService" y no "UsuarioServices"
+builder.Services.AddScoped<IUsuarioService, UsuarioService>();
+// Es importante que el nombre de la clase de implementación sea "UsuarioService" y no "UsuarioService"
 builder.Services.AddScoped<ITragoRepository, TragoRepository>();
 builder.Services.AddScoped<ITragoService, TragoService>();
 

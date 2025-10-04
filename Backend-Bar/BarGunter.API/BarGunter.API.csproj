@@ -14,7 +14,7 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BarGunter.Infrastructure\BarGunter.Infrastructure.csproj" />
     <ProjectReference Include="..\BarGunter.Application\BarGunter.Application.csproj" />
+    <ProjectReference Include="..\BarGunter.Infrastructure\BarGunter.Infrastructure.csproj" />
   </ItemGroup>
 </Project>

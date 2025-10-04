@@ -1,0 +1,90 @@
+// Backup of duplicate Program.cs moved here to disable it while debugging startup.
+// Original path: /home/roque/Gunter-Bar/Gunter-Bar/Backend-Bar/BarGunter.API/Program.cs
+// Content preserved for reference.
+using System;
+using System.Text;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using BarGunter.Infrastructure.Persistences;
+using BarGunter.Infrastructure.Persistences.Repositories;
+using BarGunter.Application.Contracts.IRepositories;
+using BarGunter.Application.Contracts.IServices;
+using BarGunter.Application.Services;
+
+try
+{
+    Console.WriteLine("[START duplicate] Minimal robust Program.cs starting");
+    var builder = WebApplication.CreateBuilder(args);
+
+    var allowedOrigins = builder.Configuration["AllowedOrigins"];
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen();
+    builder.Services.AddControllers();
+
+    if (!string.IsNullOrWhiteSpace(connectionString))
+    {
+        builder.Services.AddDbContext<BarGunterDbContext>(options =>
+            options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 4))));
+    }
+
+    // DI registrations
+    builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+    builder.Services.AddScoped<IUsuarioService, UsuarioService>();
+    builder.Services.AddScoped<ITragoRepository, TragoRepository>();
+    builder.Services.AddScoped<ITragoService, TragoService>();
+
+    var key = Encoding.ASCII.GetBytes("TucodigodeseguridadWAZAAAAAAA!!");
+    builder.Services.AddAuthentication(x =>
+    {
+        x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    }).AddJwtBearer(x =>
+    {
+        x.RequireHttpsMetadata = false;
+        x.SaveToken = true;
+        x.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(key),
+            ValidateIssuer = false,
+            ValidateAudience = false
+        };
+    });
+
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("AllowAllOrigins", policy =>
+        {
+            if (!string.IsNullOrWhiteSpace(allowedOrigins))
+            {
+                var origins = allowedOrigins.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+                policy.WithOrigins(origins).AllowAnyMethod().AllowAnyHeader().AllowCredentials();
+            }
+            else
+            {
+                policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+            }
+        });
+    });
+
+    var app = builder.Build();
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI();
+    }
+    app.UseRouting();
+    app.UseAuthentication();
+    app.UseAuthorization();
+    app.UseCors("AllowAllOrigins");
+    app.MapControllers();
+    app.Run();
+}
+catch (Exception ex)
+{
+    Console.WriteLine("[FATAL duplicate] Startup exception: " + ex);
+    throw;
+}

@@ -1,7 +1,10 @@
 namespace BarGunter.Domain.Entities;
 
+using System.ComponentModel.DataAnnotations;
+
 public class Tragos
 {
+    [Key]
     public int IdTragos { get; set; }
     public string Nombre { get; set; }
     public string Descripcion { get; set; }

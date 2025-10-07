@@ -1,7 +1,10 @@
 namespace BarGunter.Domain.Entities;
 
+using System.ComponentModel.DataAnnotations;
+
 public class Carrito
 {
+    [Key]
     public int IdCarrito { get; set; }
     // Navigation properties can be nullable to allow EF to construct the entity at design time
     public Usuario? IdUsuario { get; set; }

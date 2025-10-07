@@ -1,7 +1,10 @@
 namespace BarGunter.Domain.Entities;
 
+using System.ComponentModel.DataAnnotations;
+
 public class Categoria
 {
+    [Key]
     public int IdCategoria { get; set; }
     public Producto? CDProducto { get; set; }
     public Tipo? IdTipo { get; set; }

@@ -1,9 +1,11 @@
-﻿using BarGunter.Domain.Enums;
+﻿using System.ComponentModel.DataAnnotations;
+using BarGunter.Domain.Enums;
 
 namespace BarGunter.Domain.Entities;
 
 public class Usuario
 {
+    [Key]
     public int Id { get; set; }
     public int Dni { get; set; }
     public string NickName { get; set; }

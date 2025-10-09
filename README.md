@@ -1,6 +1,187 @@
 # Gunter-Bar
 
-Este proyecto contiene el **backend** y el **frontend** de **Gunter-Bar**, una aplicación diseñada para gestionar un bar con autenticación JWT, CRUD de productos/categorías/usuarios y gestión de pedidos.
+Este proyecto contiene el **backend** y el **frontend** de **Gunter-Bar**, una aplicación diseñada para gestionar un bar con autenticación JWT, CRUD de productos/categorías/usuarios y gestión integral de pedidos, carritos, tickets y tragos.
+
+---
+
+## Trabajo Práctico – Escuela Técnica N° 12 D.E. 1° “Libertador Gral. José de San Martín” (ET12)
+
+- Sitio web: http://et12.edu.ar
+- Asignatura: Desarrollo de Sistemas
+- Nombre del Trabajo Práctico: GUNTER BAR
+- Docentes: Sergio Mendoza y Adrián Cives
+- Ciclo Lectivo: 2025
+- Año y División: 6°17°
+- Alumnas y alumnos:
+  - Sofia Colman
+  - Camila Reyes
+  - Ana Martinez
+  - Roque Rivas
+  - Julio Martinez
+
+### Índice de contenidos del TP
+- Visión del proyecto
+- Propuesta de valor (E‑commerce + Academia de Cócteles)
+- Diseño y UX/UI
+- Objetivos
+- Beneficios para la comunidad
+- Definición de Infraestructura (recursos materiales y técnicos)
+- Software y servicios
+- DevOps
+- Arquitectura técnica y entornos
+- Seguridad
+- Backups y continuidad
+- Logística operativa
+- Roles, permisos y módulos
+
+---
+
+## Stack objetivo del proyecto
+- Backend: .NET 8 (ASP.NET Core Web API), JWT, Swagger/OpenAPI, EF Core (Pomelo para MariaDB)
+- Frontend: React + TypeScript (Vite), React Router, Axios, JWT client
+- Base de datos: MariaDB 10.11+
+- Infra: Nginx (reverse proxy), Docker/Compose (dev/prod opcional)
+
+---
+
+## Visión
+“Gunter Bar”, un comercio electrónico que trasciende la simple venta de bebidas para convertirse en un sitio web de experiencias y aprendizaje. Será la referencia para entusiastas que buscan licores e insumos de coctelería de alta calidad, con asesoramiento experto para dominar el arte del cóctel en casa.  
+El sitio destacará por un diseño visualmente atractivo e intuitivo, con contenido de alto valor, brindando una experiencia memorable y enriquecedora.
+
+## Propuesta
+Catálogo curado de bebidas (destilados, vinos, cervezas artesanales y mixers exclusivos) + “Academia de Cócteles” interactiva. Cada compra inicia una aventura de sabor con guía profesional.
+
+### E‑commerce
+- Catálogo impecable: fotos de alta calidad, descripciones con notas de cata y recomendaciones de maridaje/coctelería.
+- Kits temáticos de coctelería: p. ej. “Kit Old Fashioned Clásico” con ingredientes + enlace al tutorial.
+- Compra fluida: navegación, filtros y checkout rápidos y seguros.
+- Logística de entregas: retiro en local, envíos de zona y delivery con estados visibles (recibido, preparación, en camino, entregado).
+
+### Academia de Cócteles
+- Videotutoriales exclusivos: técnicas básicas a avanzadas, dictadas por barmans.
+- Recetas interactivas: filtros por licor, dificultad y perfil de sabor.
+- Contenido narrativo: historia y cultura detrás de licores y cócteles.
+
+### Diseño y UX/UI
+- Estética elegante: interfaz oscura de bar con imágenes vibrantes.
+- Comunidad y reviews: valoraciones de productos y recetas para impulsar confianza.
+
+## Objetivo
+Posicionar “El Arte del Cóctel” como plataforma líder de e‑commerce de bebidas premium y escuela de mixología digital, equilibrando facturación por productos y construcción de comunidad de aprendizaje.
+
+- Catálogo con excelente relación calidad/precio ajustado al público.
+- Web que amplíe alcance y adquisición.
+- Promociones temáticas, combos y sorteos para lealtad.
+- Marketing y contenido para redes afines a público joven.
+- Ambiente acogedor que motive el regreso y la recomendación.
+
+## Beneficios para la comunidad
+- Productos de calidad a precios accesibles.
+- Experiencia divertida y segura: temática cultural y controlada.
+- Participación y fidelización: promos, combos, sorteos y contenido digital.
+- Acceso digital: web y redes para interacción y compras online.
+
+---
+
+## Definición de Infraestructura
+
+### Recursos materiales y técnicos
+- Estación principal (caja/gestión):
+  - Acer Aspire 3 (equipo actual):
+    - CPU: AMD Ryzen 5
+    - RAM: 24 GB
+    - Almacenamiento: 512 GB SSD M.2 (SO y apps) + 1 TB HDD (datos/medios)
+    - Conectividad: Wi‑Fi (recomendado Ethernet para caja)
+- POS con impresora y lector:
+  - Impresora térmica 80 mm (USB/Ethernet)
+  - Lector de códigos/QR USB (opcional) y cajón monedero (opcional)
+- Red y conectividad:
+  - Conexión a Internet (ISP)
+  - Router/módem del ISP + Access Point Wi‑Fi AC/AX recomendado
+  - Switch gigabit si suman dispositivos cableados (p. ej., cámaras)
+- Logística/operación:
+  - Pantalla de barra/KDS (monitor 24–27” o tablet) para preparación de pedidos
+  - Celular opcional con WhatsApp Business
+  - Impresora de etiquetas 4x6 (opcional) si escalan envíos
+- Seguridad física:
+  - Cámaras IP (2–4) 1080p (ideal PoE con NVR)
+  - UPS 650–1000 VA para router/AP y estación principal
+- Respaldo:
+  - Sistema de backup manual o en la nube (DB y media)
+
+### Software y servicios
+- Plataforma:
+  - Backend: .NET 8 + JWT + Swagger; EF Core con Pomelo MariaDB
+  - Base de datos: MariaDB 10.11+
+  - Frontend: React + TypeScript (Vite), React Router, Axios, jwt-decode
+- Operación y terceros:
+  - POS: Poster POS, KiWi o Vendus
+  - Gestión: Xubio, Tango Gestión o Google Sheets
+  - Diseño: Canva
+  - Atención al cliente: WhatsApp Business, Instagram
+  - Facturación electrónica (AR): AFIP o Facturante (API)
+  - Almacenamiento: Google Drive (o S3/R2 si crece)
+  - Seguridad endpoint: Avast o Bitdefender en la netbook
+- DevOps:
+  - Docker y Docker Compose
+  - Nginx como reverse proxy y hosting de frontend estático
+  - HTTPS con Let’s Encrypt
+  - Monitoreo (UptimeKuma) y logging (Serilog + sink)
+  - CI/CD con GitHub Actions (opcional)
+
+### Arquitectura técnica y entornos
+- Producción recomendada:
+  - Nginx (reverse proxy) → API .NET (contenedor) → MariaDB (contenedor o DB gestionada)
+  - Frontend React servido como estático en Nginx
+  - CORS restringido a dominios propios; secretos por variables de entorno
+- Entornos:
+  - Desarrollo: DB local, Swagger abierto
+  - Staging (opcional): pruebas pre‑prod
+  - Producción: HTTPS obligatorio, rate limiting, Swagger solo lectura/protegido
+
+### Seguridad
+- App:
+  - Autenticación JWT; autorización por roles (Cliente/Buyer, Operador/Vendedor, Jefe de Ventas)
+  - Validación de inputs, límites de tamaño, saneamiento y registro de auditoría
+- Infra:
+  - TLS, headers seguros (HSTS, CSP, no‑sniff), firewall y fail2ban
+  - Parcheo y actualizaciones regulares
+- Operación:
+  - Antivirus en estación principal
+  - Gestión de contraseñas y 2FA en cuentas críticas
+
+### Backups y continuidad
+- MariaDB:
+  - Dump diario cifrado; retención 7–30 días; prueba de restauración mensual
+- Media y configuración:
+  - Código versionado (Git); artefactos reproducibles
+- Recuperación:
+  - Restaurar Compose (Nginx/API/DB) + último dump; validación de salud y pruebas funcionales
+
+### Logística operativa
+- Modos:
+  - Retiro en local, envío local por zona, delivery a domicilio
+- Estados:
+  - Pedido: Recibido → Pagado → En preparación → En camino → Entregado | Cancelado
+- Impresión:
+  - Ticket de preparación y/o etiqueta con QR para verificación/seguimiento
+
+### Roles, permisos y módulos
+
+#### Roles
+- Cliente (Buyer): navegar, comprar, ver pedidos y seguimiento.
+- Vendedor/Operador (Seller): gestionar productos propios, ver pedidos con sus líneas, preparar y despachar envíos.
+- Jefe de Ventas (SalesManager): vista y control global, políticas, reportes, intervención operativa.
+
+#### Módulos principales
+- Productos: catálogo, stock, kits temáticos.
+- Pedidos/Checkout: carrito, pago, selección de envío/dirección.
+- Envíos: cotización/local, etiquetas, tracking básico.
+- Academia: recetas, videotutoriales, storytelling de marcas y cócteles.
+- Comunidad: reviews y valoraciones.
+- Administración: gestión de roles y políticas, reportes.
+
+---
 
 ## ✨ Últimas mejoras implementadas
 
@@ -50,17 +231,17 @@ Backend-Bar/
 Antes de comenzar, asegurate de tener instalados los siguientes programas:
 
 1. **.NET SDK (v8.0 o superior)**  
-    Descargalo desde: [https://dotnet.microsoft.com/download](https://dotnet.microsoft.com/download)
+   Descargalo desde: https://dotnet.microsoft.com/download
 
 2. **Node.js y npm**  
-    Se recomienda la última versión LTS. Descargala desde: [https://nodejs.org/](https://nodejs.org/)
+   Se recomienda la última versión LTS. Descargala desde: https://nodejs.org/
 
 3. **MariaDB/MySQL (v8.4+ recomendado)**  
-    Usuario: `root`, Password: `rootroot` (configurado en `appsettings.Development.json`)
+   Usuario: `root`, Password: `rootroot` (configurado en `appsettings.Development.json`)
 
 ---
 
-## � Inicio rápido
+## 🚀 Inicio rápido
 
 ### 1. Clonar el repositorio
 

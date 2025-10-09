@@ -33,14 +33,29 @@ Este proyecto contiene el **backend** y el **frontend** de **Gunter-Bar**, una a
 - Backups y continuidad
 - Logística operativa
 - Roles, permisos y módulos
+- Technology Stack (EN)
+- Coding Conventions (EN)
+- Latest Improvements (EN)
+- Project Structure (EN)
+- API (EN)
+- Prerequisites (EN)
+- Quick Start (EN)
+- Using the API with Swagger (EN)
+- Database (EN)
+- Main Entities (EN)
+- Available Scripts (EN)
+- Technical Notes (EN)
+- Troubleshooting (EN)
+- Start the project (EN)
+- Additional Notes (EN)
 
 ---
 
-## Stack objetivo del proyecto
-- Backend: .NET 8 (ASP.NET Core Web API), JWT, Swagger/OpenAPI, EF Core (Pomelo para MariaDB)
+## Technology Stack (EN)
+- Backend: .NET 8 (ASP.NET Core Web API), JWT, Swagger/OpenAPI, EF Core (Pomelo for MariaDB)
 - Frontend: React + TypeScript (Vite), React Router, Axios, JWT client
-- Base de datos: MariaDB 10.11+
-- Infra: Nginx (reverse proxy), Docker/Compose (dev/prod opcional)
+- Database: MariaDB 10.11+
+- Infra: Nginx (reverse proxy), Docker/Compose (optional for dev/prod)
 
 ---
 
@@ -183,149 +198,147 @@ Posicionar “El Arte del Cóctel” como plataforma líder de e‑commerce de b
 
 ---
 
-## ✨ Últimas mejoras implementadas
+## Coding Conventions (EN)
+- All code identifiers MUST be in English: classes, interfaces, methods, properties, DTOs, route names, and database entity names.
+- Use PascalCase for classes and public members, camelCase for local variables and parameters, SNAKE_CASE for environment variables.
+- Avoid Spanish terms in code. UI copy and business narrative can remain in Spanish.
 
-### 🔧 Fixes aplicados al Backend
-- **Compilación**: Solucionados errores de build, referencias de proyectos y dependencias
-- **Base de datos**: Configurada conexión a MariaDB/MySQL con Entity Framework Core
-- **Entidades**: Ajustadas para compatibilidad con EF (constructores parameterless, nullable navigation properties, [Key] attributes)
-- **JWT Authentication**: Configurado Bearer token authentication con roles (Administrador/Cliente)
-- **Swagger**: Habilitado con soporte para autorización JWT (botón Authorize)
-- **Controllers**: CRUD completo para todas las entidades principales
-- **DTOs**: Validaciones de entrada para registro/login con DataAnnotations
-- **Estructura limpia**: Eliminados archivos duplicados y backups organizados
+---
 
-### 🗄️ Estructura del proyecto
+## ✨ Latest Improvements (EN)
+
+### Backend fixes
+- Build: fixed project references and dependencies
+- Database: configured MariaDB/MySQL connection via Entity Framework Core
+- Entities: updated for EF compatibility (parameterless constructors, nullable navigation properties, [Key] attributes)
+- JWT Authentication: Bearer token with roles (Administrator/Client)
+- Swagger: enabled with JWT authorization support (Authorize button)
+- Controllers: full CRUD for main entities
+- DTOs: input validation for register/login using DataAnnotations
+- Cleanup: removed duplicates and organized backups
+
+## 🗄️ Project Structure (EN)
 ```
 Backend-Bar/
-├── BarGunter.API/          # Web API con controllers y Swagger
-├── BarGunter.Application/   # Servicios y DTOs
-├── BarGunter.Domain/        # Entidades y enums
-├── BarGunter.Infrastructure/ # Repositorios y DbContext
-└── scripts/                # Scripts de build/deploy
+├── BarGunter.API/           # Web API with controllers and Swagger
+├── BarGunter.Application/   # Services and DTOs
+├── BarGunter.Domain/        # Entities and enums
+├── BarGunter.Infrastructure/# Repositories and DbContext
+└── scripts/                 # Build/deploy scripts
 ```
 
-### 📡 API Endpoints disponibles
+## 📡 Available API Endpoints (EN)
 
-#### 🔓 Públicos (sin autenticación)
-- **POST** `/api/Usuario/register` - Registro de nuevos usuarios
-- **POST** `/api/Usuario/login` - Login (retorna JWT token)
+### Public (no authentication)
+- POST `/api/Users/register` - Register new users
+- POST `/api/Users/login` - Login (returns JWT token)
 
-#### 🔒 Protegidos (requieren JWT)
-- **GET/POST/PUT/DELETE** `/api/Carrito` - Gestión de carritos
-- **GET/POST/PUT/DELETE** `/api/Categoria` - Gestión de categorías  
-- **GET/POST/PUT/DELETE** `/api/Pedido` - Gestión de pedidos
-- **GET/POST/PUT/DELETE** `/api/Producto` - Gestión de productos
-- **GET/POST/PUT/DELETE** `/api/Ticket` - Gestión de tickets
-- **GET/POST/PUT/DELETE** `/api/Tipo` - Gestión de tipos
-- **GET/POST/PUT/DELETE** `/api/Trago` - Gestión de tragos
+### Protected (require JWT)
+- GET/POST/PUT/DELETE `/api/Carts` - Cart management
+- GET/POST/PUT/DELETE `/api/Categories` - Category management
+- GET/POST/PUT/DELETE `/api/Orders` - Order management
+- GET/POST/PUT/DELETE `/api/Products` - Product management
+- GET/POST/PUT/DELETE `/api/Tickets` - Ticket management
+- GET/POST/PUT/DELETE `/api/Types` - Type management
+- GET/POST/PUT/DELETE `/api/Cocktails` - Cocktail management
 
-#### 👑 Solo Administradores
-- **GET/POST/PUT/DELETE** `/api/Usuario` - Gestión de usuarios
-- **PUT** `/api/Usuario/{id}/rol` - Cambiar rol de usuario
+### Admin only
+- GET/POST/PUT/DELETE `/api/Users` - User management
+- PUT `/api/Users/{id}/role` - Change user role
 
----
-
-## ✅ Requisitos previos
-
-Antes de comenzar, asegurate de tener instalados los siguientes programas:
-
-1. **.NET SDK (v8.0 o superior)**  
-   Descargalo desde: https://dotnet.microsoft.com/download
-
-2. **Node.js y npm**  
-   Se recomienda la última versión LTS. Descargala desde: https://nodejs.org/
-
-3. **MariaDB/MySQL (v8.4+ recomendado)**  
-   Usuario: `root`, Password: `rootroot` (configurado en `appsettings.Development.json`)
+> Note: If your current API uses Spanish route names (e.g., `/api/Usuario`, `/api/Producto`), adapt the paths accordingly until the refactor is complete.
 
 ---
 
-## 🚀 Inicio rápido
+## ✅ Prerequisites (EN)
 
-### 1. Clonar el repositorio
+Before starting, install:
 
+1. **.NET SDK (v8.0 or higher)** — https://dotnet.microsoft.com/download
+2. **Node.js and npm** (latest LTS) — https://nodejs.org/
+3. **MariaDB/MySQL (v10.11+ recommended)**
+   - Default local dev credentials: `root` / `rootroot` (see `appsettings.Development.json`)
+
+---
+
+## 🚀 Quick Start (EN)
+
+### 1) Clone the repository
 ```bash
 git clone https://github.com/rockyet12/Gunter-Bar.git
 cd Gunter-Bar
 ```
 
-### 2. Backend (API)
-
+### 2) Backend (API)
 ```bash
 cd Backend-Bar
 
-# Restaurar dependencias
+# Restore dependencies
 dotnet restore
 
-# Compilar el proyecto
+# Build solution
 dotnet build Backend-Bar.sln
 
-# Aplicar migraciones de base de datos
+# Apply database migrations
 dotnet ef database update --project BarGunter.API
 
-# Ejecutar el API (escucha en http://localhost:5172)
+# Run API (listens on http://localhost:5172)
 dotnet run --project BarGunter.API
 ```
 
-**Swagger UI disponible en:** http://localhost:5172/swagger
+Swagger UI: http://localhost:5172/swagger
 
-### 3. Frontend (React)
-
+### 3) Frontend (React)
 ```bash
 cd Frontend-Bar
-
-# Instalar dependencias
 npm install
-
-# Ejecutar en modo desarrollo
 npm run dev
 ```
 
 ---
 
-## 🔑 Uso de la API con Swagger
+## 🔑 Using the API with Swagger (EN)
 
-### 1. Registro de usuario
+### 1) Register a user
 ```json
-POST /api/Usuario/register
+POST /api/Users/register
 {
-  "nombre": "Juan Pérez",
-  "email": "juan.perez@example.com", 
-  "password": "Secreto123",
-  "dni": 12345678
+  "name": "John Doe",
+  "email": "john.doe@example.com",
+  "password": "Secret123",
+  "nationalId": 12345678
 }
 ```
 
-### 2. Login y obtención de JWT
+### 2) Login and get a JWT
 ```json
-POST /api/Usuario/login
+POST /api/Users/login
 {
-  "email": "juan.perez@example.com",
-  "password": "Secreto123"
+  "email": "john.doe@example.com",
+  "password": "Secret123"
 }
 ```
 
-**Respuesta exitosa:**
+Successful response:
 ```json
 {
   "success": true,
-  "message": "Login exitoso",
+  "message": "Login successful",
   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 }
 ```
 
-### 3. Autorización en Swagger
-1. Copia el valor del campo `token` de la respuesta del login
-2. En Swagger UI, haz clic en el botón **"Authorize"**
-3. En el campo, escribe: `Bearer [tu-token-aquí]`
-4. Cierra el diálogo - ahora puedes usar endpoints protegidos
+### 3) Authorize in Swagger
+1. Copy the `token` value from the login response
+2. In Swagger UI, click "Authorize"
+3. Enter: `Bearer <your-token-here>`
+4. Close the dialog and call protected endpoints
 
 ---
 
-## 🗄️ Base de datos
+## 🗄️ Database (EN)
 
-### Configuración (appsettings.Development.json)
+### Development configuration (appsettings.Development.json)
 ```json
 {
   "ConnectionStrings": {
@@ -334,128 +347,109 @@ POST /api/Usuario/login
 }
 ```
 
-### Entidades principales
-- **Usuario**: Gestión de usuarios con roles (Admin/Cliente)
-- **Producto**: Productos del bar con categorías
-- **Categoria**: Categorización de productos  
-- **Trago**: Recetas y preparaciones especiales
-- **Pedido**: Órdenes de clientes
-- **Carrito**: Carritos de compra
-- **Ticket**: Comprobantes y facturación
-- **Tipo**: Clasificación adicional
+### Main Entities (EN)
+- **User**: user accounts with roles (Admin/Client)
+- **Product**: bar products with categories
+- **Category**: product categorization
+- **Cocktail**: recipes and preparations
+- **Order**: customer orders
+- **Cart**: shopping carts
+- **Ticket**: receipts/invoices
+- **Type**: additional classification
 
 ---
 
-## 🛠️ Scripts disponibles
+## 🛠️ Available Scripts (EN)
 
 ### Backend
 ```bash
-# Script de rebuild completo
+# Full rebuild script
 ./Backend-Bar/scripts/rebuild.sh
 
-# Compilación manual
+# Manual build
 dotnet build Backend-Bar.sln
 
-# Ejecutar con URL específica  
+# Run with a specific URL
 dotnet run --project BarGunter.API --urls "http://localhost:5172"
 ```
 
-### Frontend  
+### Frontend
 ```bash
-# Desarrollo
 npm run dev
-
-# Build para producción
 npm run build
-
-# Preview del build
 npm run preview
 ```
 
 ---
 
-## 📋 Notas técnicas
+## 📋 Technical Notes (EN)
 
-### Arquitectura
-- **Clean Architecture**: Domain, Application, Infrastructure, API
-- **Entity Framework Core**: ORM para acceso a datos
-- **JWT Authentication**: Tokens Bearer con roles
-- **Swagger/OpenAPI**: Documentación interactiva
-- **Repository Pattern**: Abstracción de acceso a datos
-- **Dependency Injection**: Configurado en Program.cs
+### Architecture
+- Clean Architecture: Domain, Application, Infrastructure, API
+- Entity Framework Core for data access
+- JWT Authentication (Bearer) with roles
+- Swagger/OpenAPI for interactive docs
+- Repository Pattern
+- Dependency Injection configured in Program.cs
 
-### Configuraciones importantes
-- **CORS**: Configurado para desarrollo local
-- **JWT Secret**: `TucodigodeseguridadWAZAAAAAAA!!` (cambiar en producción)
-- **Puerto API**: 5172 (configurable en launchSettings.json)
-- **Base de datos**: MariaDB/MySQL con migraciones automáticas
+### Important configuration
+- CORS configured for local development
+- JWT Secret: `TucodigodeseguridadWAZAAAAAAA!!` (change for production)
+- API Port: 5172 (configurable in launchSettings.json)
+- Database: MariaDB/MySQL with automatic migrations
 
-### Backups y limpieza
-- Archivos de backup en `Backend-Bar/backups/`
-- Duplicados eliminados durante la limpieza del proyecto
-- Git history preservado con commits descriptivos
+### Backups and cleanup
+- Backup files in `Backend-Bar/backups/`
+- Duplicates removed during project cleanup
+- Git history preserved with descriptive commits
 
 ---
 
-## 🚨 Troubleshooting
+## 🚨 Troubleshooting (EN)
 
-### Error de puerto ocupado
+### Port already in use
 ```bash
-# Encontrar proceso en puerto 5172
 lsof -i :5172
-
-# Terminar proceso
-kill [PID]
+kill <PID>
 ```
 
-### Problemas de compilación
+### Build problems
 ```bash
-# Limpiar y rebuild
 dotnet clean
-dotnet restore  
+dotnet restore
 dotnet build
 ```
 
-### Base de datos
+### Database
 ```bash
-# Recrear migraciones
 dotnet ef migrations remove
 dotnet ef migrations add InitialCreate
 dotnet ef database update
 ```
 
-```bash
-npm install
-```
-
 ---
 
-## 🚀 Iniciar el proyecto
+## ▶️ Start the project (EN)
 
-### Iniciar el backend
-
+### Start backend
 ```bash
 cd ../Backend-Bar
 dotnet run
 ```
 
-### Iniciar el frontend
-
+### Start frontend
 ```bash
 cd ../Frontend-Bar
 npm run dev
 ```
 
-Esto iniciará el servidor de desarrollo del frontend.
-
 ---
 
-## 🔧 Notas adicionales
-
-- Asegurate de tener creada la base de datos que indiques en la cadena de conexión.
-- Podés usar herramientas como **MySQL Workbench** o **DBeaver** para gestionar la base de datos.
-- Si el backend no puede conectarse, revisá bien la cadena de conexión y que el servidor de MySQL esté funcionando.
-- Si tenés problemas, verificá que las versiones de las herramientas instaladas sean compatibles con los requisitos del proyecto.
+## 🔧 Additional Notes (EN)
+- Ensure the database specified in the connection string exists.
+- Tools like MySQL Workbench or DBeaver can help manage the database.
+- If the backend cannot connect, verify the connection string and that MySQL/MariaDB is running.
+- Check tool versions are compatible with the project requirements.
 
 ---
 

@@ -1,8 +1,6 @@
 using BarGunter.Application.Contracts.IRepositories;
 using BarGunter.Application.Contracts.IServices;
 using BarGunter.Domain.Entities;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace BarGunter.Application.Services;
 
@@ -10,27 +8,34 @@ public class TicketService : ITicketService
 {
     private readonly ITicketRepository _ticketRepository;
 
-    public TicketService(ITicketRepository ticketRepository)
-    {
-        _ticketRepository = ticketRepository;
-    }
-
-    public async Task<List<Ticket>> GetAllTickets()
-    {
-        return await _ticketRepository.GetAllTickets();
-    }
-
-    public async Task<Ticket> GetTicketById(int id)
-    {
-        return await _ticketRepository.GetTicketById(id);
-    }
-
-    public async Task<int> CreateTicket(Ticket ticket)
-    {
-        if (ticket.Total <= 0)
+        public TicketService(ITicketRepository ticketRepository)
         {
-            throw new ArgumentException("El total del ticket debe ser mayor a cero.");
+            _ticketRepository = ticketRepository;
         }
-        return await _ticketRepository.AddTicket(ticket);
+
+    public async Task<IEnumerable<Ticket>> GetAllAsync()
+    {
+        return await _ticketRepository.GetAllAsync();
+    }
+
+    public async Task<Ticket?> GetByIdAsync(int id)
+    {
+        return await _ticketRepository.GetByIdAsync(id);
+    }
+
+    public async Task<Ticket> CreateAsync(Ticket ticket)
+    {
+        return await _ticketRepository.CreateAsync(ticket);
+    }
+
+    public async Task<Ticket?> UpdateAsync(int id, Ticket ticket)
+    {
+        return await _ticketRepository.UpdateAsync(id, ticket);
+    }
+
+    public async Task<bool> DeleteAsync(int id)
+    {
+        return await _ticketRepository.DeleteAsync(id);
     }
 }
+

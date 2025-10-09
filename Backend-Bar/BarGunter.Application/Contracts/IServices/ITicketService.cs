@@ -1,12 +1,12 @@
 using BarGunter.Domain.Entities;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace BarGunter.Application.Contracts.IServices;
+    public interface ITicketService
+    {
+        Task<IEnumerable<Ticket>> GetAllAsync();
+        Task<Ticket?> GetByIdAsync(int id);
+        Task<Ticket> CreateAsync(Ticket ticket);
+        Task<Ticket?> UpdateAsync(int id, Ticket ticket);
+        Task<bool> DeleteAsync(int id);
+    }
 
-public interface ITicketService
-{
-    Task<List<Ticket>> GetAllTickets();
-    Task<Ticket> GetTicketById(int id);
-    Task<int> CreateTicket(Ticket ticket);
-}

@@ -8,22 +8,46 @@ public class BarGunterDbContext : DbContext
     public BarGunterDbContext(DbContextOptions<BarGunterDbContext> options) : base(options)
     {
     }
-    public DbSet<Usuario>Usuarios{ get; set; }
-    public DbSet<Tragos>Tragos{ get; set; }
-    public DbSet<Pedido>Pedidos{ get; set; }
-    public DbSet<Ticket>Tickets{ get; set; }
-    public DbSet<Tipo>Tipos{ get; set; }
-    public DbSet<Categoria>Categorias{ get; set; }
-    public DbSet<Producto>Productos{ get; set; }
-    public DbSet<Carrito>Carritos{ get; set; }
+
+    // English entity DbSets
+    public DbSet<User> Users { get; set; }
+    public DbSet<Product> Products { get; set; }
+    public DbSet<Cart> Carts { get; set; }
+    public DbSet<Category> Categories { get; set; }
+    public DbSet<Order> Orders { get; set; }
+    public DbSet<Ticket> Tickets { get; set; }
+    public DbSet<DrinkType> DrinkTypes { get; set; }
+    public DbSet<Drink> Drinks { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        modelBuilder.ApplyConfiguration(new UsuarioConfiguration());
-    // Temporary: ignore ambiguous navigation properties causing design-time DbContext creation errors
-    // These navigations can be reintroduced with explicit FK configuration later.
-    modelBuilder.Entity<BarGunter.Domain.Entities.Producto>().Ignore(p => p.idCarrito);
-    modelBuilder.Entity<BarGunter.Domain.Entities.Carrito>().Ignore(c => c.CDProducto);
+        
+        // Remove Usuario configuration since it's deleted
+        // Configure entity relationships if needed
+        
+        // Product - Category relationship
+        modelBuilder.Entity<Product>()
+            .HasOne<Category>()
+            .WithMany()
+            .HasForeignKey(p => p.CategoryId);
+
+        // Drink - DrinkType relationship  
+        modelBuilder.Entity<Drink>()
+            .HasOne<DrinkType>()
+            .WithMany()
+            .HasForeignKey(d => d.TypeId);
+
+        // Order - Ticket relationship
+        modelBuilder.Entity<Order>()
+            .HasOne<Ticket>()
+            .WithMany()
+            .HasForeignKey(o => o.TicketId);
+
+        // Cart - Product relationship
+        modelBuilder.Entity<Cart>()
+            .HasOne<Product>()
+            .WithMany()
+            .HasForeignKey(c => c.ProductId);
     }
 }

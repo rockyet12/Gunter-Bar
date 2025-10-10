@@ -1,6 +1,6 @@
 using BarGunter.Domain.Entities;
 
-namespace BarGunter.Application.Contracts.IServices;
+namespace BarGunter.Application.Interfaces.IServices;
     public interface IProductService
     {
         Task<IEnumerable<Product>> GetAllAsync();

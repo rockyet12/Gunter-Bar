@@ -1,5 +1,5 @@
-using BarGunter.Application.Contracts.IRepositories;
-using BarGunter.Application.Contracts.IServices;
+using BarGunter.Application.Interfaces.IRepositories;
+using BarGunter.Application.Interfaces.IServices;
 using BarGunter.Application.DTOs;
 using BarGunter.Domain.Entities;
 using System.Security.Cryptography;
@@ -47,13 +47,13 @@ public class UserService : IUserService
         return await _userRepository.DeleteAsync(id);
     }
 
-    public async Task<BarGunter.Application.DTOs.LoginResponse> LoginAsync(BarGunter.Application.DTOs.LoginRequest request)
+    public async Task<LoginResponse> LoginAsync(LoginRequest request)
     {
         var user = await _userRepository.GetByEmailAsync(request.Email);
         
         if (user == null || !VerifyPassword(request.Password, user.Password))
         {
-            return new BarGunter.Application.DTOs.LoginResponse
+            return new LoginResponse
             {
                 Success = false,
                 Message = "Invalid email or password"
@@ -62,7 +62,7 @@ public class UserService : IUserService
 
         if (!user.IsActive)
         {
-            return new BarGunter.Application.DTOs.LoginResponse
+            return new LoginResponse
             {
                 Success = false,
                 Message = "User account is inactive"
@@ -71,12 +71,12 @@ public class UserService : IUserService
 
         var tokenResponse = GenerateJwtToken(user);
 
-    return new BarGunter.Application.DTOs.LoginResponse
+    return new LoginResponse
         {
             Success = true,
             Message = "Login successful",
             TokenInfo = tokenResponse,
-        User = new BarGunter.Application.DTOs.UserDto
+        User = new UserDto
             {
                 UserId = user.UserId,
                 Name = user.Name,
@@ -86,12 +86,12 @@ public class UserService : IUserService
         };
     }
 
-    public async Task<BarGunter.Application.DTOs.LoginResponse> RegisterAsync(BarGunter.Application.DTOs.RegisterRequest request)
+    public async Task<LoginResponse> RegisterAsync(RegisterRequest request)
     {
         // Check if email already exists
         if (await _userRepository.EmailExistsAsync(request.Email))
         {
-            return new BarGunter.Application.DTOs.LoginResponse
+            return new LoginResponse
             {
                 Success = false,
                 Message = "Email already exists"
@@ -110,12 +110,12 @@ public class UserService : IUserService
     var createdUser = await _userRepository.CreateAsync(user);
     var tokenResponse = GenerateJwtToken(createdUser);
 
-    return new BarGunter.Application.DTOs.LoginResponse
+    return new LoginResponse
         {
             Success = true,
             Message = "Registration successful",
             TokenInfo = tokenResponse,
-            User = new BarGunter.Application.DTOs.UserDto
+            User = new UserDto
             {
                 UserId = createdUser.UserId,
                 Name = createdUser.Name,

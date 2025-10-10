@@ -1,7 +1,7 @@
 using BarGunter.Application.DTOs;
 using BarGunter.Domain.Entities;
 
-namespace BarGunter.Application.Contracts.IServices;
+namespace BarGunter.Application.Interfaces.IServices;
 
 public interface IUserService
 {
@@ -10,7 +10,7 @@ public interface IUserService
     Task<User> CreateAsync(User user);
     Task<User?> UpdateAsync(int id, User user);
     Task<bool> DeleteAsync(int id);
-    Task<BarGunter.Application.DTOs.LoginResponse> LoginAsync(BarGunter.Application.DTOs.LoginRequest request);
-    Task<BarGunter.Application.DTOs.LoginResponse> RegisterAsync(BarGunter.Application.DTOs.RegisterRequest request);
+    Task<LoginResponse> LoginAsync(LoginRequest request);
+    Task<LoginResponse> RegisterAsync(RegisterRequest request);
 }
 

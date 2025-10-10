@@ -1,6 +1,6 @@
 using BarGunter.Domain.Entities;
 
-namespace BarGunter.Application.Contracts.IRepositories;
+namespace BarGunter.Application.Interfaces.IRepositories;
     public interface IDrinkRepository
     {
         Task<IEnumerable<Drink>> GetAllAsync();

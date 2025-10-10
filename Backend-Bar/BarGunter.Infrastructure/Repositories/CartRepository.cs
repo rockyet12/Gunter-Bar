@@ -1,9 +1,9 @@
-using BarGunter.Application.Contracts.IRepositories;
+using BarGunter.Application.Interfaces.IRepositories;
 using BarGunter.Domain.Entities;
-using BarGunter.Infrastructure.Persistences;
+using BarGunter.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace BarGunter.Infrastructure.Persistences.Repositories;
+namespace BarGunter.Infrastructure.Repositories;
     public class CartRepository : ICartRepository
     {
         private readonly BarGunterDbContext _context;

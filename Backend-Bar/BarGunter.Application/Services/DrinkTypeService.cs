@@ -1,5 +1,5 @@
-using BarGunter.Application.Contracts.IRepositories;
-using BarGunter.Application.Contracts.IServices;
+using BarGunter.Application.Interfaces.IRepositories;
+using BarGunter.Application.Interfaces.IServices;
 using BarGunter.Domain.Entities;
 
 namespace BarGunter.Application.Services;

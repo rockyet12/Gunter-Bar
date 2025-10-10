@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using BarGunter.Application.Contracts.IServices;
+using BarGunter.Application.Interfaces.IServices;
 using BarGunter.Domain.Entities;
 
 namespace BarGunter.API.Controllers;

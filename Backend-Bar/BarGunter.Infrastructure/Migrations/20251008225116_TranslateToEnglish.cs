@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace BarGunter.Infrastructure.Persistences.Migrations
+namespace BarGunter.Infrastructure.Migrations
 {
     /// <inheritdoc />
     public partial class TranslateToEnglish : Migration

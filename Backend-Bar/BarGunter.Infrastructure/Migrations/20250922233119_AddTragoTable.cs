@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace BarGunter.Infrastructure.Persistences.Migrations
+namespace BarGunter.Infrastructure.Migrations
 {
     /// <inheritdoc />
     public partial class AddTragoTable : Migration

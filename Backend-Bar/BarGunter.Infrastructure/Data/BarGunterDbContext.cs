@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using BarGunter.Domain.Entities;
 
-namespace BarGunter.Infrastructure.Persistences;
+namespace BarGunter.Infrastructure.Data;
 
 public class BarGunterDbContext : DbContext
 {

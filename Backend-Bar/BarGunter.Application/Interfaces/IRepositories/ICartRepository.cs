@@ -1,6 +1,6 @@
 using BarGunter.Domain.Entities;
 
-namespace BarGunter.Application.Contracts.IRepositories;
+namespace BarGunter.Application.Interfaces.IRepositories;
     public interface ICartRepository
     {
         Task<IEnumerable<Cart>> GetAllAsync();

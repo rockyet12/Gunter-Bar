@@ -1,5 +1,5 @@
 name: CI
-# Force rebuild after fixing CS5001 and npm ci errors
+# Force rebuild after fixing CS5001 and npm ci errors - trigger v2
 
 on:
   push:

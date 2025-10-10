@@ -1,4 +1,5 @@
 name: CI
+# Force rebuild after fixing CS5001 and npm ci errors
 
 on:
   push:
@@ -15,6 +16,11 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
+      - name: Clean previous builds
+        run: |
+          cd Backend-Bar
+          find . -name "bin" -type d -exec rm -rf {} + 2>/dev/null || true
+          find . -name "obj" -type d -exec rm -rf {} + 2>/dev/null || true
       - name: Restore
         run: dotnet restore Backend-Bar/Backend-Bar.sln
       - name: Build
@@ -27,6 +33,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
+      - name: Clean npm cache
+        run: |
+          cd Frontend-Bar
+          rm -rf node_modules
+          npm cache clean --force
       - name: Install
         run: |
           cd Frontend-Bar

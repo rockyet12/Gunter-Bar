@@ -51,11 +51,72 @@ Este proyecto contiene el **backend** y el **frontend** de **Gunter-Bar**, una a
 
 ---
 
+## 🚀 Latest Improvements (EN)
+
+### **Major .NET 9 Upgrade (October 2025)**
+- **Complete migration** from .NET 8 to .NET 9 across all projects
+- **Updated NuGet packages**: EntityFrameworkCore, JWT Bearer, Pomelo MySQL driver
+- **CI/CD compatibility**: GitHub Actions updated for .NET 9 support
+- **Performance improvements** and latest framework features
+
+### **Enhanced API Controllers**
+All controllers have been significantly improved with new functionality:
+
+#### 🔐 **UserController** - Enhanced User Management
+- **Advanced search**: Search users by name, email, or role
+- **User statistics**: Get comprehensive user analytics
+- **Profile management**: Update user profiles with validation
+- **Password security**: Secure password change functionality
+- **Admin controls**: Toggle user status (active/inactive)
+- **Detailed logging**: All operations tracked for security
+
+#### 📦 **ProductController** - Advanced Product Features
+- **Promotional products**: Get current promotions and featured items
+- **Product cloning**: Duplicate products for quick catalog expansion
+- **Mass price updates**: Update prices by category efficiently
+- **Enhanced filtering**: Advanced product search and categorization
+- **Stock management**: Better inventory control and alerts
+
+#### 🧾 **TicketController** - Complete Table Management
+- **Advanced filtering**: Filter tickets by date range, table, status
+- **Real-time tracking**: Today's active tickets with live updates
+- **Smart closure**: Automated ticket closure with validation
+- **Analytics dashboard**: Comprehensive ticket statistics and reports
+- **Table optimization**: Efficient table turnover management
+
+#### 🍺 **DrinkTypeController** - Enhanced Beverage Categories
+- **Popular types**: Get trending drink categories
+- **Smart search**: Enhanced search with type-specific filtering
+- **Usage analytics**: Track most popular drink types
+- **Category management**: Advanced categorization features
+
+#### 🍸 **DrinkController** - Improved Beverage Management
+- **Type-based filtering**: Advanced filtering by drink types
+- **Drink statistics**: Analytics on beverage consumption
+- **Smart recommendations**: Suggest drinks based on preferences
+- **Inventory optimization**: Better stock management for drinks
+
+#### 📋 **OrderController** - Advanced Order Processing
+- **Status filtering**: Filter orders by processing status
+- **User order history**: Complete order tracking per user
+- **Order analytics**: Comprehensive order statistics
+- **Processing optimization**: Streamlined order fulfillment
+
+### **Technical Improvements**
+- **Clean Architecture**: Maintained separation of concerns
+- **Error handling**: Comprehensive error management and logging
+- **Security enhancements**: Role-based authorization across all endpoints
+- **Performance optimization**: Efficient database queries and caching
+- **Code quality**: Consistent coding standards and documentation
+
+---
+
 ## Technology Stack (EN)
-- Backend: .NET 8 (ASP.NET Core Web API), JWT, Swagger/OpenAPI, EF Core (Pomelo for MariaDB)
+- Backend: **.NET 9** (ASP.NET Core Web API), JWT, Swagger/OpenAPI, EF Core 9.0 (Pomelo for MariaDB)
 - Frontend: React + TypeScript (Vite), React Router, Axios, JWT client
 - Database: MariaDB 10.11+
 - Infra: Nginx (reverse proxy), Docker/Compose (optional for dev/prod)
+- CI/CD: GitHub Actions with .NET 9 support
 
 ---
 
@@ -254,7 +315,8 @@ Backend-Bar/
 
 Before starting, install:
 
-1. **.NET SDK (v8.0 or higher)** — https://dotnet.microsoft.com/download
+1. **.NET SDK (v9.0 or higher)** — https://dotnet.microsoft.com/download
+   - **Important**: This project requires .NET 9 for full compatibility
 2. **Node.js and npm** (latest LTS) — https://nodejs.org/
 3. **MariaDB/MySQL (v10.11+ recommended)**
    - Default local dev credentials: `root` / `rootroot` (see `appsettings.Development.json`)

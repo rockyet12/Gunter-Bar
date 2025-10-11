@@ -167,33 +167,6 @@ public class DrinkController : ControllerBase
             _logger.LogWarning("No se pudo eliminar bebida {DrinkId} - no encontrada", id);
             return NotFound($"Bebida con ID {id} no encontrada");
         }
-        
-        _logger.LogInformation("Bebida {DrinkId} eliminada exitosamente", id);
-        return NoContent();
-    }
-
-    [HttpGet("type/{drinkTypeId}")]
-    public async Task<ActionResult<IEnumerable<Drink>>> GetByType(int drinkTypeId)
-    {
-        var drinks = await _drinkService.GetAllAsync();
-        // Filtrar por tipo según la lógica de negocio
-        return Ok(drinks);
-    }
-
-    [HttpGet("alcoholic")]
-    public async Task<ActionResult<IEnumerable<Drink>>> GetAlcoholic()
-    {
-        var drinks = await _drinkService.GetAllAsync();
-        // Filtrar bebidas alcohólicas según la lógica de negocio
-        return Ok(drinks);
-    }
-
-    [HttpGet("non-alcoholic")]
-    public async Task<ActionResult<IEnumerable<Drink>>> GetNonAlcoholic()
-    {
-        var drinks = await _drinkService.GetAllAsync();
-        // Filtrar bebidas no alcohólicas según la lógica de negocio
-        return Ok(drinks);
         _logger.LogInformation("Bebida {DrinkId} eliminada exitosamente", id);
         return NoContent();
     }
@@ -220,7 +193,7 @@ public class DrinkController : ControllerBase
             DrinksByType = drinkTypes.Select(dt => new
             {
                 TypeName = dt.Name,
-                DrinkCount = drinks.Count(d => d.TypeId == dt.DrinkTypeId)
+                DrinkCount = drinks.Count(d => d.TypeId == dt.TypeId)
             }).ToList()
         };
         

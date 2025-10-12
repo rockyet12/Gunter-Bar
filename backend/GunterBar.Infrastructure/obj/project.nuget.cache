@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "/AO2C+HPe0M=",
+  "success": true,
+  "projectFilePath": "/home/roque/Gunter-Bar/backend/GunterBar.Infrastructure/GunterBar.Infrastructure.csproj",
+  "expectedPackageFiles": [
+    "/home/roque/.nuget/packages/microsoft.aspnetcore.app.ref/9.0.9/microsoft.aspnetcore.app.ref.9.0.9.nupkg.sha512"
+  ],
+  "logs": []
+}

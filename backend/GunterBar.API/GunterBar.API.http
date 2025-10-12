@@ -1,0 +1,6 @@
+@GunterBar.API_HostAddress = http://localhost:5057
+
+GET {{GunterBar.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

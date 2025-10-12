@@ -1,0 +1,16 @@
+/home/roque/Gunter-Bar/backend/GunterBar.Application/bin/Debug/net9.0/GunterBar.Application.deps.json
+/home/roque/Gunter-Bar/backend/GunterBar.Application/bin/Debug/net9.0/GunterBar.Application.dll
+/home/roque/Gunter-Bar/backend/GunterBar.Application/bin/Debug/net9.0/GunterBar.Application.pdb
+/home/roque/Gunter-Bar/backend/GunterBar.Application/bin/Debug/net9.0/GunterBar.Domain.dll
+/home/roque/Gunter-Bar/backend/GunterBar.Application/bin/Debug/net9.0/GunterBar.Domain.pdb
+/home/roque/Gunter-Bar/backend/GunterBar.Application/obj/Debug/net9.0/GunterBar.Application.csproj.AssemblyReference.cache
+/home/roque/Gunter-Bar/backend/GunterBar.Application/obj/Debug/net9.0/GunterBar.Application.GeneratedMSBuildEditorConfig.editorconfig
+/home/roque/Gunter-Bar/backend/GunterBar.Application/obj/Debug/net9.0/GunterBar.Application.AssemblyInfoInputs.cache
+/home/roque/Gunter-Bar/backend/GunterBar.Application/obj/Debug/net9.0/GunterBar.Application.AssemblyInfo.cs
+/home/roque/Gunter-Bar/backend/GunterBar.Application/obj/Debug/net9.0/GunterBar.Application.csproj.CoreCompileInputs.cache
+/home/roque/Gunter-Bar/backend/GunterBar.Application/obj/Debug/net9.0/GunterBar.Application.sourcelink.json
+/home/roque/Gunter-Bar/backend/GunterBar.Application/obj/Debug/net9.0/GunterBa.248D9DFF.Up2Date
+/home/roque/Gunter-Bar/backend/GunterBar.Application/obj/Debug/net9.0/GunterBar.Application.dll
+/home/roque/Gunter-Bar/backend/GunterBar.Application/obj/Debug/net9.0/refint/GunterBar.Application.dll
+/home/roque/Gunter-Bar/backend/GunterBar.Application/obj/Debug/net9.0/GunterBar.Application.pdb
+/home/roque/Gunter-Bar/backend/GunterBar.Application/obj/Debug/net9.0/ref/GunterBar.Application.dll

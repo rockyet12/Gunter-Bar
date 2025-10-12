@@ -1,0 +1,6 @@
+@GunterBar.Presentation_HostAddress = http://localhost:5221
+
+GET {{GunterBar.Presentation_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -1,5 +1,5 @@
 using GunterBar.Domain.Entities;
-using GunterBar.Domain.Enums;
+using GunterBar.Domain;
 using GunterBar.Domain.Interfaces;
 using GunterBar.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;

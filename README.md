@@ -1,170 +1,238 @@
-# Gunter-Bar
+# Gunter Bar - Sistema de Gestión de Bar
 
-Este proyecto contiene el **backend** y el **frontend** de **Gunter-Bar**, una aplicación diseñada para gestionar una tienda online de bebidas con funcionalidades avanzadas de mixología, gestión de pedidos, combos y eventos.
+## 📋 Descripción del Proyecto
 
----
+**Gunter Bar** es un sistema completo de gestión para un bar desarrollado como proyecto educativo para ET12 - Escuela Técnica 12. El sistema permite gestionar usuarios, bebidas, carritos de compra y órdenes, implementando un sistema de autenticación JWT y una arquitectura limpia (Clean Architecture).
 
-## Trabajo Práctico – Escuela Técnica N° 12 D.E. 1° "Libertador Gral. José de San Martín" (ET12)
+## 🚀 Tecnologías Utilizadas
 
-- Sitio web: http://et12.edu.ar
-- Asignatura: Desarrollo de Sistemas
-- Nombre del Trabajo Práctico: GUNTER BAR
-- Docentes: Sergio Mendoza y Adrián Cives
-- Ciclo Lectivo: 2025
-- Año y División: 6°17°
-- Alumnas y alumnos:
-  - Sofia Colman
-  - Camila Reyes
-  - Ana Martinez
-  - Roque Rivas
-  - Julio Martinez
+### Backend (.NET 9)
+- **Framework**: ASP.NET Core 9.0
+- **Arquitectura**: Clean Architecture (Domain, Application, Infrastructure, Presentation)
+- **Base de Datos**: SQL Server con Entity Framework Core 9.0
+- **Autenticación**: JWT Bearer Authentication
+- **Testing**: xUnit con Moq y FluentAssertions
+- **Documentación**: Swagger/OpenAPI
 
-### Índice de contenidos del TP
-- Visión del proyecto
-- Propuesta de valor (E‑commerce + Academia de Cócteles)
-- Diseño y UX/UI
-- Objetivos
-- Beneficios para la comunidad
-- Definición de Infraestructura (recursos materiales y técnicos)
-- Software y servicios
-- DevOps
-- Arquitectura técnica y entornos
-- Seguridad
-- Backups y continuidad
-- Logística operativa
-- Roles, permisos y módulos
+### Frontend (React + TypeScript)
+- **Framework**: React 18 con TypeScript
+- **Bundler**: Create React App
+- **Styling**: CSS Modules
+- **HTTP Client**: Axios
+- **Gestión de Estado**: React Hooks
 
----
-
-## Visión
-"Gunter Bar", un comercio electrónico que trasciende la simple venta de bebidas para convertirse en un sitio web de experiencias y aprendizaje. Será la referencia para entusiastas que buscan licores e insumos de coctelería de alta calidad, con asesoramiento experto para dominar el arte del cóctel en casa.  
-El sitio destacará por un diseño visualmente atractivo e intuitivo, con contenido de alto valor, brindando una experiencia memorable y enriquecedora.
-
-## Propuesta
-Catálogo curado de bebidas (destilados, vinos, cervezas artesanales y mixers exclusivos) + "Academia de Cócteles" interactiva. Cada compra inicia una aventura de sabor con guía profesional.
-
-### E‑commerce
-- Catálogo impecable: fotos de alta calidad, descripciones con notas de cata y recomendaciones de maridaje/coctelería.
-- Kits temáticos de coctelería: p. ej. "Kit Old Fashioned Clásico" con ingredientes + enlace al tutorial.
-- Compra fluida: navegación, filtros y checkout rápidos y seguros.
-- Logística de entregas: retiro en local, envíos de zona y delivery con estados visibles (recibido, preparación, en camino, entregado).
-
-### Academia de Cócteles
-- Videotutoriales exclusivos: técnicas básicas a avanzadas, dictadas por barmans.
-- Recetas interactivas: filtros por licor, dificultad y perfil de sabor.
-- Contenido narrativo: historia y cultura detrás de licores y cócteles.
-
-### Diseño y UX/UI
-- Estética elegante: interfaz oscura de bar con imágenes vibrantes.
-- Comunidad y reviews: valoraciones de productos y recetas para impulsar confianza.
-
-## Objetivo
-Posicionar "El Arte del Cóctel" como plataforma líder de e‑commerce de bebidas premium y escuela de mixología digital, equilibrando facturación por productos y construcción de comunidad de aprendizaje.
-
-- Catálogo con excelente relación calidad/precio ajustado al público.
-- Web que amplíe alcance y adquisición.
-- Promociones temáticas, combos y sorteos para lealtad.
-- Marketing y contenido para redes afines a público joven.
-- Ambiente acogedor que motive el regreso y la recomendación.
-
-## Beneficios para la comunidad
-- Productos de calidad a precios accesibles.
-- Experiencia divertida y segura: temática cultural y controlada.
-- Participación y fidelización: promos, combos, sorteos y contenido digital.
-- Acceso digital: web y redes para interacción y compras online.
-
----
-
-## Definición de Infraestructura
-
-### Recursos materiales y técnicos
-- Servidor web con capacidad para alta concurrencia
-- Base de datos robusta para gestión de inventario y usuarios
-- Sistema de pagos integrado y seguro
-- CDN para entrega rápida de contenido multimedia
-- Sistemas de backup y recuperación
-
-### Software y servicios
-- Plataforma de e‑commerce escalable
-- CMS para gestión de contenido de la academia
-- Sistema de gestión de inventario en tiempo real
-- Herramientas de analítica y métricas
-- Integración con redes sociales y marketing digital
-
-### DevOps
-- Integración continua y deployment automatizado
-- Monitoreo de performance y disponibilidad
-- Gestión de logs centralizados
-- Automatización de testing
-- Escalado automático según demanda
-
-### Arquitectura técnica y entornos
-- Desarrollo: ambiente local con hot reload
-- Testing: ambiente de pruebas automatizadas
-- Staging: réplica de producción para validación final
-- Producción: ambiente optimizado y monitoreado
-- Entornos containerizados para consistencia
-
-### Seguridad
-- App:
-  - Autenticación JWT; autorización por roles (Cliente, Empleado, Jefe de Ventas)
-  - Validación de inputs, límites de tamaño, saneamiento y registro de auditoría
-- Infra:
-  - TLS, headers seguros (HSTS, CSP, no‑sniff), firewall y protección DDoS
-  - Parcheo y actualizaciones regulares
-- Operación:
-  - Gestión de contraseñas y 2FA en cuentas críticas
-  - Auditoría de accesos y operaciones sensibles
-
-### Backups y continuidad
-- Base de datos:
-  - Backup diario cifrado; retención 7–30 días; prueba de restauración mensual
-- Media y configuración:
-  - Código versionado (Git); artefactos reproducibles
-- Recuperación:
-  - Plan de recuperación ante desastres
-  - Pruebas regulares de restauración
-
-### Logística operativa
-- Modos:
-  - Retiro en local, envío local por zona, delivery a domicilio
-- Estados:
-  - Pedido: Recibido → Pagado → En preparación → En camino → Entregado | Cancelado
-- Tracking:
-  - Sistema de seguimiento en tiempo real
-  - Notificaciones automáticas por email/SMS
-
-### Roles, permisos y módulos
-
-#### Roles
-- Cliente (Customer): navegar, comprar, ver pedidos y seguimiento, acceso a academia.
-- Empleado (Employee): gestionar productos, ver pedidos, preparar despachos, solo lectura en precios.
-- Jefe de Ventas (SalesManager): vista y control global, modificar precios, gestión de usuarios, reportes avanzados.
-
-#### Módulos principales
-- Productos: catálogo, stock, combos, promociones.
-- Pedidos/Checkout: carrito, pago, selección de envío/dirección.
-- Logística: cotización, etiquetas, tracking en tiempo real.
-- Academia: recetas de cócteles, videotutoriales, guías de maridaje.
-- Eventos: promociones especiales, cupones de bienvenida.
-- Administración: gestión de roles, reportes de ventas, analytics.
-
----
-
-## 📁 Estructura del Proyecto
+## 🏗️ Arquitectura del Backend
 
 ```
-Gunter-Bar/
-├── backend/                     # Backend .NET 9
-│   ├── GunterBar.Domain/        # Entidades y reglas de negocio
-│   ├── GunterBar.Application/   # Servicios y lógica de aplicación
-│   ├── GunterBar.Infrastructure/# Acceso a datos y servicios externos
-│   ├── GunterBar.API/          # API REST y controllers
-│   └── GunterBar.sln           # Solución del backend
-└── frontend/                   # Frontend React + TypeScript
-    └── (estructura del frontend)
+GunterBar.Solution/
+│
+├── GunterBar.Domain/              (Capa de Dominio)
+│   ├── Entities/                  (Entidades de negocio)
+│   ├── ValueObjects/              (Objetos de valor)
+│   ├── Interfaces/                (Contratos del dominio)
+│   └── Enums/                     (Enumeraciones)
+│
+├── GunterBar.Application/         (Capa de Aplicación)
+│   ├── Services/                  (Servicios de aplicación)
+│   ├── UseCases/                  (Casos de uso)
+│   ├── Interfaces/                (Contratos de aplicación)
+│   └── DTOs/                      (Objetos de transferencia)
+│
+├── GunterBar.Infrastructure/      (Capa de Infraestructura)
+│   ├── Data/                      (Contexto de BD y configuraciones)
+│   ├── Repositories/              (Implementación de repositorios)
+│   └── ExternalServices/          (Servicios externos)
+│
+├── GunterBar.Presentation/        (Capa de Presentación)
+│   ├── Controllers/               (Controladores de API)
+│   ├── Models/                    (Modelos de vista)
+│   └── Program.cs                 (Punto de entrada)
+│
+└── GunterBar.Tests/               (Pruebas Unitarias)
+    ├── DomainTests/
+    ├── ApplicationTests/
+    ├── InfrastructureTests/
+    └── PresentationTests/
 ```
+
+## 🎯 Funcionalidades Principales
+
+### Sistema de Autenticación
+- [x] Registro de usuarios
+- [x] Login con JWT
+- [x] Roles de usuario (Admin, Cliente)
+- [x] Protección de endpoints
+
+### Gestión de Bebidas
+- [x] CRUD de bebidas
+- [x] Categorización por tipo
+- [x] Gestión de ingredientes
+- [x] Control de stock
+
+### Sistema de Carritos
+- [x] Agregar/quitar items
+- [x] Actualizar cantidades
+- [x] Cálculo de totales
+- [x] Persistencia por usuario
+
+### Gestión de Órdenes
+- [x] Crear órdenes desde carrito
+- [x] Estados de órdenes
+- [x] Historial de órdenes
+- [x] Administración de órdenes
+
+## 🛠️ Instalación y Configuración
+
+### Prerrequisitos
+- .NET 9.0 SDK
+- SQL Server (LocalDB o instancia completa)
+- Node.js 18+ y npm
+- Git
+
+### Backend Setup
+
+1. **Clonar el repositorio**
+   ```bash
+   git clone https://github.com/rockyet12/Gunter-Bar.git
+   cd Gunter-Bar/backend
+   ```
+
+2. **Restaurar dependencias**
+   ```bash
+   dotnet restore
+   ```
+
+3. **Configurar conexión a base de datos**
+   ```bash
+   # Editar appsettings.json en GunterBar.Presentation
+   # Configurar la cadena de conexión DefaultConnection
+   ```
+
+4. **Crear y aplicar migraciones**
+   ```bash
+   dotnet ef migrations add InitialCreate --project GunterBar.Infrastructure --startup-project GunterBar.Presentation
+   dotnet ef database update --project GunterBar.Infrastructure --startup-project GunterBar.Presentation
+   ```
+
+5. **Ejecutar la aplicación**
+   ```bash
+   dotnet run --project GunterBar.Presentation
+   ```
+
+### Frontend Setup
+
+1. **Navegar a la carpeta frontend**
+   ```bash
+   cd ../frontend
+   ```
+
+2. **Instalar dependencias**
+   ```bash
+   npm install
+   ```
+
+3. **Ejecutar en modo desarrollo**
+   ```bash
+   npm start
+   ```
+
+## 📚 Documentación API
+
+La documentación de la API está disponible a través de Swagger UI:
+- **Desarrollo**: `https://localhost:7000/swagger`
+- **Producción**: `[URL_PRODUCCION]/swagger`
+
+### Principales Endpoints
+
+#### Autenticación
+- `POST /api/auth/register` - Registro de usuario
+- `POST /api/auth/login` - Inicio de sesión
+- `GET /api/auth/profile` - Perfil del usuario autenticado
+
+#### Bebidas
+- `GET /api/drinks` - Listar bebidas
+- `GET /api/drinks/{id}` - Obtener bebida por ID
+- `POST /api/drinks` - Crear bebida (Admin)
+- `PUT /api/drinks/{id}` - Actualizar bebida (Admin)
+- `DELETE /api/drinks/{id}` - Eliminar bebida (Admin)
+
+#### Carrito
+- `GET /api/cart` - Obtener carrito del usuario
+- `POST /api/cart/items` - Agregar item al carrito
+- `PUT /api/cart/items/{id}` - Actualizar cantidad
+- `DELETE /api/cart/items/{id}` - Remover item
+
+#### Órdenes
+- `GET /api/orders` - Listar órdenes del usuario
+- `POST /api/orders` - Crear orden desde carrito
+- `GET /api/orders/{id}` - Obtener orden por ID
+
+## 🧪 Testing
+
+### Ejecutar todas las pruebas
+```bash
+dotnet test
+```
+
+### Ejecutar pruebas con cobertura
+```bash
+dotnet test --collect:"XPlat Code Coverage"
+```
+
+### Tipos de pruebas incluidas
+- **Pruebas unitarias**: Lógica de negocio y servicios
+- **Pruebas de integración**: Repositorios y base de datos
+- **Pruebas de API**: Endpoints y autenticación
+
+## 📦 Deployment
+
+### Configuración para Producción
+
+1. **Configurar variables de entorno**
+   ```bash
+   export ConnectionStrings__DefaultConnection="[CADENA_PRODUCCION]"
+   export JwtSettings__SecretKey="[CLAVE_SECRETA_PRODUCCION]"
+   export ASPNETCORE_ENVIRONMENT="Production"
+   ```
+
+2. **Publicar aplicación**
+   ```bash
+   dotnet publish -c Release -o ./publish
+   ```
+
+3. **Configurar servidor web** (IIS, Nginx, etc.)
+
+## 👥 Equipo de Desarrollo
+
+**Desarrollador Principal**: Roque Rivas  
+**Institución**: ET12 - Escuela Técnica N° 12 D.E. 1°  
+**Materia**: Desarrollo de Sistemas  
+**Año**: 2025
+
+### Compañeros de Curso
+- Sofia Colman
+- Camila Reyes
+- Ana Martinez
+- Julio Martinez
+
+### Docentes
+- Sergio Mendoza
+- Adrián Cives
+
+## 📄 Licencia
+
+Este proyecto es de uso educativo para ET12. Todos los derechos reservados.
+
+## 🤝 Contribuciones
+
+Este es un proyecto educativo. Las contribuciones están limitadas a los estudiantes de ET12 bajo supervisión del docente.
+
+## 📞 Contacto
+
+Para consultas sobre este proyecto:
+- **GitHub**: [@rockyet12](https://github.com/rockyet12)
+- **Institución**: ET12 - http://et12.edu.ar
 
 ---
 
-*La documentación técnica detallada se agregará progresivamente durante el desarrollo del proyecto.*
+**Proyecto desarrollado con 💻 y ☕ en ET12 - Escuela Técnica 12**

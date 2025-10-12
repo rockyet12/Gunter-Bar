@@ -1,13 +1,12 @@
 using GunterBar.Domain.Entities;
-using GunterBar.Domain.Enums;
-using GunterBar.Domain.Entities;
+using GunterBar.Domain;
 
 namespace GunterBar.Domain.Interfaces;
 
 // Contrato para repositorio de bebidas
 public interface IDrinkRepository
 {
-    Task<Drink?> GetByIdAsync(int id);
+    Task<Drink> GetByIdAsync(int id);
     Task<IEnumerable<Drink>> GetAllAsync();
     Task<IEnumerable<Drink>> GetByTypeAsync(DrinkType type);
     Task<IEnumerable<Drink>> GetAvailableAsync();

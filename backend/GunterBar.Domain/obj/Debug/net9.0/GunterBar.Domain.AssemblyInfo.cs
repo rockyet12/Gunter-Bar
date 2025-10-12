@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("GunterBar.Domain")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d79fab6e9c0591f0b7271369f7d896d856635179")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e70db532f455e7897e8717bea4027e91f7ae630e")]
 [assembly: System.Reflection.AssemblyProductAttribute("GunterBar.Domain")]
 [assembly: System.Reflection.AssemblyTitleAttribute("GunterBar.Domain")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

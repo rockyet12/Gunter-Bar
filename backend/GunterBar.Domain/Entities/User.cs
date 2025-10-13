@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using GunterBar.Domain.Enums;
 
 namespace GunterBar.Domain.Entities;
 
@@ -9,7 +10,7 @@ public class User
     public int Id { get; set; }
 
     [Required, MaxLength(100)]
-    public string FullName { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
 
     [Required, EmailAddress, MaxLength(150)]
     public string Email { get; set; } = string.Empty;
@@ -17,20 +18,27 @@ public class User
     [Required]
     public string PasswordHash { get; set; } = string.Empty;
 
-    [Phone]
+    [Required]
+    public UserRole Role { get; set; }
     public string? PhoneNumber { get; set; }
 
     [MaxLength(250)]
     public string? Address { get; set; }
 
+    public int LoginAttempts { get; set; }
+    public DateTime? LastLoginAttempt { get; set; }
+
     // Navigation properties
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 
     // Constructor
-    public User(string fullName, string email, string passwordHash)
+    public User(string name, string email, string passwordHash)
     {
-        FullName = fullName;
+        Name = name;
         Email = email;
         PasswordHash = passwordHash;
+        Role = UserRole.Client;
+        LoginAttempts = 0;
     }
+}
 }

@@ -1,12 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "wBXgJj+En44=",
+  "dgSpecHash": "MNOafQlINZI=",
   "success": true,
-  "projectFilePath": "/home/roque/Gunter-Bar/backend/GunterBar.Presentation/GunterBar.Presentation.csproj",
+  "projectFilePath": "/home/roque/Bar-Gunter/backend/GunterBar.Presentation/GunterBar.Presentation.csproj",
   "expectedPackageFiles": [
     "/home/roque/.nuget/packages/azure.core/1.38.0/azure.core.1.38.0.nupkg.sha512",
     "/home/roque/.nuget/packages/azure.identity/1.11.4/azure.identity.1.11.4.nupkg.sha512",
     "/home/roque/.nuget/packages/bcrypt.net-next/4.0.3/bcrypt.net-next.4.0.3.nupkg.sha512",
+    "/home/roque/.nuget/packages/fluentvalidation/12.0.0/fluentvalidation.12.0.0.nupkg.sha512",
     "/home/roque/.nuget/packages/microsoft.aspnetcore.authentication.jwtbearer/9.0.9/microsoft.aspnetcore.authentication.jwtbearer.9.0.9.nupkg.sha512",
     "/home/roque/.nuget/packages/microsoft.aspnetcore.openapi/9.0.9/microsoft.aspnetcore.openapi.9.0.9.nupkg.sha512",
     "/home/roque/.nuget/packages/microsoft.bcl.asyncinterfaces/1.1.1/microsoft.bcl.asyncinterfaces.1.1.1.nupkg.sha512",

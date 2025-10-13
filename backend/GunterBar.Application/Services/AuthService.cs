@@ -1,5 +1,6 @@
 using BCrypt.Net;
-using GunterBar.Application.DTOs;
+using GunterBar.Application.Common.Models;
+using GunterBar.Application.DTOs.User;
 using GunterBar.Application.Interfaces;
 using GunterBar.Domain.Entities;
 using GunterBar.Domain.Enums;
@@ -7,7 +8,6 @@ using GunterBar.Domain.Interfaces;
 
 namespace GunterBar.Application.Services;
 
-// Implementación del servicio de autenticación
 public class AuthService : IAuthService
 {
     private readonly IUserRepository _userRepository;
@@ -21,127 +21,183 @@ public class AuthService : IAuthService
 
     public async Task<ApiResponse<AuthResponseDto>> RegisterAsync(RegisterDto registerDto)
     {
-        // Verificar si el email ya existe
-        if (await _userRepository.EmailExistsAsync(registerDto.Email))
+        try
         {
-            return new ApiResponse<AuthResponseDto>
+            if (await _userRepository.EmailExistsAsync(registerDto.Email))
             {
-                Success = false,
-                Message = "El email ya está registrado",
-                Errors = { "Email already exists" }
+                return ApiResponse<AuthResponseDto>.Fail("El email ya está registrado");
+            }
+
+            var user = new User
+            {
+                Name = registerDto.Name,
+                Email = registerDto.Email,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(registerDto.Password),
+                Role = UserRole.Client,
+                PhoneNumber = registerDto.PhoneNumber,
+                Address = registerDto.Address
             };
-        }
 
-        // Crear nuevo usuario
-        var user = new User
-        {
-            Email = registerDto.Email,
-            Password = BCrypt.Net.BCrypt.HashPassword(registerDto.Password),
-            FirstName = registerDto.FirstName,
-            LastName = registerDto.LastName,
-            Role = UserRole.Cliente
-        };
+            var createdUser = await _userRepository.CreateAsync(user);
+            var token = _jwtService.GenerateToken(createdUser.Id, createdUser.Email, createdUser.Role.ToString());
 
-        var createdUser = await _userRepository.CreateAsync(user);
-
-        // Generar token
-        var token = _jwtService.GenerateToken(createdUser.Id, createdUser.Email, createdUser.Role.ToString());
-
-        return new ApiResponse<AuthResponseDto>
-        {
-            Success = true,
-            Message = "Usuario registrado exitosamente",
-            Data = new AuthResponseDto
+            var response = new AuthResponseDto
             {
                 Token = token,
-                ExpiresAt = DateTime.UtcNow.AddHours(24),
+                RefreshToken = _jwtService.GenerateRefreshToken(createdUser.Id),
                 User = new UserDto
                 {
                     Id = createdUser.Id,
+                    Name = createdUser.Name,
                     Email = createdUser.Email,
-                    FirstName = createdUser.FirstName,
-                    LastName = createdUser.LastName,
-                    FullName = createdUser.FullName,
-                    Role = createdUser.Role.ToString()
+                    Role = createdUser.Role,
+                    PhoneNumber = createdUser.PhoneNumber,
+                    Address = createdUser.Address
                 }
-            }
-        };
+            };
+
+            return ApiResponse<AuthResponseDto>.Succeed(response);
+        }
+        catch (Exception ex)
+        {
+            return ApiResponse<AuthResponseDto>.Fail($"Error al registrar usuario: {ex.Message}");
+        }
     }
 
     public async Task<ApiResponse<AuthResponseDto>> LoginAsync(LoginDto loginDto)
     {
-        var user = await _userRepository.GetByEmailAsync(loginDto.Email);
-
-        if (user == null || !BCrypt.Net.BCrypt.Verify(loginDto.Password, user.Password))
+        try
         {
-            return new ApiResponse<AuthResponseDto>
+            var user = await _userRepository.GetByEmailAsync(loginDto.Email);
+
+            if (user == null || !BCrypt.Net.BCrypt.Verify(loginDto.Password, user.PasswordHash))
             {
-                Success = false,
-                Message = "Credenciales inválidas",
-                Errors = { "Invalid credentials" }
-            };
-        }
+                return ApiResponse<AuthResponseDto>.Fail("Email o contraseña incorrectos");
+            }
 
-        if (!user.IsActive)
-        {
-            return new ApiResponse<AuthResponseDto>
-            {
-                Success = false,
-                Message = "Usuario inactivo",
-                Errors = { "User is inactive" }
-            };
-        }
+            var token = _jwtService.GenerateToken(user.Id, user.Email, user.Role.ToString());
 
-        var token = _jwtService.GenerateToken(user.Id, user.Email, user.Role.ToString());
-
-        return new ApiResponse<AuthResponseDto>
-        {
-            Success = true,
-            Message = "Login exitoso",
-            Data = new AuthResponseDto
+            var response = new AuthResponseDto
             {
                 Token = token,
-                ExpiresAt = DateTime.UtcNow.AddHours(24),
+                RefreshToken = _jwtService.GenerateRefreshToken(user.Id),
                 User = new UserDto
                 {
                     Id = user.Id,
+                    Name = user.Name,
                     Email = user.Email,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    FullName = user.FullName,
-                    Role = user.Role.ToString()
+                    Role = user.Role,
+                    PhoneNumber = user.PhoneNumber,
+                    Address = user.Address
                 }
-            }
-        };
+            };
+
+            return ApiResponse<AuthResponseDto>.Succeed(response);
+        }
+        catch (Exception ex)
+        {
+            return ApiResponse<AuthResponseDto>.Fail($"Error al iniciar sesión: {ex.Message}");
+        }
     }
 
     public async Task<ApiResponse<UserDto>> GetProfileAsync(int userId)
     {
-        var user = await _userRepository.GetByIdAsync(userId);
-
-        if (user == null)
+        try
         {
-            return new ApiResponse<UserDto>
+            var user = await _userRepository.GetByIdAsync(userId);
+            if (user == null)
             {
-                Success = false,
-                Message = "Usuario no encontrado",
-                Errors = { "User not found" }
-            };
-        }
+                return ApiResponse<UserDto>.Fail("Usuario no encontrado");
+            }
 
-        return new ApiResponse<UserDto>
-        {
-            Success = true,
-            Message = "Perfil obtenido exitosamente",
-            Data = new UserDto
+            var userDto = new UserDto
             {
                 Id = user.Id,
+                Name = user.Name,
                 Email = user.Email,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                FullName = user.FullName,
-                Role = user.Role.ToString()
+                Role = user.Role,
+                PhoneNumber = user.PhoneNumber,
+                Address = user.Address
+            };
+
+            return ApiResponse<UserDto>.Succeed(userDto);
+        }
+        catch (Exception ex)
+        {
+            return ApiResponse<UserDto>.Fail($"Error al obtener perfil: {ex.Message}");
+        }
+    }
+
+    public async Task<ApiResponse<AuthResponseDto>> RefreshTokenAsync(string refreshToken)
+    {
+        try
+        {
+            var userId = _jwtService.ValidateRefreshToken(refreshToken);
+            if (userId == 0)
+            {
+                return ApiResponse<AuthResponseDto>.Fail("Token de actualización inválido");
             }
-        };
+
+            var user = await _userRepository.GetByIdAsync(userId);
+            if (user == null)
+            {
+                return ApiResponse<AuthResponseDto>.Fail("Usuario no encontrado");
+            }
+
+            var token = _jwtService.GenerateToken(user.Id, user.Email, user.Role.ToString());
+            var newRefreshToken = _jwtService.GenerateRefreshToken(user.Id);
+
+            var response = new AuthResponseDto
+            {
+                Token = token,
+                RefreshToken = newRefreshToken,
+                User = new UserDto
+                {
+                    Id = user.Id,
+                    Name = user.Name,
+                    Email = user.Email,
+                    Role = user.Role,
+                    PhoneNumber = user.PhoneNumber,
+                    Address = user.Address
+                }
+            };
+
+            return ApiResponse<AuthResponseDto>.Succeed(response);
+        }
+        catch (Exception ex)
+        {
+            return ApiResponse<AuthResponseDto>.Fail($"Error al renovar el token: {ex.Message}");
+        }
+    }
+
+    public async Task<ApiResponse<bool>> ChangePasswordAsync(int userId, string currentPassword, string newPassword)
+    {
+        try
+        {
+            var user = await _userRepository.GetByIdAsync(userId);
+            if (user == null)
+            {
+                return ApiResponse<bool>.Fail("Usuario no encontrado");
+            }
+
+            if (!BCrypt.Net.BCrypt.Verify(currentPassword, user.PasswordHash))
+            {
+                return ApiResponse<bool>.Fail("Contraseña actual incorrecta");
+            }
+
+            if (string.IsNullOrWhiteSpace(newPassword) || newPassword.Length < 6)
+            {
+                return ApiResponse<bool>.Fail("La nueva contraseña debe tener al menos 6 caracteres");
+            }
+
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
+            await _userRepository.UpdateAsync(user);
+
+            return ApiResponse<bool>.Succeed(true, "Contraseña actualizada correctamente");
+        }
+        catch (Exception ex)
+        {
+            return ApiResponse<bool>.Fail($"Error al cambiar la contraseña: {ex.Message}");
+        }
     }
 }

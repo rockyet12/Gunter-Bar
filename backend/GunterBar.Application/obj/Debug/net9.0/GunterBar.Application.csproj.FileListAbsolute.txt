@@ -1,0 +1,6 @@
+/home/roque/Bar-Gunter/backend/GunterBar.Application/obj/Debug/net9.0/GunterBar.Application.csproj.AssemblyReference.cache
+/home/roque/Bar-Gunter/backend/GunterBar.Application/obj/Debug/net9.0/GunterBar.Application.GeneratedMSBuildEditorConfig.editorconfig
+/home/roque/Bar-Gunter/backend/GunterBar.Application/obj/Debug/net9.0/GunterBar.Application.AssemblyInfoInputs.cache
+/home/roque/Bar-Gunter/backend/GunterBar.Application/obj/Debug/net9.0/GunterBar.Application.AssemblyInfo.cs
+/home/roque/Bar-Gunter/backend/GunterBar.Application/obj/Debug/net9.0/GunterBar.Application.csproj.CoreCompileInputs.cache
+/home/roque/Bar-Gunter/backend/GunterBar.Application/obj/Debug/net9.0/GunterBar.Application.sourcelink.json

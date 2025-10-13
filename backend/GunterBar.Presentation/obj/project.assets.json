@@ -60,6 +60,19 @@
           }
         }
       },
+      "FluentValidation/12.0.0": {
+        "type": "package",
+        "compile": {
+          "lib/net8.0/FluentValidation.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net8.0/FluentValidation.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "Microsoft.AspNetCore.Authentication.JwtBearer/9.0.9": {
         "type": "package",
         "dependencies": {
@@ -1000,7 +1013,10 @@
         "type": "project",
         "framework": ".NETCoreApp,Version=v9.0",
         "dependencies": {
-          "GunterBar.Domain": "1.0.0"
+          "BCrypt.Net-Next": "4.0.3",
+          "FluentValidation": "12.0.0",
+          "GunterBar.Domain": "1.0.0",
+          "Microsoft.Extensions.DependencyInjection": "9.0.9"
         },
         "compile": {
           "bin/placeholder/GunterBar.Application.dll": {}
@@ -1105,6 +1121,21 @@
         "lib/netstandard2.1/BCrypt.Net-Next.dll",
         "lib/netstandard2.1/BCrypt.Net-Next.xml",
         "readme.md"
+      ]
+    },
+    "FluentValidation/12.0.0": {
+      "sha512": "8NVLxtMUXynRHJIX3Hn1ACovaqZIJASufXIIFkD0EUbcd5PmMsL1xUD5h548gCezJ5BzlITaR9CAMrGe29aWpA==",
+      "type": "package",
+      "path": "fluentvalidation/12.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "fluent-validation-icon.png",
+        "fluentvalidation.12.0.0.nupkg.sha512",
+        "fluentvalidation.nuspec",
+        "lib/net8.0/FluentValidation.dll",
+        "lib/net8.0/FluentValidation.xml"
       ]
     },
     "Microsoft.AspNetCore.Authentication.JwtBearer/9.0.9": {
@@ -2642,11 +2673,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/roque/Gunter-Bar/backend/GunterBar.Presentation/GunterBar.Presentation.csproj",
+      "projectUniqueName": "/home/roque/Bar-Gunter/backend/GunterBar.Presentation/GunterBar.Presentation.csproj",
       "projectName": "GunterBar.Presentation",
-      "projectPath": "/home/roque/Gunter-Bar/backend/GunterBar.Presentation/GunterBar.Presentation.csproj",
+      "projectPath": "/home/roque/Bar-Gunter/backend/GunterBar.Presentation/GunterBar.Presentation.csproj",
       "packagesPath": "/home/roque/.nuget/packages/",
-      "outputPath": "/home/roque/Gunter-Bar/backend/GunterBar.Presentation/obj/",
+      "outputPath": "/home/roque/Bar-Gunter/backend/GunterBar.Presentation/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/home/roque/.nuget/NuGet/NuGet.Config"
@@ -2661,14 +2692,14 @@
         "net9.0": {
           "targetAlias": "net9.0",
           "projectReferences": {
-            "/home/roque/Gunter-Bar/backend/GunterBar.Application/GunterBar.Application.csproj": {
-              "projectPath": "/home/roque/Gunter-Bar/backend/GunterBar.Application/GunterBar.Application.csproj"
+            "/home/roque/Bar-Gunter/backend/GunterBar.Application/GunterBar.Application.csproj": {
+              "projectPath": "/home/roque/Bar-Gunter/backend/GunterBar.Application/GunterBar.Application.csproj"
             },
-            "/home/roque/Gunter-Bar/backend/GunterBar.Domain/GunterBar.Domain.csproj": {
-              "projectPath": "/home/roque/Gunter-Bar/backend/GunterBar.Domain/GunterBar.Domain.csproj"
+            "/home/roque/Bar-Gunter/backend/GunterBar.Domain/GunterBar.Domain.csproj": {
+              "projectPath": "/home/roque/Bar-Gunter/backend/GunterBar.Domain/GunterBar.Domain.csproj"
             },
-            "/home/roque/Gunter-Bar/backend/GunterBar.Infrastructure/GunterBar.Infrastructure.csproj": {
-              "projectPath": "/home/roque/Gunter-Bar/backend/GunterBar.Infrastructure/GunterBar.Infrastructure.csproj"
+            "/home/roque/Bar-Gunter/backend/GunterBar.Infrastructure/GunterBar.Infrastructure.csproj": {
+              "projectPath": "/home/roque/Bar-Gunter/backend/GunterBar.Infrastructure/GunterBar.Infrastructure.csproj"
             }
           }
         }

@@ -1,5 +1,5 @@
 using GunterBar.Domain.Entities;
-using GunterBar.Domain;
+using GunterBar.Domain.Enums;
 
 namespace GunterBar.Domain.Interfaces;
 

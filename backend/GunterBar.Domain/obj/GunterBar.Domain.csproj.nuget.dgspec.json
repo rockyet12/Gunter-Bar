@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/home/roque/Gunter-Bar/backend/GunterBar.Domain/GunterBar.Domain.csproj": {}
+    "/home/roque/Bar-Gunter/backend/GunterBar.Domain/GunterBar.Domain.csproj": {}
   },
   "projects": {
-    "/home/roque/Gunter-Bar/backend/GunterBar.Domain/GunterBar.Domain.csproj": {
+    "/home/roque/Bar-Gunter/backend/GunterBar.Domain/GunterBar.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/roque/Gunter-Bar/backend/GunterBar.Domain/GunterBar.Domain.csproj",
+        "projectUniqueName": "/home/roque/Bar-Gunter/backend/GunterBar.Domain/GunterBar.Domain.csproj",
         "projectName": "GunterBar.Domain",
-        "projectPath": "/home/roque/Gunter-Bar/backend/GunterBar.Domain/GunterBar.Domain.csproj",
+        "projectPath": "/home/roque/Bar-Gunter/backend/GunterBar.Domain/GunterBar.Domain.csproj",
         "packagesPath": "/home/roque/.nuget/packages/",
-        "outputPath": "/home/roque/Gunter-Bar/backend/GunterBar.Domain/obj/",
+        "outputPath": "/home/roque/Bar-Gunter/backend/GunterBar.Domain/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/home/roque/.nuget/NuGet/NuGet.Config"

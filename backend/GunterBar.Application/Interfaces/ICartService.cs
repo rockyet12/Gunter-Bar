@@ -1,4 +1,5 @@
-using GunterBar.Application.DTOs;
+using GunterBar.Application.Common.Models;
+using GunterBar.Application.DTOs.Cart;
 
 namespace GunterBar.Application.Interfaces;
 

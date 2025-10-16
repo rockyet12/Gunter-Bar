@@ -15,10 +15,7 @@ public class DrinkIngredientConfiguration : IEntityTypeConfiguration<DrinkIngred
             .HasMaxLength(100);
 
         builder.Property(di => di.Quantity)
-            .IsRequired();
-
-        builder.Property(di => di.Unit)
             .IsRequired()
-            .HasMaxLength(20);
+            .HasDefaultValue(0);
     }
 }

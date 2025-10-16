@@ -1,25 +1,46 @@
-# Gunter Bar - Sistema de Gestión de Bar
+# 🍺 Gunter Bar - Sistema de Gestión de Bar
 
 ## 📋 Descripción del Proyecto
 
-**Gunter Bar** es un sistema completo de gestión para un bar desarrollado como proyecto educativo para ET12 - Escuela Técnica 12. El sistema permite gestionar usuarios, bebidas, carritos de compra y órdenes, implementando un sistema de autenticación JWT y una arquitectura limpia (Clean Architecture).
+**Gunter Bar** es un sistema completo de gestión para un bar desarrollado como proyecto educativo para ET12 - Escuela Técnica 12. El sistema implementa una API RESTful moderna con autenticación JWT, siguiendo los principios de Clean Architecture y las mejores prácticas de desarrollo.
+
+### Características Destacadas
+
+- 🔐 Autenticación segura con JWT y roles
+- 🍻 Gestión completa de bebidas e ingredientes
+- 🛒 Sistema de carrito de compras en tiempo real
+- 📦 Gestión de pedidos y seguimiento
+- 📊 Métricas y monitoreo del sistema
+- 🔒 Seguridad robusta y validaciones
+- 📝 Documentación completa con Swagger
 
 ## 🚀 Tecnologías Utilizadas
 
 ### Backend (.NET 9)
 - **Framework**: ASP.NET Core 9.0
-- **Arquitectura**: Clean Architecture (Domain, Application, Infrastructure, Presentation)
-- **Base de Datos**: SQL Server con Entity Framework Core 9.0
-- **Autenticación**: JWT Bearer Authentication
-- **Testing**: xUnit con Moq y FluentAssertions
-- **Documentación**: Swagger/OpenAPI
+- **Arquitectura**: Clean Architecture con CQRS
+- **ORM**: Entity Framework Core 9.0
+- **Base de Datos**: SQL Server
+- **Autenticación**: JWT con roles y refresh tokens
+- **Validación**: FluentValidation
+- **Caching**: Distributed Memory Cache
+- **Testing**: xUnit, Moq, FluentAssertions
+- **Documentación**: Swagger/OpenAPI con ejemplos
+- **Seguridad**: BCrypt para hashing, HTTPS
+- **Monitoreo**: Health Checks, métricas personalizadas
+- **Middleware**: Manejo global de errores, logging
+- **Rate Limiting**: Protección contra abusos
 
 ### Frontend (React + TypeScript)
 - **Framework**: React 18 con TypeScript
 - **Bundler**: Create React App
-- **Styling**: CSS Modules
-- **HTTP Client**: Axios
-- **Gestión de Estado**: React Hooks
+- **Styling**: CSS Modules + Styled Components
+- **HTTP Client**: Axios con interceptores
+- **Gestión de Estado**: React Query + Context
+- **Formularios**: React Hook Form
+- **UI Components**: Material-UI v5
+- **Testing**: Jest + React Testing Library
+- **PWA**: Service Workers y manifest
 
 ## 🏗️ Arquitectura del Backend
 
@@ -89,7 +110,9 @@ GunterBar.Solution/
 - Node.js 18+ y npm
 - Git
 
-### Backend Setup
+### Configuración del Entorno
+
+#### Backend Setup
 
 1. **Clonar el repositorio**
    ```bash
@@ -98,6 +121,78 @@ GunterBar.Solution/
    ```
 
 2. **Restaurar dependencias**
+   ```bash
+   dotnet restore
+   ```
+
+3. **Configurar la base de datos**
+   ```bash
+   # Actualizar cadena de conexión en appsettings.json
+   dotnet ef database update
+   ```
+
+4. **Ejecutar el proyecto**
+   ```bash
+   dotnet run --project GunterBar.Presentation
+   ```
+
+5. **Acceder a la documentación**
+   ```
+   https://localhost:5001/swagger
+   ```
+
+#### Frontend Setup
+
+1. **Instalar dependencias**
+   ```bash
+   cd ../frontend
+   npm install
+   ```
+
+2. **Configurar variables de entorno**
+   ```bash
+   cp .env.example .env.local
+   # Editar .env.local con las configuraciones necesarias
+   ```
+
+3. **Iniciar el servidor de desarrollo**
+   ```bash
+   npm start
+   ```
+
+### 🔧 Configuraciones Adicionales
+
+#### Configuración de JWT
+```json
+{
+  "JwtSettings": {
+    "SecretKey": "tu-clave-secreta-aqui",
+    "Issuer": "GunterBar",
+    "Audience": "GunterBar-Users",
+    "ExpiryMinutes": 60
+  }
+}
+```
+
+#### Configuración de CORS
+```json
+{
+  "CorsSettings": {
+    "AllowedOrigins": [
+      "http://localhost:3000"
+    ]
+  }
+}
+```
+
+#### Configuración de Rate Limiting
+```json
+{
+  "RateLimitingSettings": {
+    "PermitLimit": 100,
+    "Window": "00:01:00"
+  }
+}
    ```bash
    dotnet restore
    ```

@@ -8,48 +8,54 @@ public static class DbInitializer
 {
     public static async Task Initialize(GunterBarDbContext context)
     {
-        // Asegurarse de que la base de datos está creada
+        // Ensure database is created
         await context.Database.EnsureCreatedAsync();
 
-        // Verificar si ya hay datos
+        // Check if data already exists
         if (await context.Users.AnyAsync())
-            return; // DB ya ha sido inicializada
+            return; // DB has already been initialized
 
-        // Crear usuario admin por defecto
-        var adminUser = new User
+        // Create default admin user with secure password
+        var defaultAdminPassword = Environment.GetEnvironmentVariable("ADMIN_DEFAULT_PASSWORD") ?? "Admin123!"; // TODO: Remove fallback in production
+        var adminUser = new User(
+            name: "Admin",
+            email: "admin@gunterbar.com",
+            passwordHash: BCrypt.Net.BCrypt.HashPassword(defaultAdminPassword)
+        )
         {
-            Name = "Admin",
-            Email = "admin@gunterbar.com",
-            Password = BCrypt.Net.BCrypt.HashPassword("Admin123!"),
             Role = UserRole.Admin
         };
         await context.Users.AddAsync(adminUser);
 
-        // Crear algunas bebidas iniciales
-        var drinks = new List<Drink>
+        // Create initial drinks with their ingredients
+        var mojito = new Drink("Mojito", 8.99m, 100)
         {
-            new Drink
-            {
-                Name = "Mojito",
-                Description = "Bebida cubana a base de ron, limón y menta",
-                Price = 8.99m,
-                Type = DrinkType.Cocktail,
-                ImageUrl = "/images/drinks/mojito.jpg",
-                IsAvailable = true,
-                Stock = 100
-            },
-            new Drink
-            {
-                Name = "Margarita",
-                Description = "Cóctel mexicano con tequila, triple sec y limón",
-                Price = 9.99m,
-                Type = DrinkType.Cocktail,
-                ImageUrl = "/images/drinks/margarita.jpg",
-                IsAvailable = true,
-                Stock = 100
-            }
+            Description = "Cuban cocktail with rum, lime, and mint",
+            ImageUrl = "/images/drinks/mojito.jpg",
+            IsAvailable = true,
+            Category = "Cocktails"
         };
-        await context.Drinks.AddRangeAsync(drinks);
+        
+        mojito.Ingredients.Add(new DrinkIngredient(mojito.Id, "White Rum", 50));
+        mojito.Ingredients.Add(new DrinkIngredient(mojito.Id, "Fresh Lime Juice", 30));
+        mojito.Ingredients.Add(new DrinkIngredient(mojito.Id, "Mint Leaves", 6));
+        mojito.Ingredients.Add(new DrinkIngredient(mojito.Id, "Sugar Syrup", 20));
+        mojito.Ingredients.Add(new DrinkIngredient(mojito.Id, "Soda Water", 100));
+
+        var margarita = new Drink("Margarita", 9.99m, 100)
+        {
+            Description = "Mexican cocktail with tequila, triple sec, and lime",
+            ImageUrl = "/images/drinks/margarita.jpg",
+            IsAvailable = true,
+            Category = "Cocktails"
+        };
+
+        margarita.Ingredients.Add(new DrinkIngredient(margarita.Id, "Tequila", 50));
+        margarita.Ingredients.Add(new DrinkIngredient(margarita.Id, "Triple Sec", 25));
+        margarita.Ingredients.Add(new DrinkIngredient(margarita.Id, "Fresh Lime Juice", 25));
+        margarita.Ingredients.Add(new DrinkIngredient(margarita.Id, "Salt", 1));
+
+        await context.Drinks.AddRangeAsync(new[] { mojito, margarita });
 
         await context.SaveChangesAsync();
     }

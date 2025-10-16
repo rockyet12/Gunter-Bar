@@ -1,31 +1,65 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using GunterBar.Domain.Common;
+
 namespace GunterBar.Domain.Entities;
 
-// Entidad que representa un item dentro del carrito de compras
-// Relaciona una bebida con su cantidad seleccionada
-
-public class CartItem
+public class CartItem : EntityBase
 {
-    // Identificador único del item del carrito
-    public int Id { get; set; }
-
-    // ID del carrito al que pertenece este item
+    [Required, ForeignKey("Cart")]
     public int CartId { get; set; }
 
-    // Carrito al que pertenece este item
-    public virtual Cart Cart { get; set; } = null!;
-
-    // ID de la bebida seleccionada
+    [Required, ForeignKey("Drink")]
     public int DrinkId { get; set; }
 
-    // Bebida seleccionada
-    public virtual Drink Drink { get; set; } = null!;
-
-    // Cantidad de la bebida en el carrito
+    [Required]
     public int Quantity { get; set; }
 
-    // Precio unitario al momento de agregar al carrito
+    [Required, Column(TypeName = "decimal(18,2)")]
     public decimal UnitPrice { get; set; }
 
-    // Fecha en que se agregó el item al carrito
-    public DateTime AddedAt { get; set; } = DateTime.UtcNow;
+    public DateTime AddedAt { get; set; }
+
+    [NotMapped]
+    public decimal Subtotal => Quantity * UnitPrice;
+
+    public virtual Cart Cart { get; set; } = null!;
+    public virtual Drink Drink { get; set; } = null!;
+
+    protected CartItem() 
+    {
+        AddedAt = DateTime.UtcNow;
+    }
+
+    public CartItem(int cartId, int drinkId, int quantity, decimal unitPrice) : this()
+    {
+        if (quantity <= 0)
+            throw new ArgumentException("La cantidad debe ser mayor a 0", nameof(quantity));
+        
+        if (unitPrice <= 0)
+            throw new ArgumentException("El precio unitario debe ser mayor a 0", nameof(unitPrice));
+
+        CartId = cartId;
+        DrinkId = drinkId;
+        Quantity = quantity;
+        UnitPrice = unitPrice;
+    }
+
+    public void UpdateQuantity(int newQuantity)
+    {
+        if (newQuantity <= 0)
+            throw new ArgumentException("La cantidad debe ser mayor a 0", nameof(newQuantity));
+
+        Quantity = newQuantity;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
+    public void UpdatePrice(decimal newPrice)
+    {
+        if (newPrice <= 0)
+            throw new ArgumentException("El precio debe ser mayor a 0", nameof(newPrice));
+
+        UnitPrice = newPrice;
+        UpdatedAt = DateTime.UtcNow;
+    }
 }

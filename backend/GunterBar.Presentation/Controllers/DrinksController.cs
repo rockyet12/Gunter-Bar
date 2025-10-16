@@ -1,4 +1,6 @@
+using GunterBar.Application.Common.Models;
 using GunterBar.Application.DTOs;
+using GunterBar.Application.DTOs.Drinks;
 using GunterBar.Application.Interfaces;
 using GunterBar.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
@@ -11,10 +13,12 @@ namespace GunterBar.Presentation.Controllers;
 public class DrinksController : ControllerBase
 {
     private readonly IDrinkService _drinkService;
+    private readonly ILogger<DrinksController> _logger;
 
-    public DrinksController(IDrinkService drinkService)
+    public DrinksController(IDrinkService drinkService, ILogger<DrinksController> logger)
     {
-        _drinkService = drinkService;
+        _drinkService = drinkService ?? throw new ArgumentNullException(nameof(drinkService));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     /// <summary>
@@ -83,9 +87,23 @@ public class DrinksController : ControllerBase
     /// <summary>
     /// Actualiza una bebida existente (Solo Admin)
     /// </summary>
+    /// <summary>
+    /// Actualiza una bebida existente
+    /// </summary>
+    /// <param name="id">ID de la bebida a actualizar</param>
+    /// <param name="updateDto">Datos de actualización de la bebida</param>
+    /// <returns>La bebida actualizada</returns>
+    /// <response code="200">La bebida se actualizó correctamente</response>
+    /// <response code="400">Datos inválidos</response>
+    /// <response code="404">Bebida no encontrada</response>
+    /// <response code="409">Conflicto con datos existentes</response>
     [HttpPut("{id}")]
     [Authorize(Roles = "Admin")]
-    public async Task<ActionResult<ApiResponse<DrinkDto>>> Update(int id, [FromBody] CreateDrinkDto updateDrinkDto)
+    [ProducesResponseType(typeof(ApiResponse<DrinkDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse<DrinkDto>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResponse<DrinkDto>), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ApiResponse<DrinkDto>), StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<ApiResponse<DrinkDto>>> Update(int id, [FromBody] UpdateDrinkDto updateDto)
     {
         if (!ModelState.IsValid)
         {
@@ -97,14 +115,33 @@ public class DrinksController : ControllerBase
             });
         }
 
-        var result = await _drinkService.UpdateAsync(id, updateDrinkDto);
-        
-        if (!result.Success)
+        try 
         {
-            return NotFound(result);
-        }
+            var result = await _drinkService.UpdateAsync(id, updateDto);
+            
+            if (!result.Success)
+            {
+                // Determinar el tipo de error basado en el mensaje
+                if (result.Message.Contains("no encontrad", StringComparison.OrdinalIgnoreCase))
+                    return NotFound(result);
+                if (result.Message.Contains("existe", StringComparison.OrdinalIgnoreCase))
+                    return Conflict(result);
+                
+                return BadRequest(result);
+            }
 
-        return Ok(result);
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al actualizar la bebida {DrinkId}", id);
+            return StatusCode(500, new ApiResponse<DrinkDto>
+            {
+                Success = false,
+                Message = "Error interno del servidor al actualizar la bebida",
+                Errors = new List<string> { ex.Message }
+            });
+        }
     }
 
     /// <summary>

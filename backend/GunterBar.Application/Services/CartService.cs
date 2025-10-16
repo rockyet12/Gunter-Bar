@@ -1,4 +1,5 @@
-using GunterBar.Application.DTOs;
+using GunterBar.Application.Common.Models;
+using GunterBar.Application.DTOs.Cart;
 using GunterBar.Application.Interfaces;
 using GunterBar.Domain.Entities;
 using GunterBar.Domain.Interfaces;
@@ -10,6 +11,10 @@ public class CartService : ICartService
 {
     private readonly ICartRepository _cartRepository;
     private readonly IDrinkRepository _drinkRepository;
+    private const int MAX_ITEMS_PER_CART = 20;
+    private const int CART_EXPIRATION_HOURS = 24;
+    private const int MIN_QUANTITY = 1;
+    private const int MAX_QUANTITY = 10;
 
     public CartService(ICartRepository cartRepository, IDrinkRepository drinkRepository)
     {
@@ -17,22 +22,17 @@ public class CartService : ICartService
         _drinkRepository = drinkRepository;
     }
 
-    public async Task<ApiResponse<CartDto>> GetCartAsync(int userId)
+    private static bool IsCartExpired(Cart cart)
     {
-        var cart = await _cartRepository.GetByUserIdAsync(userId);
+        return (DateTime.UtcNow - cart.UpdatedAt).TotalHours > CART_EXPIRATION_HOURS;
+    }
 
-        if (cart == null)
-        {
-            // Crear carrito si no existe
-            cart = new Cart
-            {
-                UserId = userId,
-                CreatedAt = DateTime.UtcNow
-            };
-            cart = await _cartRepository.CreateAsync(cart);
-        }
+    private static CartDto MapToCartDto(Cart cart)
+    {
+        if (cart == null) 
+            throw new ArgumentNullException(nameof(cart));
 
-        var cartDto = new CartDto
+        return new CartDto
         {
             Id = cart.Id,
             UserId = cart.UserId,
@@ -40,8 +40,8 @@ public class CartService : ICartService
             {
                 Id = ci.Id,
                 DrinkId = ci.DrinkId,
-                DrinkName = ci.Drink.Name,
-                DrinkImageUrl = ci.Drink.ImageUrl,
+                DrinkName = ci.Drink?.Name ?? string.Empty,
+                DrinkImageUrl = ci.Drink?.ImageUrl ?? string.Empty,
                 Quantity = ci.Quantity,
                 UnitPrice = ci.UnitPrice,
                 Subtotal = ci.Subtotal,
@@ -49,15 +49,47 @@ public class CartService : ICartService
             }).ToList(),
             Total = cart.Total,
             TotalItems = cart.TotalItems,
-            CreatedAt = cart.CreatedAt
+            CreatedAt = cart.CreatedAt,
+            UpdatedAt = cart.UpdatedAt
         };
+    }
 
-        return new ApiResponse<CartDto>
+    public async Task<ApiResponse<CartDto>> GetCartAsync(int userId)
+    {
+        try
         {
-            Success = true,
-            Message = "Carrito obtenido exitosamente",
-            Data = cartDto
-        };
+            var cart = await _cartRepository.GetByUserIdAsync(userId);
+
+            if (cart == null)
+            {
+                // Crear carrito si no existe
+                cart = new Cart(userId);
+                cart = await _cartRepository.CreateAsync(cart);
+            }
+            else if (IsCartExpired(cart))
+            {
+                // Limpiar carrito si está expirado
+                await _cartRepository.ClearCartAsync(cart.Id);
+            }
+
+            var cartDto = MapToCartDto(cart);
+
+            return new ApiResponse<CartDto>
+            {
+                Success = true,
+                Message = "Carrito obtenido exitosamente",
+                Data = cartDto
+            };
+        }
+        catch (Exception ex)
+        {
+            return new ApiResponse<CartDto>
+            {
+                Success = false,
+                Message = "Error al obtener el carrito",
+                Errors = { ex.Message }
+            };
+        }
     }
 
     public async Task<ApiResponse<CartDto>> AddToCartAsync(int userId, AddToCartDto addToCartDto)
@@ -70,6 +102,16 @@ public class CartService : ICartService
                 Success = false,
                 Message = "Bebida no encontrada",
                 Errors = { "Drink not found" }
+            };
+        }
+
+        if (addToCartDto.Quantity < MIN_QUANTITY || addToCartDto.Quantity > MAX_QUANTITY)
+        {
+            return new ApiResponse<CartDto>
+            {
+                Success = false,
+                Message = $"La cantidad debe estar entre {MIN_QUANTITY} y {MAX_QUANTITY}",
+                Errors = { "Invalid quantity" }
             };
         }
 
@@ -86,12 +128,23 @@ public class CartService : ICartService
         var cart = await _cartRepository.GetByUserIdAsync(userId);
         if (cart == null)
         {
-            cart = new Cart
-            {
-                UserId = userId,
-                CreatedAt = DateTime.UtcNow
-            };
+            cart = new Cart(userId);
             cart = await _cartRepository.CreateAsync(cart);
+        }
+        else if (IsCartExpired(cart))
+        {
+            await _cartRepository.ClearCartAsync(cart.Id);
+        }
+
+        if (cart.Items.Count >= MAX_ITEMS_PER_CART && 
+            !cart.Items.Any(i => i.DrinkId == addToCartDto.DrinkId))
+        {
+            return new ApiResponse<CartDto>
+            {
+                Success = false,
+                Message = $"El carrito ha alcanzado el límite de {MAX_ITEMS_PER_CART} items diferentes",
+                Errors = { "Cart is full" }
+            };
         }
 
         var existingItem = await _cartRepository.GetCartItemAsync(cart.Id, addToCartDto.DrinkId);
@@ -103,14 +156,12 @@ public class CartService : ICartService
         }
         else
         {
-            var newItem = new CartItem
-            {
-                CartId = cart.Id,
-                DrinkId = addToCartDto.DrinkId,
-                Quantity = addToCartDto.Quantity,
-                UnitPrice = drink.Price,
-                AddedAt = DateTime.UtcNow
-            };
+            var newItem = new CartItem(
+                cart.Id,
+                addToCartDto.DrinkId,
+                addToCartDto.Quantity,
+                drink.Price
+            );
             await _cartRepository.AddItemAsync(newItem);
         }
 
@@ -141,7 +192,17 @@ public class CartService : ICartService
             };
         }
 
-        cartItem.Quantity = updateDto.Quantity;
+        if (updateDto.Quantity < MIN_QUANTITY || updateDto.Quantity > MAX_QUANTITY)
+        {
+            return new ApiResponse<CartDto>
+            {
+                Success = false,
+                Message = $"La cantidad debe estar entre {MIN_QUANTITY} y {MAX_QUANTITY}",
+                Errors = { "Invalid quantity" }
+            };
+        }
+
+        cartItem.UpdateQuantity(updateDto.Quantity);
         await _cartRepository.UpdateItemAsync(cartItem);
 
         return await GetCartAsync(userId);

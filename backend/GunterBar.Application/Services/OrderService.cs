@@ -1,8 +1,10 @@
-using GunterBar.Application.DTOs;
+using GunterBar.Application.Common.Models;
+using GunterBar.Application.DTOs.Order;
 using GunterBar.Application.Interfaces;
 using GunterBar.Domain.Entities;
 using GunterBar.Domain.Enums;
 using GunterBar.Domain.Interfaces;
+using GunterBar.Domain.Common;
 
 namespace GunterBar.Application.Services;
 
@@ -12,28 +14,45 @@ public class OrderService : IOrderService
     private readonly IOrderRepository _orderRepository;
     private readonly ICartRepository _cartRepository;
     private readonly IDrinkRepository _drinkRepository;
+    private readonly IUnitOfWork _unitOfWork;
+    
+    private const int MAX_ITEMS_PER_ORDER = 20;
+    private static readonly Dictionary<OrderStatus, OrderStatus[]> AllowedStatusTransitions = new()
+    {
+        { OrderStatus.Pending, new[] { OrderStatus.InProgress, OrderStatus.Cancelled } },
+        { OrderStatus.InProgress, new[] { OrderStatus.Completed, OrderStatus.Cancelled } },
+        { OrderStatus.Completed, Array.Empty<OrderStatus>() },
+        { OrderStatus.Cancelled, Array.Empty<OrderStatus>() }
+    };
 
-    public OrderService(IOrderRepository orderRepository, ICartRepository cartRepository, IDrinkRepository drinkRepository)
+    public OrderService(
+        IOrderRepository orderRepository, 
+        ICartRepository cartRepository, 
+        IDrinkRepository drinkRepository,
+        IUnitOfWork unitOfWork)
     {
         _orderRepository = orderRepository;
         _cartRepository = cartRepository;
         _drinkRepository = drinkRepository;
+        _unitOfWork = unitOfWork;
     }
 
-    public async Task<ApiResponse<IEnumerable<OrderDto>>> GetUserOrdersAsync(int userId)
+    private static OrderDto MapToOrderDto(Order order)
     {
-        var orders = await _orderRepository.GetByUserIdAsync(userId);
-
-        var orderDtos = orders.Select(o => new OrderDto
+        return new OrderDto
         {
-            Id = o.Id,
-            UserId = o.UserId,
-            UserFullName = o.User?.FullName ?? "",
-            Total = o.Total,
-            Status = o.Status.ToString(),
-            CreatedAt = o.CreatedAt,
-            Notes = o.Notes,
-            Items = o.Items.Select(oi => new OrderItemDto
+            Id = order.Id,
+            UserId = order.UserId,
+            UserName = order.User?.Name ?? "",
+            Total = order.Total.Amount,
+            Status = order.Status,
+            Notes = order.Notes,
+            OrderDate = order.OrderDate,
+            CompletedDate = order.CompletedDate,
+            CancelledDate = order.CancelledDate,
+            CreatedAt = order.CreatedAt,
+            UpdatedAt = order.UpdatedAt,
+            Items = order.Items.Select(oi => new OrderItemDto
             {
                 Id = oi.Id,
                 DrinkId = oi.DrinkId,
@@ -42,7 +61,13 @@ public class OrderService : IOrderService
                 UnitPrice = oi.UnitPrice,
                 Subtotal = oi.Subtotal
             }).ToList()
-        });
+        };
+    }
+
+    public async Task<ApiResponse<IEnumerable<OrderDto>>> GetUserOrdersAsync(int userId)
+    {
+        var orders = await _orderRepository.GetByUserIdAsync(userId);
+        var orderDtos = orders.Select(MapToOrderDto);
 
         return new ApiResponse<IEnumerable<OrderDto>>
         {
@@ -56,25 +81,7 @@ public class OrderService : IOrderService
     {
         var orders = await _orderRepository.GetAllAsync();
 
-        var orderDtos = orders.Select(o => new OrderDto
-        {
-            Id = o.Id,
-            UserId = o.UserId,
-            UserFullName = o.User.FullName,
-            Total = o.Total,
-            Status = o.Status.ToString(),
-            CreatedAt = o.CreatedAt,
-            Notes = o.Notes,
-            Items = o.Items.Select(oi => new OrderItemDto
-            {
-                Id = oi.Id,
-                DrinkId = oi.DrinkId,
-                DrinkName = oi.DrinkName,
-                Quantity = oi.Quantity,
-                UnitPrice = oi.UnitPrice,
-                Subtotal = oi.Subtotal
-            }).ToList()
-        });
+        var orderDtos = orders.Select(MapToOrderDto);
 
         return new ApiResponse<IEnumerable<OrderDto>>
         {
@@ -109,25 +116,7 @@ public class OrderService : IOrderService
             };
         }
 
-        var orderDto = new OrderDto
-        {
-            Id = order.Id,
-            UserId = order.UserId,
-            UserFullName = order.User.FullName,
-            Total = order.Total,
-            Status = order.Status.ToString(),
-            CreatedAt = order.CreatedAt,
-            Notes = order.Notes,
-            Items = order.Items.Select(oi => new OrderItemDto
-            {
-                Id = oi.Id,
-                DrinkId = oi.DrinkId,
-                DrinkName = oi.DrinkName,
-                Quantity = oi.Quantity,
-                UnitPrice = oi.UnitPrice,
-                Subtotal = oi.Subtotal
-            }).ToList()
-        };
+        var orderDto = MapToOrderDto(order);
 
         return new ApiResponse<OrderDto>
         {
@@ -139,54 +128,61 @@ public class OrderService : IOrderService
 
     public async Task<ApiResponse<OrderDto>> CreateOrderFromCartAsync(int userId, CreateOrderDto createOrderDto)
     {
-        var cart = await _cartRepository.GetByUserIdAsync(userId);
-
-        if (cart == null || !cart.Items.Any())
+        try
         {
-            return new ApiResponse<OrderDto>
-            {
-                Success = false,
-                Message = "Carrito vacío o no encontrado",
-                Errors = { "Cart is empty or not found" }
-            };
-        }
+            await _unitOfWork.BeginTransactionAsync();
 
-        // Verificar stock disponible
-        foreach (var cartItem in cart.Items)
-        {
-            var drink = await _drinkRepository.GetByIdAsync(cartItem.DrinkId);
-            if (drink == null || !drink.IsAvailable || drink.Stock < cartItem.Quantity)
+            var cart = await _cartRepository.GetByUserIdAsync(userId);
+
+            if (cart == null || !cart.Items.Any())
             {
-                return new ApiResponse<OrderDto>
-                {
-                    Success = false,
-                    Message = $"Stock insuficiente para {cartItem.Drink.Name}",
-                    Errors = { "Insufficient stock" }
-                };
+                return ApiResponse<OrderDto>.Fail("Carrito vacío o no encontrado");
             }
-        }
+
+            if (cart.Items.Count > MAX_ITEMS_PER_ORDER)
+            {
+                return ApiResponse<OrderDto>.Fail($"El carrito excede el límite de {MAX_ITEMS_PER_ORDER} items");
+            }
+
+            // Verificar stock disponible y precios actualizados
+            foreach (var cartItem in cart.Items)
+            {
+                if (cartItem.Quantity <= 0)
+                {
+                    return ApiResponse<OrderDto>.Fail($"La cantidad debe ser mayor a 0 para {cartItem.Drink.Name}");
+                }
+
+                var drink = await _drinkRepository.GetByIdAsync(cartItem.DrinkId);
+                if (drink == null || !drink.IsAvailable)
+                {
+                    return ApiResponse<OrderDto>.Fail($"La bebida {cartItem.Drink.Name} no está disponible");
+                }
+
+                if (drink.Stock < cartItem.Quantity)
+                {
+                    return ApiResponse<OrderDto>.Fail($"Stock insuficiente para {cartItem.Drink.Name}. Disponible: {drink.Stock}");
+                }
+
+                if (drink.Price != cartItem.UnitPrice)
+                {
+                    return ApiResponse<OrderDto>.Fail($"El precio de {cartItem.Drink.Name} ha cambiado. Por favor, actualice el carrito");
+                }
+            }
 
         // Crear la orden
-        var order = new Order
-        {
-            UserId = userId,
-            Total = cart.Total,
-            Status = OrderStatus.Pendiente,
-            Notes = createOrderDto.Notes,
-            CreatedAt = DateTime.UtcNow
-        };
+        var order = new Order(userId, createOrderDto.Notes);
 
         // Crear los items de la orden
         foreach (var cartItem in cart.Items)
         {
-            var orderItem = new OrderItem
-            {
-                DrinkId = cartItem.DrinkId,
-                DrinkName = cartItem.Drink.Name,
-                Quantity = cartItem.Quantity,
-                UnitPrice = cartItem.UnitPrice
-            };
-            order.Items.Add(orderItem);
+            var orderItem = new OrderItem(
+                order.Id,
+                cartItem.DrinkId, 
+                cartItem.Drink.Name,
+                cartItem.Quantity,
+                cartItem.UnitPrice
+            );
+            order.AddItem(orderItem);
 
             // Actualizar stock
             await _drinkRepository.UpdateStockAsync(cartItem.DrinkId, cartItem.Drink.Stock - cartItem.Quantity);
@@ -197,24 +193,9 @@ public class OrderService : IOrderService
         // Limpiar el carrito
         await _cartRepository.ClearCartAsync(cart.Id);
 
-        var orderDto = new OrderDto
-        {
-            Id = createdOrder.Id,
-            UserId = createdOrder.UserId,
-            Total = createdOrder.Total,
-            Status = createdOrder.Status.ToString(),
-            CreatedAt = createdOrder.CreatedAt,
-            Notes = createdOrder.Notes,
-            Items = createdOrder.Items.Select(oi => new OrderItemDto
-            {
-                Id = oi.Id,
-                DrinkId = oi.DrinkId,
-                DrinkName = oi.DrinkName,
-                Quantity = oi.Quantity,
-                UnitPrice = oi.UnitPrice,
-                Subtotal = oi.Subtotal
-            }).ToList()
-        };
+        var orderDto = MapToOrderDto(createdOrder);
+
+        await _unitOfWork.CommitAsync();
 
         return new ApiResponse<OrderDto>
         {
@@ -223,6 +204,12 @@ public class OrderService : IOrderService
             Data = orderDto
         };
     }
+    catch (Exception ex)
+    {
+        await _unitOfWork.RollbackAsync();
+        return ApiResponse<OrderDto>.Fail($"Error al crear la orden: {ex.Message}");
+    }
+}
 
     public async Task<ApiResponse<OrderDto>> UpdateOrderStatusAsync(int orderId, UpdateOrderStatusDto updateStatusDto)
     {
@@ -238,28 +225,10 @@ public class OrderService : IOrderService
             };
         }
 
-        order.Status = (OrderStatus)updateStatusDto.Status;
+        order.UpdateStatus(updateStatusDto.NewStatus);
         var updatedOrder = await _orderRepository.UpdateAsync(order);
 
-        var orderDto = new OrderDto
-        {
-            Id = updatedOrder.Id,
-            UserId = updatedOrder.UserId,
-            UserFullName = updatedOrder.User.FullName,
-            Total = updatedOrder.Total,
-            Status = updatedOrder.Status.ToString(),
-            CreatedAt = updatedOrder.CreatedAt,
-            Notes = updatedOrder.Notes,
-            Items = updatedOrder.Items.Select(oi => new OrderItemDto
-            {
-                Id = oi.Id,
-                DrinkId = oi.DrinkId,
-                DrinkName = oi.DrinkName,
-                Quantity = oi.Quantity,
-                UnitPrice = oi.UnitPrice,
-                Subtotal = oi.Subtotal
-            }).ToList()
-        };
+        var orderDto = MapToOrderDto(updatedOrder);
 
         return new ApiResponse<OrderDto>
         {

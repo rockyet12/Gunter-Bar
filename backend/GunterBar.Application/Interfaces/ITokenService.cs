@@ -1,5 +1,5 @@
 using System.Security.Claims;
-using GunterBar.Application.DTOs;
+using GunterBar.Application.DTOs.User;
 
 namespace GunterBar.Application.Interfaces;
 

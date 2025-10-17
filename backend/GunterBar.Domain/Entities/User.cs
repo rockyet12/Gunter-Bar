@@ -40,5 +40,12 @@ public class User
         Role = UserRole.Client;
         LoginAttempts = 0;
     }
-}
+
+    // Constructor sin parámetros requerido por EF Core
+    public User()
+    {
+        Name = string.Empty;
+        Email = string.Empty;
+        PasswordHash = string.Empty;
+    }
 }

@@ -1,4 +1,5 @@
-using GunterBar.Application.DTOs;
+using System.Threading.Tasks;
+using GunterBar.Application.DTOs.Order;
 
 namespace GunterBar.Application.Interfaces;
 

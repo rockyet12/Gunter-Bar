@@ -79,4 +79,3 @@ public class ValidationBehavior<TRequest, TResponse> : IValidationBehavior<TRequ
                 $"{e.PropertyName}: {e.ErrorMessage}"));
     }
 }
-}

@@ -1,7 +1,10 @@
+using System;
+using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
+using Swashbuckle.AspNetCore.Filters;
 
 namespace GunterBar.Presentation.Extensions;
 
@@ -9,6 +12,7 @@ public static class SwaggerExtensions
 {
     public static IServiceCollection AddCustomSwagger(this IServiceCollection services)
     {
+        services.AddSwaggerExamplesFromAssemblies(Assembly.GetEntryAssembly());
         services.AddSwaggerGen(c =>
         {
             c.SwaggerDoc("v1", new OpenApiInfo

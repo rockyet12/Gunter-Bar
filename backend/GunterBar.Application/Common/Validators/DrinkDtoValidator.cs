@@ -1,5 +1,5 @@
 using FluentValidation;
-using GunterBar.Application.DTOs;
+using GunterBar.Application.DTOs.Drinks;
 
 namespace GunterBar.Application.Common.Validators;
 

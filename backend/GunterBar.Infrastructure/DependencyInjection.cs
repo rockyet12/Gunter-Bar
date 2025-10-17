@@ -1,9 +1,11 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using GunterBar.Infrastructure.Data;
 using GunterBar.Infrastructure.Services;
 using GunterBar.Domain.Interfaces;
 using GunterBar.Infrastructure.Repositories;
+using GunterBar.Application.Interfaces;
 
 namespace GunterBar.Infrastructure;
 
@@ -16,6 +18,9 @@ public static class DependencyInjection
         // Database
         services.AddDbContext<GunterBarDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+
+        // Unit of Work
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         // Repositories
         services.AddScoped<IUserRepository, UserRepository>();

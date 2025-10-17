@@ -1,9 +1,6 @@
-using Microsoft.AspNetCore.Builder;
+using System.Text.Json;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace GunterBar.Presentation.Extensions;
 
@@ -11,10 +8,35 @@ public static class HealthCheckExtensions
 {
     public static IServiceCollection AddCustomHealthChecks(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddHealthChecks()
-            .AddSqlServer(configuration.GetConnectionString("DefaultConnection"), name: "Database")
-            .AddRedis(configuration.GetConnectionString("Redis"), name: "Redis")
-            .AddUrlGroup(new Uri("https://api.external-service.com/health"), name: "ExternalAPI");
+        var healthChecks = services.AddHealthChecks();
+
+        var dbConnection = configuration.GetConnectionString("DefaultConnection");
+        if (!string.IsNullOrEmpty(dbConnection))
+        {
+            healthChecks.AddSqlServer(
+                connectionString: dbConnection,
+                healthQuery: "SELECT 1;",
+                name: "Database",
+                tags: new[] { "db", "sql", "sqlserver" });
+        }
+
+        var redisConnection = configuration.GetConnectionString("Redis");
+        if (!string.IsNullOrEmpty(redisConnection))
+        {
+            healthChecks.AddRedis(
+                redisConnectionString: redisConnection,
+                name: "Redis",
+                tags: new[] { "cache", "redis" });
+        }
+
+        var externalApiUrl = configuration["ExternalServices:ApiUrl"];
+        if (!string.IsNullOrEmpty(externalApiUrl))
+        {
+            healthChecks.AddUrlGroup(
+                new Uri(externalApiUrl),
+                name: "ExternalAPI",
+                tags: new[] { "api", "external" });
+        }
 
         return services;
     }
@@ -23,7 +45,8 @@ public static class HealthCheckExtensions
     {
         app.UseHealthChecks("/health", new HealthCheckOptions
         {
-            ResponseWriter = WriteResponse
+            ResponseWriter = WriteResponse,
+            AllowCachingResponses = false
         });
     }
 
@@ -39,11 +62,19 @@ public static class HealthCheckExtensions
                 name = e.Key,
                 status = e.Value.Status.ToString(),
                 description = e.Value.Description,
-                duration = e.Value.Duration
+                duration = $"{e.Value.Duration.TotalMilliseconds}ms",
+                tags = e.Value.Tags
             }),
-            duration = result.TotalDuration
+            totalDuration = $"{result.TotalDuration.TotalMilliseconds}ms",
+            timestamp = DateTime.UtcNow
         };
 
-        return context.Response.WriteAsync(JsonConvert.SerializeObject(response));
+        var options = new JsonSerializerOptions
+        {
+            WriteIndented = true,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        };
+
+        return context.Response.WriteAsync(JsonSerializer.Serialize(response, options));
     }
 }

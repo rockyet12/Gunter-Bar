@@ -1,15 +1,27 @@
 using System.Text;
+using GunterBar.Application;
+using GunterBar.Infrastructure;
 using GunterBar.Infrastructure.Data;
+using GunterBar.Domain.Interfaces;
+using GunterBar.Infrastructure.Repositories;
+using GunterBar.Application.Interfaces;
+using GunterBar.Application.Services;
+using GunterBar.Infrastructure.Services;
+using GunterBar.Presentation.Extensions;
+using GunterBar.Presentation.Middleware;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 
 namespace GunterBar.Presentation;
 
 public class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
 var builder = WebApplication.CreateBuilder(args);
 

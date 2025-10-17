@@ -1,0 +1,113 @@
+using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Hosting;
+using Xunit;
+using GunterBar.Presentation.Metrics;
+using GunterBar.Presentation;
+using GunterBar.Presentation.Extensions;
+using System.Net.Http.Json;
+
+namespace GunterBar.Tests.Integration;
+
+public class MetricsIntegrationTests : IClassFixture<WebApplicationFactory<Program>>
+{
+    private readonly WebApplicationFactory<Program> _factory;
+    private readonly IMetricCollector _metrics;
+
+    public MetricsIntegrationTests(WebApplicationFactory<Program> factory)
+    {
+        _factory = factory.WithWebHostBuilder(builder =>
+        {
+            builder.ConfigureServices(services =>
+            {
+                services.AddCustomMetrics();
+                services.AddSingleton<IMetricsConfiguration, TestMetricsConfiguration>();
+            });
+        });
+        
+        _metrics = _factory.Services.GetRequiredService<IMetricCollector>();
+    }
+
+    [Fact]
+    public async Task MetricsEndpoint_ShouldReturn200()
+    {
+        // Arrange
+        using var client = _factory.CreateClient();
+        
+        // Generate some metrics
+        _metrics.OrderCreated("completed");
+        _metrics.DrinkAdded("cocktail");
+        _metrics.UpdateActiveUsers(1);
+        _metrics.RecordCartValue(25.5m);
+        
+        // Act
+        var response = await client.GetAsync("/metrics");
+        
+        // Assert
+        response.EnsureSuccessStatusCode();
+        var content = await response.Content.ReadAsStringAsync();
+        
+        Assert.Contains("gunterbar_orders_total", content);
+        Assert.Contains("gunterbar_drinks_added_total", content);
+        Assert.Contains("gunterbar_active_users", content);
+        Assert.Contains("gunterbar_cart_value_dollars", content);
+    }
+
+    [Fact]
+    public async Task ApiEndpoints_ShouldRecordLatency()
+    {
+        // Arrange
+        using var client = _factory.CreateClient();
+
+        // Act
+        await client.GetAsync("/api/drinks");
+        await client.GetAsync("/api/orders");
+
+        // Verify metrics
+        var metricsResponse = await client.GetAsync("/metrics");
+        var content = await metricsResponse.Content.ReadAsStringAsync();
+
+        // Assert
+        Assert.Contains("gunterbar_api_latency_milliseconds", content);
+        Assert.Contains("endpoint=\"/api/drinks\"", content);
+        Assert.Contains("endpoint=\"/api/orders\"", content);
+    }
+
+    [Fact]
+    public async Task Login_ShouldRecordAttempts()
+    {
+        // Arrange
+        using var client = _factory.CreateClient();
+
+        // Act - Simulate login attempts
+        var loginData = new { username = "test", password = "test" };
+        await client.PostAsJsonAsync("/api/auth/login", loginData);
+
+        // Verify metrics
+        var metricsResponse = await client.GetAsync("/metrics");
+        var content = await metricsResponse.Content.ReadAsStringAsync();
+
+        // Assert
+        Assert.Contains("gunterbar_login_attempts_total", content);
+    }
+
+    [Fact]
+    public async Task Errors_ShouldBeRecorded()
+    {
+        // Arrange
+        using var client = _factory.CreateClient();
+
+        // Act - Trigger some errors
+        await client.GetAsync("/api/nonexistent");
+        
+        // Verify metrics
+        var metricsResponse = await client.GetAsync("/metrics");
+        var content = await metricsResponse.Content.ReadAsStringAsync();
+
+        // Assert
+        Assert.Contains("gunterbar_errors_total", content);
+        Assert.Contains("type=\"not_found\"", content);
+    }
+}

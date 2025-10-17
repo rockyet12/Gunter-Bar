@@ -143,4 +143,3 @@ public class TokenService : ITokenService
         return DateTime.UtcNow.AddDays(_refreshTokenExpirationDays);
     }
 }
-}

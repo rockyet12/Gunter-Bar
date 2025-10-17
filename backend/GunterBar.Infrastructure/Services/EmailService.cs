@@ -1,7 +1,8 @@
 using GunterBar.Application.Interfaces;
 using System.Net.Mail;
 using System.Net;
-using GunterBar.Application.DTOs;
+using Microsoft.Extensions.Configuration;
+using GunterBar.Application.DTOs.Order;
 
 namespace GunterBar.Infrastructure.Services;
 
@@ -15,15 +16,32 @@ public class EmailService : IEmailService
 
     public EmailService(IConfiguration configuration)
     {
-        _smtpServer = configuration["Email:SmtpServer"];
-        _smtpPort = int.Parse(configuration["Email:SmtpPort"]);
-        _smtpUsername = configuration["Email:Username"];
-        _smtpPassword = configuration["Email:Password"];
-        _fromEmail = configuration["Email:FromEmail"];
+        if (configuration == null)
+            throw new ArgumentNullException(nameof(configuration));
+
+        _smtpServer = configuration["Email:SmtpServer"] ?? 
+            throw new InvalidOperationException("SMTP Server not configured");
+        
+        _smtpPort = int.Parse(configuration["Email:SmtpPort"] ?? "587");
+        
+        _smtpUsername = configuration["Email:Username"] ?? 
+            throw new InvalidOperationException("SMTP Username not configured");
+        
+        _smtpPassword = configuration["Email:Password"] ?? 
+            throw new InvalidOperationException("SMTP Password not configured");
+        
+        _fromEmail = configuration["Email:FromEmail"] ?? 
+            throw new InvalidOperationException("From Email not configured");
     }
 
     public async Task SendOrderConfirmationAsync(OrderDto order, string userEmail)
     {
+        if (order == null)
+            throw new ArgumentNullException(nameof(order));
+            
+        if (string.IsNullOrWhiteSpace(userEmail))
+            throw new ArgumentException("User email is required", nameof(userEmail));
+
         var subject = "Confirmación de Orden - Gunter Bar";
         var body = GenerateOrderConfirmationEmail(order);
         await SendEmailAsync(userEmail, subject, body);

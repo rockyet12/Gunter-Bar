@@ -16,8 +16,11 @@ public class GunterBarDbContextFactory : IDesignTimeDbContextFactory<GunterBarDb
             .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json", true)
             .Build();
 
+        var connectionString = configuration.GetConnectionString("DefaultConnection");
+        var serverVersion = new MariaDbServerVersion(ServerVersion.AutoDetect(connectionString));
+        
         var optionsBuilder = new DbContextOptionsBuilder<GunterBarDbContext>();
-        optionsBuilder.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+        optionsBuilder.UseMySql(connectionString, serverVersion);
 
         return new GunterBarDbContext(optionsBuilder.Options);
     }

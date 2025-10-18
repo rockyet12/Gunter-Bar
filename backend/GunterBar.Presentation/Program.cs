@@ -9,13 +9,13 @@ using GunterBar.Application.Services;
 using GunterBar.Infrastructure.Services;
 using GunterBar.Presentation.Extensions;
 using GunterBar.Presentation.Middleware;
+using GunterBar.Presentation.Infrastructure;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
 
 namespace GunterBar.Presentation;
 
@@ -23,16 +23,54 @@ public class Program
 {
     public static async Task Main(string[] args)
     {
-var builder = WebApplication.CreateBuilder(args);
+        var builder = WebApplication.CreateBuilder(args);
 
-// Agregar servicios de la aplicación y la infraestructura
-builder.Services.AddApplication();
-builder.Services.AddInfrastructure(builder.Configuration);
+        ConfigureServices(builder);
 
-// Health Checks, Métricas y Rate Limiting
-builder.Services.AddCustomHealthChecks(builder.Configuration);
-builder.Services.AddCustomMetrics();
-builder.Services.AddCustomRateLimiting();        // Configuración de JWT
+        var app = builder.Build();
+
+        ConfigureMiddleware(app);
+
+        if (app.Environment.IsDevelopment())
+        {
+            await InitializeDatabaseAsync(app);
+        }
+
+        await app.RunAsync();
+    }
+
+    private static void ConfigureServices(WebApplicationBuilder builder)
+    {
+        // Servicios principales
+        builder.Services.AddControllers();
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddCustomSwagger();
+        
+        // Capas de aplicación e infraestructura
+        builder.Services.AddApplication();
+        builder.Services.AddInfrastructure(builder.Configuration);
+
+        // Monitoreo y rendimiento
+        builder.Services.AddCustomHealthChecks(builder.Configuration);
+        builder.Services.AddCustomMetrics();
+        builder.Services.AddCustomRateLimiting();
+
+        // Autenticación y autorización
+        ConfigureJwtAuthentication(builder);
+
+        // Repositorios
+        ConfigureRepositories(builder.Services);
+
+        // Servicios de negocio
+        ConfigureBusinessServices(builder.Services);
+
+        // CORS y Cache
+        ConfigureCors(builder.Services);
+        builder.Services.AddMemoryCache();
+    }
+
+    private static void ConfigureJwtAuthentication(WebApplicationBuilder builder)
+    {
         var jwtSettings = builder.Configuration.GetSection("JwtSettings");
         var secretKey = jwtSettings["SecretKey"] ?? "GunterBar-SecretKey-2025-ET12-Development-Key";
 
@@ -53,27 +91,29 @@ builder.Services.AddCustomRateLimiting();        // Configuración de JWT
             });
 
         builder.Services.AddAuthorization();
+    }
 
-        // Inyección de dependencias - Repositorios
-        builder.Services.AddScoped<IUserRepository, UserRepository>();
-        builder.Services.AddScoped<IDrinkRepository, DrinkRepository>();
-        builder.Services.AddScoped<ICartRepository, CartRepository>();
-        builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+    private static void ConfigureRepositories(IServiceCollection services)
+    {
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IDrinkRepository, DrinkRepository>();
+        services.AddScoped<ICartRepository, CartRepository>();
+        services.AddScoped<IOrderRepository, OrderRepository>();
+    }
 
-// Inyección de dependencias - Servicios
-builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IDrinkService, DrinkService>();
-builder.Services.AddScoped<ICartService, CartService>();
-builder.Services.AddScoped<IOrderService, OrderService>();
-builder.Services.AddScoped<IJwtService, JwtService>();
-builder.Services.AddScoped<ICacheService, CacheService>();
+    private static void ConfigureBusinessServices(IServiceCollection services)
+    {
+        services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IDrinkService, DrinkService>();
+        services.AddScoped<ICartService, CartService>();
+        services.AddScoped<IOrderService, OrderService>();
+        services.AddScoped<IJwtService, JwtService>();
+        services.AddScoped<ICacheService, CacheService>();
+    }
 
-// Configurar cache en memoria
-builder.Services.AddMemoryCache();        // Configuración de Controllers
-        builder.Services.AddControllers();
-
-        // Configuración de CORS
-        builder.Services.AddCors(options =>
+    private static void ConfigureCors(IServiceCollection services)
+    {
+        services.AddCors(options =>
         {
             options.AddPolicy("AllowFrontend", policy =>
             {
@@ -83,52 +123,11 @@ builder.Services.AddMemoryCache();        // Configuración de Controllers
                       .AllowCredentials();
             });
         });
+    }
 
-        // Configuración de Swagger
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen(c =>
-        {
-            c.SwaggerDoc("v1", new OpenApiInfo
-            {
-                Title = "Gunter Bar API",
-                Version = "v1",
-                Description = "API para el sistema de gestión de Gunter Bar - ET12",
-                Contact = new OpenApiContact
-                {
-                    Name = "Equipo ET12",
-                    Email = "info@et12.edu.ar"
-                }
-            });
-
-            // Configuración de JWT en Swagger
-            c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-            {
-                Description = "JWT Authorization header usando Bearer scheme. Ejemplo: 'Bearer {token}'",
-                Name = "Authorization",
-                In = ParameterLocation.Header,
-                Type = SecuritySchemeType.ApiKey,
-                Scheme = "Bearer"
-            });
-
-            c.AddSecurityRequirement(new OpenApiSecurityRequirement
-            {
-                {
-                    new OpenApiSecurityScheme
-                    {
-                        Reference = new OpenApiReference
-                        {
-                            Type = ReferenceType.SecurityScheme,
-                            Id = "Bearer"
-                        }
-                    },
-                    Array.Empty<string>()
-                }
-            });
-        });
-
-        var app = builder.Build();
-
-        // Configuración del pipeline HTTP
+    private static void ConfigureMiddleware(WebApplication app)
+    {
+        // Desarrollo
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();
@@ -139,38 +138,40 @@ builder.Services.AddMemoryCache();        // Configuración de Controllers
             });
         }
 
-app.UseHttpsRedirection();
+        // Seguridad básica
+        app.UseHttpsRedirection();
+        app.UseMiddleware<ErrorHandlingMiddleware>();
+        app.UseMiddleware<RequestLoggingMiddleware>();
 
-// Middleware personalizado
-app.UseMiddleware<ErrorHandlingMiddleware>();
-app.UseMiddleware<RequestLoggingMiddleware>();
+                // Monitoreo y métricas
+        ((IApplicationBuilder)app).UseCustomMetrics();
+        app.UseCustomHealthChecks();
+        app.UseCustomRateLimiting();
 
-// Métricas, Health Checks y Rate Limiting
-app.UseCustomMetrics();
-app.UseCustomHealthChecks();
-app.UseCustomRateLimiting();
+        // CORS y autenticación
+        app.UseCors("AllowFrontend");
+        app.UseAuthentication();
+        app.UseAuthorization();
 
-app.UseCors("AllowFrontend");
-
-app.UseAuthentication();
-app.UseAuthorization();
-
-app.MapControllers();        // Ejecutar migraciones automáticamente en desarrollo
-if (app.Environment.IsDevelopment())
-{
-    using var scope = app.Services.CreateScope();
-    var services = scope.ServiceProvider;
-    try
-    {
-        var context = services.GetRequiredService<GunterBarDbContext>();
-        await context.Database.MigrateAsync();
-        await DbInitializer.Initialize(context);
+        // Endpoints
+        app.MapControllers();
     }
-    catch (Exception ex)
+
+    private static async Task InitializeDatabaseAsync(WebApplication app)
     {
-        var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "Error al inicializar la base de datos");
-    }
-}        app.Run();
+        using var scope = app.Services.CreateScope();
+        var services = scope.ServiceProvider;
+
+        try
+        {
+            var context = services.GetRequiredService<GunterBarDbContext>();
+            await context.Database.MigrateAsync();
+            await DbInitializer.Initialize(context);
+        }
+        catch (Exception ex)
+        {
+            var logger = services.GetRequiredService<ILogger<Program>>();
+            logger.LogError(ex, "Error al inicializar la base de datos");
+        }
     }
 }

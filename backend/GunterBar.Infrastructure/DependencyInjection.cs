@@ -16,8 +16,11 @@ public static class DependencyInjection
         IConfiguration configuration)
     {
         // Database
+        var connectionString = configuration.GetConnectionString("DefaultConnection");
+        var serverVersion = new MariaDbServerVersion(ServerVersion.AutoDetect(connectionString));
+        
         services.AddDbContext<GunterBarDbContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+            options.UseMySql(connectionString, serverVersion));
 
         // Unit of Work
         services.AddScoped<IUnitOfWork, UnitOfWork>();

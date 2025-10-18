@@ -4,10 +4,10 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
 using Xunit;
-using GunterBar.Presentation.Metrics;
 using GunterBar.Presentation;
 using GunterBar.Presentation.Extensions;
 using System.Net.Http.Json;
+using GunterBar.Presentation.Infrastructure;
 
 namespace GunterBar.Tests.Integration;
 
@@ -167,6 +167,7 @@ public class MetricsIntegrationTests : IClassFixture<WebApplicationFactory<Progr
         // Act - Record different cart values including edge cases
         _metrics.RecordCartValue(0m);
         _metrics.RecordCartValue(999.99m);
+        _metrics.RecordCartValue(1500m); // Valor que garantiza que se use el bucket de 1000.0
         _metrics.RecordCartValue(0.01m);
         
         // Verify metrics

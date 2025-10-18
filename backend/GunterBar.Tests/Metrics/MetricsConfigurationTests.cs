@@ -1,12 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+using GunterBar.Presentation.Extensions;
+using GunterBar.Presentation.Infrastructure;
+using GunterBar.Presentation.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
-using Xunit;
-using GunterBar.Presentation.Extensions;
-using GunterBar.Presentation.Metrics;
 
 namespace GunterBar.Tests.Metrics;
 

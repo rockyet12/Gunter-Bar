@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Xunit;
 using Moq;
-using GunterBar.Presentation.Metrics;
+using GunterBar.Presentation.Infrastructure;
 
 namespace GunterBar.Tests.Metrics;
 
@@ -17,12 +17,12 @@ public class MetricCollectorTests
     {
         _defaultLabels = new Dictionary<string, string>
         {
-            { "app", "test-app" },
+            { "app", "test_app" },
             { "version", "1.0.0" }
         };
 
         _configMock = new Mock<IMetricsConfiguration>();
-        _configMock.Setup(c => c.ApplicationName).Returns("test-app");
+        _configMock.Setup(c => c.ApplicationName).Returns("test_app");
         _configMock.Setup(c => c.DefaultLabels).Returns(_defaultLabels);
         _configMock.Setup(c => c.CartValueBuckets).Returns(new[] { 5.0, 10.0, 25.0, 50.0, 100.0 });
         _configMock.Setup(c => c.LatencyBuckets).Returns(new[] { 10.0, 25.0, 50.0, 100.0 });

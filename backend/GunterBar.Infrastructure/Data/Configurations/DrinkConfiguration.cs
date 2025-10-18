@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace GunterBar.Infrastructure.Data.Configurations;
 
-public class DrinkConfiguration : IEntityTypeConfiguration<Drink>
+public class DrinkConfiguration : EntityBaseConfiguration<Drink>
 {
-    public void Configure(EntityTypeBuilder<Drink> builder)
+    public override void Configure(EntityTypeBuilder<Drink> builder)
     {
         builder.HasKey(d => d.Id);
 

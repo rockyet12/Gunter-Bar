@@ -1,139 +1,120 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
-import { LoginDto } from '../types';
+import { useAuth } from '../features/auth/contexts/AuthContext';
+import { 
+  Container, 
+  Box, 
+  Typography, 
+  TextField, 
+  Button
+} from '@mui/material';
 
-const Login: React.FC = () => {
-  const { login, loading, error, isAuthenticated } = useAuth();
-  const [formData, setFormData] = useState<LoginDto>({
-    email: '',
-    password: ''
-  });
-  const [showPassword, setShowPassword] = useState(false);
-
-  // Redirigir si ya está autenticado
+export const Login: React.FC = () => {
+  const { login, isAuthenticated } = useAuth();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  
   if (isAuthenticated) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/" replace />;
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const success = await login(formData);
-    if (success) {
-      // La navegación será manejada por el contexto de autenticación
+    setError('');
+    setIsLoading(true);
+    
+    try {
+      await login(email, password);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred during login');
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
-
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-900 to-purple-900">
-      <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-xl shadow-2xl">
-        <div className="text-center">
-          <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
-            Gunter Bar
-          </h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Inicia sesión en tu cuenta
-          </p>
-        </div>
-        
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-              {error}
-            </div>
-          )}
-          
-          <div className="space-y-4">
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Correo electrónico
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                required
-                value={formData.email}
-                onChange={handleChange}
-                className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="usuario@ejemplo.com"
-              />
-            </div>
-            
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                Contraseña
-              </label>
-              <div className="mt-1 relative">
-                <input
-                  id="password"
-                  name="password"
-                  type={showPassword ? "text" : "password"}
-                  required
-                  value={formData.password}
-                  onChange={handleChange}
-                  className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm pr-10"
-                  placeholder="Contraseña"
-                />
-                <button
-                  type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? (
-                    <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
-                    </svg>
-                  ) : (
-                    <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                    </svg>
-                  )}
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? (
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-              ) : (
-                'Iniciar sesión'
-              )}
-            </button>
-          </div>
-
-          <div className="text-center">
-            <p className="text-sm text-gray-600">
-              ¿No tienes una cuenta?{' '}
-              <Link to="/register" className="font-medium text-indigo-600 hover:text-indigo-500">
-                Regístrate aquí
-              </Link>
-            </p>
-          </div>
-
-          {/* Cuenta de prueba para desarrollo */}
-          <div className="bg-gray-50 border border-gray-200 rounded-md p-4">
-            <p className="text-xs text-gray-600 mb-2">Cuenta de prueba:</p>
-            <p className="text-xs text-gray-800">Email: admin@gunterbar.com</p>
-            <p className="text-xs text-gray-800">Contraseña: 123456</p>
-          </div>
-        </form>
-      </div>
-    </div>
+    <Container component="main" maxWidth="xs">
+      <Box
+        sx={{
+          marginTop: 8,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
+        <Typography component="h1" variant="h5">
+          Gunter Bar
+        </Typography>
+        <Typography variant="body2" sx={{ mt: 1, mb: 3 }}>
+          Iniciar sesión
+        </Typography>
+        {error && (
+          <Typography color="error" align="center" sx={{ mt: 2 }}>
+            {error}
+          </Typography>
+        )}
+        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3, width: '100%' }}>
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="email"
+            label="Email"
+            name="email"
+            autoComplete="email"
+            autoFocus
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            name="password"
+            label="Contraseña"
+            type="password"
+            id="password"
+            autoComplete="current-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+            disabled={isLoading}
+          >
+            {isLoading ? 'Iniciando sesión...' : 'Iniciar sesión'}
+          </Button>
+          <Box sx={{ mt: 2, display: 'flex', justifyContent: 'space-between' }}>
+            <Link to="/forgot-password" style={{ textDecoration: 'none' }}>
+              <Button sx={{ textTransform: 'none' }}>
+                ¿Olvidaste tu contraseña?
+              </Button>
+            </Link>
+            <Link to="/register" style={{ textDecoration: 'none' }}>
+              <Button sx={{ textTransform: 'none' }}>
+                Registrarse
+              </Button>
+            </Link>
+          </Box>
+          <Box sx={{ mt: 4, p: 2, bgcolor: 'grey.50', borderRadius: 1 }}>
+            <Typography variant="caption" color="text.secondary" gutterBottom>
+              Cuenta de prueba:
+            </Typography>
+            <Typography variant="caption" display="block">
+              Email: admin@gunterbar.com
+            </Typography>
+            <Typography variant="caption" display="block">
+              Contraseña: 123456
+            </Typography>
+          </Box>
+        </Box>
+      </Box>
+    </Container>
   );
 };
 

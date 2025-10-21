@@ -225,6 +225,10 @@
               "target": "Package",
               "version": "[9.0.9, )"
             },
+            "Microsoft.EntityFrameworkCore.Sqlite": {
+              "target": "Package",
+              "version": "[9.0.10, )"
+            },
             "Microsoft.Extensions.Caching.Memory": {
               "target": "Package",
               "version": "[9.0.10, )"
@@ -252,6 +256,10 @@
             "Microsoft.IdentityModel.Tokens": {
               "target": "Package",
               "version": "[8.14.0, )"
+            },
+            "Pomelo.EntityFrameworkCore.MySql": {
+              "target": "Package",
+              "version": "[9.0.0, )"
             },
             "System.IdentityModel.Tokens.Jwt": {
               "target": "Package",

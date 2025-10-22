@@ -5,7 +5,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   user: AuthResponse['user'] | null;
   login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string, firstName: string, lastName: string) => Promise<void>;
+  register: (name: string, email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -16,7 +16,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<AuthResponse['user'] | null>(null);
 
   useEffect(() => {
-    const token = authService.getToken();
+    const token = localStorage.getItem('token');
     if (token) {
       const savedUser = localStorage.getItem('user');
       if (savedUser) {
@@ -37,9 +37,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const register = async (email: string, password: string, firstName: string, lastName: string) => {
+  const register = async (name: string, email: string, password: string) => {
     try {
-      const response = await authService.register({ email, password, firstName, lastName });
+      const response = await authService.register({ name, email, password });
       authService.setAuthData(response);
       setIsAuthenticated(true);
       setUser(response.user);

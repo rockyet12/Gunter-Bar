@@ -21,7 +21,8 @@ export const LoginForm = () => {
       await login(email, password);
       navigate('/');
     } catch (err) {
-      setError('Invalid email or password');
+      const errorMessage = err instanceof Error ? err.message : 'Email o contraseña inválidos';
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }

@@ -8,10 +8,9 @@ export const RegisterForm = () => {
   const { register } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
+    name: '',
     email: '',
     password: '',
-    firstName: '',
-    lastName: '',
   });
   const [error, setError] = useState('');
 
@@ -19,7 +18,7 @@ export const RegisterForm = () => {
     e.preventDefault();
     setError('');
 
-    if (!formData.email || !formData.password || !formData.firstName || !formData.lastName) {
+    if (!formData.email || !formData.password || !formData.name) {
       setError('Por favor completa todos los campos');
       return;
     }
@@ -37,11 +36,11 @@ export const RegisterForm = () => {
     setIsLoading(true);
 
     try {
-      const { email, password, firstName, lastName } = formData;
-      await register(email, password, firstName, lastName);
+      const { name, email, password } = formData;
+      await register(name, email, password);
       navigate('/');
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Registration failed. Please try again.';
+      const errorMessage = err instanceof Error ? err.message : 'No se pudo registrar. Intenta de nuevo.';
       setError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -60,7 +59,7 @@ export const RegisterForm = () => {
     <Container component="main" maxWidth="xs">
       <Paper elevation={3} sx={{ p: 4, mt: 8 }}>
         <Typography component="h1" variant="h5" align="center">
-          Register
+          Crear cuenta
         </Typography>
         {error && (
           <Typography color="error" align="center" sx={{ mt: 2 }}>
@@ -72,21 +71,11 @@ export const RegisterForm = () => {
             margin="normal"
             required
             fullWidth
-            name="firstName"
-            label="Nombre"
-            inputProps={{ 'aria-label': 'Nombre', 'aria-required': true }}
+            name="name"
+            label="Nombre completo"
+            inputProps={{ 'aria-label': 'Nombre completo', 'aria-required': true }}
             autoFocus
-            value={formData.firstName}
-            onChange={handleChange}
-          />
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            name="lastName"
-            label="Apellido"
-            inputProps={{ 'aria-label': 'Apellido', 'aria-required': true }}
-            value={formData.lastName}
+            value={formData.name}
             onChange={handleChange}
           />
           <TextField

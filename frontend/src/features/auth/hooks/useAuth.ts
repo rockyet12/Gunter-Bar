@@ -5,7 +5,7 @@ export interface UseAuth {
   isAuthenticated: boolean;
   user: AuthResponse['user'] | null;
   login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string, firstName: string, lastName: string) => Promise<void>;
+  register: (name: string, email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   updateUser: (userData: Partial<AuthResponse['user']>) => void;
 }
@@ -35,9 +35,9 @@ export const useAuth = (): UseAuth => {
     }
   };
 
-  const register = async (email: string, password: string, firstName: string, lastName: string) => {
+  const register = async (name: string, email: string, password: string) => {
     try {
-      const response = await authService.register({ email, password, firstName, lastName });
+      const response = await authService.register({ name, email, password });
       authService.setAuthData(response);
       setIsAuthenticated(true);
       setUser(response.user);

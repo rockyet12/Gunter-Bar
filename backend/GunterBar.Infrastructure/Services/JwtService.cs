@@ -32,6 +32,7 @@ public class JwtService : IJwtService
         var claims = new[]
         {
             new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
+            new Claim("uid", userId.ToString()), // Claim extra para compatibilidad con controladores
             new Claim(ClaimTypes.Email, email),
             new Claim(ClaimTypes.Role, role),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),

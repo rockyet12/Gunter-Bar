@@ -1,3 +1,4 @@
+// ...existing code...
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import { 
   ApiResponse, 
@@ -14,6 +15,15 @@ import {
 } from '../types';
 
 class ApiService {
+  async getAllUsers(): Promise<ApiResponse<User[]>> {
+    const response: AxiosResponse<ApiResponse<User[]>> = await this.api.get('/users');
+    return response.data;
+  }
+
+  async updateUserRole(userId: number, role: number): Promise<ApiResponse<User>> {
+    const response: AxiosResponse<ApiResponse<User>> = await this.api.patch(`/users/${userId}/role`, role);
+    return response.data;
+  }
   private api: AxiosInstance;
 
   constructor() {

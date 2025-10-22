@@ -7,6 +7,7 @@ export interface User {
   role: UserRole;
   phoneNumber?: string;
   address?: string;
+  birthDate?: string;
 }
 
 export enum UserRole {
@@ -110,6 +111,7 @@ export interface RegisterUserDto {
   confirmPassword: string;
   phoneNumber?: string;
   address?: string;
+  birthDate?: string;
   role?: UserRole;
 }
 

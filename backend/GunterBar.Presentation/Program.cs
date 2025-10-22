@@ -31,6 +31,14 @@ public class Program
 
         ConfigureMiddleware(app);
 
+        // Servir archivos estáticos desde /uploads
+        app.UseStaticFiles(new StaticFileOptions
+        {
+            FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(
+                Path.Combine(Directory.GetCurrentDirectory(), "Uploads")),
+            RequestPath = "/uploads"
+        });
+
         if (app.Environment.IsDevelopment())
         {
             await InitializeDatabaseAsync(app);

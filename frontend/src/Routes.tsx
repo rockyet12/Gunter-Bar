@@ -1,7 +1,8 @@
-
 import Home from './pages/Home';
 import Orders from './pages/Orders';
 import NewOrder from './pages/NewOrder';
+import AdminBebidas from './pages/AdminBebidas';
+import Profile from './pages/Profile';
 import { ReactNode, useEffect } from 'react';
 import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { Box } from '@mui/material';
@@ -65,6 +66,22 @@ export const AppRoutes = () => {
         element={
           <PrivateRoute>
             <NewOrder />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/admin-bebidas"
+        element={
+          <PrivateRoute>
+            <AdminBebidas />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/profile"
+        element={
+          <PrivateRoute>
+            <Profile />
           </PrivateRoute>
         }
       />

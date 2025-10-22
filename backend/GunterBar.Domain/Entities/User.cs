@@ -20,10 +20,14 @@ public class User
 
     [Required]
     public UserRole Role { get; set; }
+
     public string? PhoneNumber { get; set; }
 
     [MaxLength(250)]
     public string? Address { get; set; }
+
+    [MaxLength(2000)]
+    public string? ProfileImageUrl { get; set; }
 
     public int LoginAttempts { get; set; }
     public DateTime? LastLoginAttempt { get; set; }

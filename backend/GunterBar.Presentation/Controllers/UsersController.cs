@@ -293,4 +293,64 @@ public class UsersController : ControllerBase
                 ApiResponse<bool>.Fail("An error occurred while processing your request"));
         }
     }
+
+    /// <summary>
+    /// Uploads a profile image for the user
+    /// </summary>
+    /// <param name="id">The ID of the user</param>
+    /// <param name="file">The image file</param>
+    /// <returns>The updated user with new profile image URL</returns>
+    /// <response code="200">Returns the updated user</response>
+    /// <response code="400">If the file is invalid</response>
+    /// <response code="401">If the user is not authenticated</response>
+    /// <response code="403">If the user is not authorized</response>
+    /// <response code="404">If the user is not found</response>
+    /// <response code="500">If there was an internal server error</response>
+    [HttpPost("{id:int}/profile-image")]
+    [Authorize]
+    [ProducesResponseType(typeof(ApiResponse<UserDto>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
+    [ProducesResponseType((int)HttpStatusCode.Forbidden)]
+    [ProducesResponseType((int)HttpStatusCode.NotFound)]
+    [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
+    public async Task<ActionResult<ApiResponse<UserDto>>> UploadProfileImage(int id, IFormFile file)
+    {
+        try
+        {
+            var currentUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
+            if (id != currentUserId && !User.IsInRole("Admin"))
+            {
+                return Forbid();
+            }
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest(ApiResponse<UserDto>.Fail("No file uploaded"));
+            }
+            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "Uploads", "Profiles");
+            if (!Directory.Exists(uploadsFolder))
+                Directory.CreateDirectory(uploadsFolder);
+            var ext = Path.GetExtension(file.FileName);
+            var fileName = $"user_{id}_{Guid.NewGuid().ToString().Substring(0,8)}{ext}";
+            var filePath = Path.Combine(uploadsFolder, fileName);
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+            var imageUrl = $"/uploads/profiles/{fileName}";
+            var updateDto = new UpdateUserDto { ProfileImageUrl = imageUrl };
+            var result = await _userService.UpdateAsync(id, updateDto);
+            if (!result.Success)
+            {
+                return result.Message.Contains("no encontrado") ? NotFound(result) : BadRequest(result);
+            }
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error uploading profile image for user {UserId}", id);
+            return StatusCode((int)HttpStatusCode.InternalServerError,
+                ApiResponse<UserDto>.Fail("An error occurred while uploading the image"));
+        }
+    }
 }

@@ -1,6 +1,8 @@
 import { Box, Typography, Container, Button, TextField, MenuItem, Snackbar, Alert } from '@mui/material';
 import { useState } from 'react';
 import { useOrders } from '../features/orders/contexts/OrderContext';
+import { useAuth } from '../features/auth/contexts/AuthContext';
+import dayjs from 'dayjs';
 
 const bebidas = [
   { value: 'mojito', label: 'Mojito' },
@@ -11,22 +13,32 @@ const bebidas = [
 ];
 
 
+
 export default function NewOrder() {
   const [drink, setDrink] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [note, setNote] = useState('');
   const [success, setSuccess] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const { addPedido } = useOrders();
+  const { user } = useAuth();
+
+  const isAdult = user?.birthDate && dayjs().diff(dayjs(user.birthDate), 'year') >= 18;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isAdult) {
+      setError('Debes ser mayor de 18 años para realizar compras.');
+      return;
+    }
     addPedido({ bebida: drink, cantidad: quantity, nota: note });
     setSuccess(true);
     setOpenSnackbar(true);
     setDrink('');
     setQuantity(1);
     setNote('');
+    setError(null);
   };
 
   return (
@@ -46,6 +58,7 @@ export default function NewOrder() {
         <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
           Selecciona tu bebida y completa los detalles.
         </Typography>
+        {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
         <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           <TextField
             select
@@ -98,4 +111,4 @@ export default function NewOrder() {
       </Box>
     </Container>
   );
-
+}

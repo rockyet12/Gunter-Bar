@@ -46,7 +46,5 @@ public class AddToCartUseCase : UseCase<AddToCartRequest, CartDto>
         {
             return ApiResponse<CartDto>.Fail($"Error al agregar al carrito: {ex.Message}");
         }
-
-        return await _cartService.AddToCartAsync(request.UserId, request.Item);
     }
 }

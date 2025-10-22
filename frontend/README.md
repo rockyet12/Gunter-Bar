@@ -37,9 +37,10 @@ frontend/
 
 ## Características Principales
 
+
 ### Sistema de Autenticación
 
-El sistema de autenticación está implementado usando React Context y hooks personalizados:
+El sistema de autenticación está implementado usando React Context y hooks personalizados, y ahora utiliza **cookies** y **localStorage** para persistir la sesión:
 
 - **LoginForm**: Permite a los usuarios iniciar sesión
   - Validación de campos
@@ -52,9 +53,14 @@ El sistema de autenticación está implementado usando React Context y hooks per
   - Inicio de sesión automático
 
 - **AuthContext**: Maneja el estado global de autenticación
-  - Token JWT
-  - Información del usuario
+  - Token JWT (persistido en cookie y localStorage)
+  - Información del usuario (persistida en cookie y localStorage)
   - Estado de autenticación
+  - Cierre de sesión elimina datos de ambas ubicaciones
+
+**Ventajas:**
+- Permite mantener la sesión aunque se cierre el navegador
+- Compatible con SSR y futuras mejoras de seguridad
 
 ### Rutas y Navegación
 

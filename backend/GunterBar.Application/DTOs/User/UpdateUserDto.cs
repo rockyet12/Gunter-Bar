@@ -6,4 +6,6 @@ public class UpdateUserDto
     public string? PhoneNumber { get; set; }
     public string? Address { get; set; }
     public string? ProfileImageUrl { get; set; }
+    public string? DeliveryDescription { get; set; }
+    public DateTime? BirthDate { get; set; }
 }

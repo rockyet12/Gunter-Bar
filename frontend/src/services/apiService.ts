@@ -15,6 +15,19 @@ import {
 } from '../types';
 
 class ApiService {
+  async uploadProfileImage(userId: number, file: File): Promise<ApiResponse<User>> {
+    const formData = new FormData();
+    formData.append('file', file);
+    const response: AxiosResponse<ApiResponse<User>> = await this.api.post(`/users/${userId}/profile-image`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+    return response.data;
+  }
+
+  async updateUser(userId: number, data: Partial<User>): Promise<ApiResponse<User>> {
+    const response: AxiosResponse<ApiResponse<User>> = await this.api.put(`/users/${userId}`, data);
+    return response.data;
+  }
   async getAllUsers(): Promise<ApiResponse<User[]>> {
     const response: AxiosResponse<ApiResponse<User[]>> = await this.api.get('/users');
     return response.data;

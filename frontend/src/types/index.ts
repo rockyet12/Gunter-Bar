@@ -8,6 +8,8 @@ export interface User {
   phoneNumber?: string;
   address?: string;
   birthDate?: string;
+  deliveryDescription?: string;
+  profileImageUrl?: string;
 }
 
 export enum UserRole {

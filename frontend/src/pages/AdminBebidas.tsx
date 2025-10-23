@@ -1,4 +1,6 @@
-import { Box, Typography, Container, Grid, Card, CardMedia, CardContent, CardActions, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, Alert } from '@mui/material';
+import { Box, Typography, Container, Grid, Card, CardMedia, CardContent, CardActions, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress } from '@mui/material';
+import ConfirmModal from '../components/ConfirmModal';
+import Toast from '../components/Toast';
 import { useEffect, useState } from 'react';
 import apiService from '../services/apiService';
 import { User, UserRole } from '../types';
@@ -42,6 +44,8 @@ export default function AdminBebidas() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [pendingRole, setPendingRole] = useState<{ userId: number, role: UserRole } | null>(null);
   const [updatingId, setUpdatingId] = useState<number | null>(null);
 
   useEffect(() => {
@@ -52,18 +56,27 @@ export default function AdminBebidas() {
       .finally(() => setLoading(false));
   }, []);
 
-  const handleAssignVendor = async (userId: number) => {
+  const handleAssignRole = (userId: number, role: UserRole) => {
+    setPendingRole({ userId, role });
+    setModalOpen(true);
+  };
+
+  const confirmAssignRole = async () => {
+    if (!pendingRole) return;
+    const { userId, role } = pendingRole;
     setUpdatingId(userId);
     setError(null);
     setSuccess(null);
+    setModalOpen(false);
     try {
-  await apiService.updateUserRole(userId, UserRole.Employee);
-  setUsers(users => users.map(u => u.id === userId ? { ...u, role: UserRole.Employee } : u));
-  setSuccess('Rol asignado correctamente');
+      await apiService.updateUserRole(userId, role);
+      setUsers(users => users.map(u => u.id === userId ? { ...u, role } : u));
+      setSuccess('Rol asignado correctamente');
     } catch {
       setError('No se pudo asignar el rol');
     } finally {
       setUpdatingId(null);
+      setTimeout(() => { setSuccess(null); setError(null); }, 2500);
     }
   };
 
@@ -78,8 +91,15 @@ export default function AdminBebidas() {
         </Button>
       </Box>
       <Typography variant="h5" sx={{ mb: 2 }}>Usuarios</Typography>
-      {error && <Alert severity="error">{error}</Alert>}
-      {success && <Alert severity="success">{success}</Alert>}
+      <ConfirmModal
+        open={modalOpen}
+        title="Confirmar cambio de rol"
+        content={pendingRole ? `¿Seguro que quieres asignar el rol de ${pendingRole.role === UserRole.Employee ? 'Vendedor' : 'Jefe de Ventas'} a este usuario?` : ''}
+        onConfirm={confirmAssignRole}
+        onCancel={() => setModalOpen(false)}
+      />
+      <Toast open={!!success} message={success || ''} severity="success" onClose={() => setSuccess(null)} />
+      <Toast open={!!error} message={error || ''} severity="error" onClose={() => setError(null)} />
       {loading ? <CircularProgress /> : (
         <TableContainer component={Paper} sx={{ mb: 6 }}>
           <Table>
@@ -101,15 +121,27 @@ export default function AdminBebidas() {
                   <TableCell>{UserRole[user.role]}</TableCell>
                   <TableCell>
                     {user.role === UserRole.Customer ? (
-                      <Button
-                        variant="contained"
-                        color="secondary"
-                        size="small"
-                        disabled={updatingId === user.id}
-                        onClick={() => handleAssignVendor(user.id)}
-                      >
-                        {updatingId === user.id ? <CircularProgress size={18} /> : 'Asignar como Vendedor'}
-                      </Button>
+                      <>
+                        <Button
+                          variant="contained"
+                          color="secondary"
+                          size="small"
+                          disabled={updatingId === user.id}
+                          onClick={() => handleAssignRole(user.id, UserRole.Employee)}
+                          sx={{ mr: 1 }}
+                        >
+                          {updatingId === user.id ? <CircularProgress size={18} /> : 'Asignar Vendedor'}
+                        </Button>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          size="small"
+                          disabled={updatingId === user.id}
+                          onClick={() => handleAssignRole(user.id, UserRole.SalesManager)}
+                        >
+                          {updatingId === user.id ? <CircularProgress size={18} /> : 'Asignar Jefe de Ventas'}
+                        </Button>
+                      </>
                     ) : (
                       <span>-</span>
                     )}

@@ -35,12 +35,7 @@ export default function Profile() {
     setLoading(true);
     setError(null);
     try {
-      const formData = new FormData();
-      formData.append('file', image);
-      await axios.post(`/api/users/${user.id}/profile-image`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-        withCredentials: true,
-      });
+      await apiService.uploadProfileImage(user.id, image);
       setLoading(false);
       setSuccess(true);
       setTimeout(() => setSuccess(false), 2000);
@@ -63,12 +58,12 @@ export default function Profile() {
     setSaving(true);
     setError(null);
     try {
-      await axios.put(`/api/users/${user.id}`, {
+      await apiService.updateUser(user.id, {
         address,
         phoneNumber,
         deliveryDescription,
         birthDate,
-      }, { withCredentials: true });
+      });
       setSaving(false);
       setSuccess(true);
       setTimeout(() => setSuccess(false), 2000);

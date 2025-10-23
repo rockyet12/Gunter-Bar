@@ -31,7 +31,10 @@ public class UserService : IUserService
             Email = user.Email,
             Role = user.Role,
             PhoneNumber = user.PhoneNumber,
-            Address = user.Address
+            Address = user.Address,
+            ProfileImageUrl = user.ProfileImageUrl,
+            DeliveryDescription = user.DeliveryDescription,
+            BirthDate = user.BirthDate
         };
     }
 
@@ -162,6 +165,8 @@ public class UserService : IUserService
             user.Name = updateUserDto.Name;
             user.PhoneNumber = updateUserDto.PhoneNumber;
             user.Address = updateUserDto.Address;
+            user.DeliveryDescription = updateUserDto.DeliveryDescription;
+            user.BirthDate = updateUserDto.BirthDate;
 
             var updatedUser = await _userRepository.UpdateAsync(user);
             return ApiResponse<UserDto>.Succeed(MapToDto(updatedUser), "Usuario actualizado exitosamente");

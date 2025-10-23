@@ -21,6 +21,7 @@ public class User
     [Required]
     public UserRole Role { get; set; }
 
+
     public string? PhoneNumber { get; set; }
 
     [MaxLength(250)]
@@ -28,6 +29,11 @@ public class User
 
     [MaxLength(2000)]
     public string? ProfileImageUrl { get; set; }
+
+    [MaxLength(500)]
+    public string? DeliveryDescription { get; set; }
+
+    public DateTime? BirthDate { get; set; }
 
     public int LoginAttempts { get; set; }
     public DateTime? LastLoginAttempt { get; set; }

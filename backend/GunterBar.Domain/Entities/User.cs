@@ -35,6 +35,9 @@ public class User
 
     public DateTime? BirthDate { get; set; }
 
+    [MaxLength(20)]
+    public string? Dni { get; set; }
+
     public int LoginAttempts { get; set; }
     public DateTime? LastLoginAttempt { get; set; }
 

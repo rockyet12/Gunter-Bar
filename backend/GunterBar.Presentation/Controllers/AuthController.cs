@@ -5,10 +5,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GunterBar.Presentation.Controllers;
 
-[ApiController]
-[Route("api/[controller]")]
-public class AuthController : ControllerBase
-{
+ [ApiController]
+ [Route("api/[controller]")]
+ public class AuthController : ControllerBase
+    {
     private readonly IAuthService _authService;
 
     public AuthController(IAuthService authService)

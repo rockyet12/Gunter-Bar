@@ -29,13 +29,16 @@ export const LoginForm = () => {
   };
 
   return (
-    <Container component="main" maxWidth="xs">
-      <Paper elevation={3} sx={{ p: 4, mt: 8 }}>
-        <Typography component="h1" variant="h5" align="center">
-          Iniciar sesión
-        </Typography>
+    <Container component="main" maxWidth="xs" sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(120deg, #f5f7fa 0%, #c3cfe2 100%)' }}>
+      <Paper elevation={6} sx={{ p: 4, borderRadius: 4, boxShadow: 6, width: '100%', maxWidth: 400, mx: 'auto', animation: 'fadeDown 1s' }}>
+        <Box sx={{ textAlign: 'center', mb: 2 }}>
+          <img src="/logo192.png" alt="Logo" style={{ width: 48, marginBottom: 8, opacity: 0.85 }} />
+          <Typography component="h1" variant="h5" align="center" sx={{ fontWeight: 700, letterSpacing: 1 }}>
+            Iniciar sesión
+          </Typography>
+        </Box>
         {error && (
-          <Typography color="error" align="center" sx={{ mt: 2 }}>
+          <Typography color="error" align="center" sx={{ mt: 2, fontWeight: 500 }}>
             {error}
           </Typography>
         )}
@@ -52,6 +55,7 @@ export const LoginForm = () => {
             autoFocus
             value={email}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+            sx={{ mb: 2 }}
           />
           <TextField
             margin="normal"

@@ -223,7 +223,7 @@ public class UsersController : ControllerBase
     /// <response code="404">If the user is not found</response>
     /// <response code="500">If there was an internal server error</response>
     [HttpPatch("{id:int}/role")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,SalesManager")]
     [ProducesResponseType(typeof(ApiResponse<UserDto>), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
@@ -234,6 +234,16 @@ public class UsersController : ControllerBase
     {
         try
         {
+            // Solo el jefe de ventas puede asignar el rol de vendedor
+            if (role == UserRole.Employee && !User.IsInRole("SalesManager"))
+            {
+                return Forbid("Solo el jefe de ventas puede asignar el rol de vendedor.");
+            }
+            // Solo el admin puede asignar el rol de jefe de ventas
+            if (role == UserRole.SalesManager && !User.IsInRole("Admin"))
+            {
+                return Forbid("Solo el administrador puede asignar el rol de jefe de ventas.");
+            }
             var result = await _userService.UpdateRoleAsync(id, role);
             if (!result.Success)
             {

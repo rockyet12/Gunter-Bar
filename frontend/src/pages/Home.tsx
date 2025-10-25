@@ -1,6 +1,13 @@
+import React, { useState, useEffect } from 'react';
 import { Box, Typography, Container, Grid, Card, CardMedia, CardContent, CardActionArea, TextField, InputAdornment, Skeleton, Button, Fade, Chip } from '@mui/material';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import styled from 'styled-components';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
+import LocalBarIcon from '@mui/icons-material/LocalBar';
+import './Home.css';
 import { useAuth } from '../features/auth/contexts/AuthContext';
-import React, { useState } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 
 const bebidas = [
@@ -44,7 +51,11 @@ export default function Home() {
   const [bebidasFiltradas, setBebidasFiltradas] = useState(bebidas);
   const [suggestions, setSuggestions] = useState<typeof bebidas>([]);
 
-  React.useEffect(() => {
+  useEffect(() => {
+    AOS.init({ duration: 900, once: true });
+  }, []);
+
+  useEffect(() => {
     setLoading(true);
     const timeout = setTimeout(() => {
       const filtradas = bebidas.filter(b =>
@@ -67,107 +78,75 @@ export default function Home() {
   }, [search]);
 
   return (
-    <Container maxWidth="lg" sx={{ py: 8 }}>
-      <Typography variant="h3" color="primary" gutterBottom align="center" sx={{ fontWeight: 700, letterSpacing: 1 }}>
-        ¡Bienvenido{user ? `, ${user.name}` : ''} a Gunter Bar!
-      </Typography>
-      <Typography variant="h5" color="secondary" sx={{ mb: 4, fontWeight: 500 }} align="center">
-        Elige tu bebida favorita
-      </Typography>
-      {!selected && (
-        <Box sx={{ maxWidth: 400, mx: 'auto', mb: 4 }}>
-          <TextField
-            fullWidth
-            variant="outlined"
-            placeholder="Buscar bebida..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon color="primary" />
-                </InputAdornment>
-              ),
-              sx: { bgcolor: '#fff', borderRadius: 2, fontSize: '1.1rem' }
-            }}
-            sx={{ fontSize: '1.1rem', mb: 1 }}
-          />
-          {suggestions.length > 0 && (
-            <Box sx={{ mt: 1, textAlign: 'center' }}>
-              <Typography variant="body2" color="text.secondary">¿Buscabas alguna de estas?</Typography>
-              {suggestions.map(s => (
-                <Chip key={s.value} label={s.label} onClick={() => setSearch(s.label)} sx={{ m: 0.5, cursor: 'pointer' }} />
-              ))}
-            </Box>
-          )}
-        </Box>
-      )}
-      {selected ? (
-        <Fade in={!!selected}>
-          <Box sx={{ maxWidth: 400, mx: 'auto', mb: 4 }}>
-            <Card sx={{ boxShadow: 6 }}>
-              <CardMedia
-                component="img"
-                height="260"
-                image={selected.img}
-                alt={selected.label}
-              />
-              <CardContent>
-                <Typography variant="h5" gutterBottom sx={{ fontWeight: 600 }}>{selected.label}</Typography>
-                <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>{selected.desc}</Typography>
-                <Box sx={{ mt: 2, textAlign: 'center' }}>
-                  <Button onClick={() => setSelected(null)} variant="contained" color="primary" sx={{ borderRadius: 2, px: 4, fontWeight: 600 }}>
-                    Volver
-                  </Button>
-                </Box>
-              </CardContent>
-            </Card>
-          </Box>
-        </Fade>
-      ) : (
-        <Grid container spacing={4} justifyContent="center">
-          {loading ? (
-            Array.from({ length: 4 }).map((_, i) => (
-              <Grid item xs={12} sm={6} md={4} lg={3} key={i}>
-                <Card sx={{ boxShadow: 4 }}>
-                  <Skeleton variant="rectangular" height={180} />
-                  <CardContent>
-                    <Skeleton variant="text" width="60%" />
-                    <Skeleton variant="text" width="80%" />
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))
-          ) : bebidasFiltradas.length === 0 ? (
-            <Grid item xs={12}>
-              <Typography variant="body1" color="text.secondary" align="center" sx={{ mt: 4 }}>
-                No se encontraron bebidas para tu búsqueda.
-              </Typography>
+    <StyledBg>
+      <Container maxWidth="md" sx={{ py: 6 }}>
+      <Box sx={{ textAlign: 'center', mb: 4 }}>
+        <Typography className="gunter-title animated-title" variant="h4" color="primary" sx={{ fontWeight: 700, letterSpacing: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
+          <LocalBarIcon sx={{ fontSize: 36, color: 'secondary.main' }} />
+          ¡Bienvenido{user ? `, ${user.name}` : ''} a Gunter Bar!
+        </Typography>
+        <Typography variant="subtitle1" color="text.secondary" sx={{ mb: 2 }}>
+          Elige tu bebida favorita
+        </Typography>
+      </Box>
+      <Box sx={{ maxWidth: 400, mx: 'auto', mb: 4 }}>
+        <TextField
+          fullWidth
+          placeholder="Buscar bebida..."
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            ),
+          }}
+        />
+      </Box>
+  <Grid container spacing={3} justifyContent="center">
+        {loading ? (
+          Array.from({ length: 4 }).map((_, i) => (
+            <Grid item xs={12} sm={6} md={4} key={i}>
+              <Skeleton variant="rectangular" height={180} />
             </Grid>
-          ) : (
-            bebidasFiltradas.map(bebida => (
-              <Grid item xs={12} sm={6} md={4} lg={3} key={bebida.value}>
-                <Fade in={!loading}>
-                  <Card sx={{ transition: 'transform 0.2s', '&:hover': { transform: 'scale(1.04)', boxShadow: 8 } }}>
-                    <CardActionArea onClick={() => setSelected(bebida)}>
-                      <CardMedia
-                        component="img"
-                        height="180"
-                        image={bebida.img}
-                        alt={bebida.label}
-                      />
-                      <CardContent>
-                        <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>{bebida.label}</Typography>
-                        <Typography variant="body2" color="text.secondary">{bebida.desc}</Typography>
-                      </CardContent>
-                    </CardActionArea>
-                  </Card>
-                </Fade>
-              </Grid>
-            ))
-          )}
-        </Grid>
-      )}
+          ))
+        ) : bebidasFiltradas.length > 0 ? (
+          bebidasFiltradas.map(b => (
+            <Grid item xs={12} sm={6} md={4} key={b.value} data-aos="fade-up">
+              <Card className="shadow-sm border border-light animated-card" style={{ borderRadius: 16 }}>
+                <CardActionArea>
+                  <CardMedia
+                    component="img"
+                    height="140"
+                    image={b.img}
+                    alt={b.label}
+                  />
+                  <CardContent>
+                    <Typography variant="h6" sx={{ fontWeight: 600 }}>{b.label}</Typography>
+                    <Typography variant="body2" color="text.secondary">{b.desc}</Typography>
+                  </CardContent>
+                </CardActionArea>
+              </Card>
+            </Grid>
+          ))
+        ) : (
+          <Grid item xs={12}>
+            <Typography variant="body1" color="text.secondary" align="center" sx={{ mt: 4 }}>
+              No se encontraron bebidas. Prueba otra búsqueda.
+            </Typography>
+          </Grid>
+        )}
+      </Grid>
+  <ToastContainer position="bottom-right" autoClose={2000} theme="colored" aria-label="notificación" />
     </Container>
+    </StyledBg>
   );
 }
+
+// Fondo con styled-components y Bootstrap
+const StyledBg = styled.div`
+  min-height: 100vh;
+  background: linear-gradient(120deg, #f5f7fa 0%, #c3cfe2 100%);
+  font-family: 'Montserrat', 'Roboto', 'Arial', sans-serif;
+`;

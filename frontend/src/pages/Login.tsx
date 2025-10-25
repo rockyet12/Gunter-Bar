@@ -35,86 +35,82 @@ export const Login: React.FC = () => {
   };
 
   return (
-    <Container component="main" maxWidth="xs">
-      <Box
-        sx={{
-          marginTop: 8,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-      >
-        <Typography component="h1" variant="h5">
-          Gunter Bar
-        </Typography>
-        <Typography variant="body2" sx={{ mt: 1, mb: 3 }}>
-          Iniciar sesión
-        </Typography>
-        {error && (
-          <Typography color="error" align="center" sx={{ mt: 2 }}>
-            {error}
+    <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: 'grey.100' }}>
+      <Container maxWidth="xs">
+        <Box sx={{ p: 4, bgcolor: 'white', borderRadius: 3, boxShadow: 4, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <Typography component="h1" variant="h4" color="primary" sx={{ fontWeight: 700, mb: 1 }}>
+            Gunter Bar
           </Typography>
-        )}
-        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3, width: '100%' }}>
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            id="email"
-            label="Email"
-            name="email"
-            autoComplete="email"
-            autoFocus
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            label="Contraseña"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            sx={{ mt: 3, mb: 2 }}
-            disabled={isLoading}
-          >
-            {isLoading ? 'Iniciando sesión...' : 'Iniciar sesión'}
-          </Button>
-          <Box sx={{ mt: 2, display: 'flex', justifyContent: 'space-between' }}>
-            <Link to="/forgot-password" style={{ textDecoration: 'none' }}>
-              <Button sx={{ textTransform: 'none' }}>
-                ¿Olvidaste tu contraseña?
-              </Button>
-            </Link>
-            <Link to="/register" style={{ textDecoration: 'none' }}>
-              <Button sx={{ textTransform: 'none' }}>
-                Registrarse
-              </Button>
-            </Link>
-          </Box>
-          <Box sx={{ mt: 4, p: 2, bgcolor: 'grey.50', borderRadius: 1 }}>
-            <Typography variant="caption" color="text.secondary" gutterBottom>
-              Cuenta de prueba:
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+            Iniciar sesión
+          </Typography>
+          {error && (
+            <Typography color="error" align="center" sx={{ mb: 2 }}>
+              {error}
             </Typography>
-            <Typography variant="caption" display="block">
-              Email: admin@gunterbar.com
-            </Typography>
-            <Typography variant="caption" display="block">
-              Contraseña: 123456
-            </Typography>
+          )}
+          <Box component="form" onSubmit={handleSubmit} sx={{ width: '100%' }}>
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="email"
+              label="Email"
+              name="email"
+              autoComplete="email"
+              autoFocus
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Contraseña"
+              type="password"
+              id="password"
+              autoComplete="current-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              sx={{ mt: 3, mb: 2, fontWeight: 600 }}
+              disabled={isLoading}
+            >
+              {isLoading ? 'Iniciando sesión...' : 'Iniciar sesión'}
+            </Button>
+            <Box sx={{ mt: 2, display: 'flex', justifyContent: 'space-between' }}>
+              <Link to="/forgot-password" style={{ textDecoration: 'none' }}>
+                <Button sx={{ textTransform: 'none' }}>
+                  ¿Olvidaste tu contraseña?
+                </Button>
+              </Link>
+              <Link to="/register" style={{ textDecoration: 'none' }}>
+                <Button sx={{ textTransform: 'none' }}>
+                  Registrarse
+                </Button>
+              </Link>
+            </Box>
+            <Box sx={{ mt: 4, p: 2, bgcolor: 'grey.50', borderRadius: 1 }}>
+              <Typography variant="caption" color="text.secondary" gutterBottom>
+                Cuenta de prueba:
+              </Typography>
+              <Typography variant="caption" display="block">
+                Email: admin@gunterbar.com
+              </Typography>
+              <Typography variant="caption" display="block">
+                Contraseña: 123456
+              </Typography>
+            </Box>
           </Box>
         </Box>
-      </Box>
-    </Container>
+      </Container>
+    </Box>
   );
 };
 

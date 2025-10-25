@@ -56,11 +56,14 @@ export const RegisterForm = () => {
   };
 
   return (
-    <Container component="main" maxWidth="xs">
-      <Paper elevation={3} sx={{ p: 4, mt: 8 }}>
-        <Typography component="h1" variant="h5" align="center">
-          Crear cuenta
-        </Typography>
+      <Container component="main" maxWidth="xs" sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(120deg, #f5f7fa 0%, #c3cfe2 100%)' }}>
+        <Paper elevation={6} sx={{ p: 4, borderRadius: 4, boxShadow: 6, width: '100%', maxWidth: 400, mx: 'auto', animation: 'fadeDown 1s' }}>
+        <Box sx={{ textAlign: 'center', mb: 2 }}>
+          <img src="/logo192.png" alt="Logo" style={{ width: 48, marginBottom: 8, opacity: 0.85 }} />
+          <Typography component="h1" variant="h5" align="center" sx={{ fontWeight: 700, letterSpacing: 1 }}>
+            Registrarse
+          </Typography>
+        </Box>
         {error && (
           <Typography color="error" align="center" sx={{ mt: 2 }}>
             {error}

@@ -33,7 +33,9 @@ const HomePage = () => (
 );
 
 export const AppRoutes = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
+  // Normaliza el rol para evitar problemas de tipo
+  const role = typeof user?.role === 'string' ? Number(user.role) : user?.role;
 
   return (
     <Routes>
@@ -53,41 +55,36 @@ export const AppRoutes = () => {
           </PrivateRoute>
         }
       />
-      <Route
-        path="/orders"
-        element={
-          <PrivateRoute>
-            <Orders />
-          </PrivateRoute>
-        }
-      />
-      <Route
-        path="/orders/new"
-        element={
-          <PrivateRoute>
-            <NewOrder />
-          </PrivateRoute>
-        }
-      />
-      <Route
-        path="/admin-bebidas"
-        element={
-          <PrivateRoute>
-            <AdminBebidas />
-          </PrivateRoute>
-        }
-      />
-      <Route
-        path="/profile"
-        element={
-          <PrivateRoute>
-            <Profile />
-          </PrivateRoute>
-        }
-      />
-      <Route path="*" element={<Navigate to="/" replace />} />
+      {/* Panel de usuario */}
+      {role === 1 && (
+        <Route
+          path="/orders"
+          element={
+            <PrivateRoute>
+              <Orders />
+            </PrivateRoute>
+          }
+        />
+      )}
+      {role === 1 && (
+        <Route
+          path="/orders/new"
+          element={
+            <PrivateRoute>
+              <NewOrder />
+            </PrivateRoute>
+          }
+        />
+      )}
+          <Route
+            path="/profile"
+            element={
+              <PrivateRoute>
+                <Profile />
+              </PrivateRoute>
+            }
+          />
+    <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
-};
-
-export default AppRoutes;
+}

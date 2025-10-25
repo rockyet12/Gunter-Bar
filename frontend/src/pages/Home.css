@@ -1,0 +1,36 @@
+.animated-card {
+  animation: fadeInCard 1s ease;
+}
+
+@keyframes fadeInCard {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animated-btn {
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.animated-btn:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+}
+.animated-title {
+  animation: fadeDown 1.2s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+@keyframes fadeDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-40px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -20,4 +20,23 @@ public interface IUserService
     // Auth
     Task<ApiResponse<UserDto>> AuthenticateAsync(UserCredentialsDto credentials);
     Task<ApiResponse<bool>> ChangePasswordAsync(int userId, string currentPassword, string newPassword);
+    /// <summary>
+    /// Guarda el código de recuperación de contraseña para el usuario
+    /// </summary>
+    /// <param name="email">Email del usuario</param>
+    /// <param name="code">Código de recuperación</param>
+    /// <returns>Resultado de la operación</returns>
+    Task<ApiResponse<bool>> SetPasswordResetCodeAsync(string email, string code);
+    /// <summary>
+    /// Restablece la contraseña usando email y código de seguridad
+    /// </summary>
+    /// <param name="email">Email del usuario</param>
+    /// <param name="code">Código de recuperación</param>
+    /// <param name="newPassword">Nueva contraseña</param>
+    /// <returns>Resultado de la operación</returns>
+    Task<ApiResponse<bool>> ResetPasswordWithCodeAsync(string email, string code, string newPassword);
+    
+    // SMS Verification
+    Task<ApiResponse<bool>> GenerateSmsVerificationCodeAsync(int userId, string phoneNumber);
+    Task<ApiResponse<bool>> VerifySmsCodeAsync(int userId, string code);
 }

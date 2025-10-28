@@ -31,10 +31,12 @@ public class JwtService : IJwtService
 
         var claims = new[]
         {
-            new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
+            new Claim("sub", userId.ToString()), // Subject claim (usuario principal) - usando string literal
+            new Claim(ClaimTypes.NameIdentifier, userId.ToString()), // Para compatibilidad
             new Claim("uid", userId.ToString()), // Claim extra para compatibilidad con controladores
             new Claim(ClaimTypes.Email, email),
-            new Claim(ClaimTypes.Role, role),
+            // El claim de rol debe ser string, no int
+            new Claim(ClaimTypes.Role, role.ToString()),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new Claim(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64)
         };
@@ -43,7 +45,7 @@ public class JwtService : IJwtService
             issuer: _issuer,
             audience: _audience,
             claims: claims,
-            expires: DateTime.UtcNow.AddHours(24),
+            expires: DateTime.UtcNow.AddDays(7), // Cambiado de 24 horas a 7 días para coincidir con la cookie
             signingCredentials: credentials
         );
 

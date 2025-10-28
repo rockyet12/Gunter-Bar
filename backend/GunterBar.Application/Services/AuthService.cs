@@ -28,15 +28,20 @@ public class AuthService : IAuthService
                 return ApiResponse<AuthResponseDto>.Fail("El email ya está registrado");
             }
 
-            var user = new User
+            var user = new User(
+                registerDto.Name,
+                registerDto.Email,
+                BCrypt.Net.BCrypt.HashPassword(registerDto.Password)
+            )
             {
-                Name = registerDto.Name,
-                Email = registerDto.Email,
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword(registerDto.Password),
                 Role = UserRole.Client,
                 PhoneNumber = registerDto.PhoneNumber,
-                Address = registerDto.Address
+                Address = registerDto.Address,
+                ProfileImageUrl = registerDto.ProfileImageUrl
             };
+
+            // Set LastName separately to ensure it's properly assigned
+            user.LastName = registerDto.LastName;
 
             var createdUser = await _userRepository.CreateAsync(user);
             var token = _jwtService.GenerateToken(createdUser.Id, createdUser.Email, createdUser.Role.ToString());
@@ -49,10 +54,12 @@ public class AuthService : IAuthService
                 {
                     Id = createdUser.Id,
                     Name = createdUser.Name,
+                    LastName = createdUser.LastName,
                     Email = createdUser.Email,
                     Role = createdUser.Role,
                     PhoneNumber = createdUser.PhoneNumber,
-                    Address = createdUser.Address
+                    Address = createdUser.Address,
+                    ProfileImageUrl = createdUser.ProfileImageUrl
                 }
             };
 

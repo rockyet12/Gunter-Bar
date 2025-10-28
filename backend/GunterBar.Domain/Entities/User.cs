@@ -12,6 +12,9 @@ public class User
     [Required, MaxLength(100)]
     public string Name { get; set; } = string.Empty;
 
+    [MaxLength(100)]
+    public string? LastName { get; set; }
+
     [Required, EmailAddress, MaxLength(150)]
     public string Email { get; set; } = string.Empty;
 
@@ -20,6 +23,17 @@ public class User
 
     [Required]
     public UserRole Role { get; set; }
+
+    [MaxLength(20)]
+    public string RoleName
+    {
+        get => Role.ToString();
+        set
+        {
+            if (!string.IsNullOrEmpty(value) && Enum.TryParse<UserRole>(value, out var parsed))
+                Role = parsed;
+        }
+    }
 
 
     public string? PhoneNumber { get; set; }
@@ -41,6 +55,17 @@ public class User
     public int LoginAttempts { get; set; }
     public DateTime? LastLoginAttempt { get; set; }
 
+
+    [MaxLength(10)]
+    public string? PasswordResetCode { get; set; }
+
+    public DateTime? PasswordResetCodeGeneratedAt { get; set; }
+
+    [MaxLength(6)]
+    public string? SmsVerificationCode { get; set; }
+
+    public DateTime? SmsVerificationCodeGeneratedAt { get; set; }
+
     // Navigation properties
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 
@@ -48,6 +73,17 @@ public class User
     public User(string name, string email, string passwordHash)
     {
         Name = name;
+        Email = email;
+        PasswordHash = passwordHash;
+        Role = UserRole.Client;
+        LoginAttempts = 0;
+    }
+
+    // Constructor con apellido
+    public User(string name, string lastName, string email, string passwordHash)
+    {
+        Name = name;
+        LastName = lastName;
         Email = email;
         PasswordHash = passwordHash;
         Role = UserRole.Client;

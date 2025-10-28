@@ -1,0 +1,75 @@
+/* Input Components - Consistent Styling */
+
+.input-group {
+  margin-bottom: 1rem;
+}
+
+.input-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #34495e;
+}
+
+.input-field {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #e1e8ed;
+  border-radius: 8px;
+  font-size: 1rem;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+  background-color: #f8f9fa;
+  color: #2c3e50;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: #e74c3c;
+  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+  background-color: white;
+}
+
+.input-field::placeholder {
+  color: #95a5a6;
+}
+
+.input-field:disabled {
+  background-color: #ecf0f1;
+  color: #7f8c8d;
+  cursor: not-allowed;
+}
+
+/* Error state */
+.input-field.error {
+  border-color: #e74c3c;
+  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+}
+
+.input-error {
+  color: #e74c3c;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+/* Different input types */
+.input-textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.input-select {
+  cursor: pointer;
+}
+
+/* Input sizes */
+.input-sm {
+  padding: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.input-lg {
+  padding: 1rem;
+  font-size: 1.125rem;
+}

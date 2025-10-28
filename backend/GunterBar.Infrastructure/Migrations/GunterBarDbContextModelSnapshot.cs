@@ -187,14 +187,29 @@ namespace GunterBar.Infrastructure.Migrations
                     b.Property<DateTime?>("CancelledDate")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<string>("CodigoVerif")
+                        .IsRequired()
+                        .HasMaxLength(4)
+                        .HasColumnType("varchar(4)");
+
                     b.Property<DateTime?>("CompletedDate")
                         .HasColumnType("datetime(6)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<string>("Direccion")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("MetodoPago")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)");
 
                     b.Property<string>("Notes")
                         .HasMaxLength(500)
@@ -205,6 +220,10 @@ namespace GunterBar.Infrastructure.Migrations
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
+
+                    b.Property<string>("Tarjeta")
+                        .HasMaxLength(30)
+                        .HasColumnType("varchar(30)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)");
@@ -291,6 +310,10 @@ namespace GunterBar.Infrastructure.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("varchar(500)");
 
+                    b.Property<string>("Dni")
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -298,6 +321,10 @@ namespace GunterBar.Infrastructure.Migrations
 
                     b.Property<DateTime?>("LastLoginAttempt")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<string>("LastName")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<int>("LoginAttempts")
                         .HasColumnType("int");
@@ -311,6 +338,13 @@ namespace GunterBar.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<string>("PasswordResetCode")
+                        .HasMaxLength(10)
+                        .HasColumnType("varchar(10)");
+
+                    b.Property<DateTime?>("PasswordResetCodeGeneratedAt")
+                        .HasColumnType("datetime(6)");
+
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("longtext");
 
@@ -320,6 +354,18 @@ namespace GunterBar.Infrastructure.Migrations
 
                     b.Property<int>("Role")
                         .HasColumnType("int");
+
+                    b.Property<string>("RoleName")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)");
+
+                    b.Property<string>("SmsVerificationCode")
+                        .HasMaxLength(6)
+                        .HasColumnType("varchar(6)");
+
+                    b.Property<DateTime?>("SmsVerificationCodeGeneratedAt")
+                        .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
 

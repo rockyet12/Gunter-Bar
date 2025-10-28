@@ -15,6 +15,7 @@ public class OrderService : IOrderService
     private readonly ICartRepository _cartRepository;
     private readonly IDrinkRepository _drinkRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IEmailService _emailService;
     
     private const int MAX_ITEMS_PER_ORDER = 20;
     private static readonly Dictionary<OrderStatus, OrderStatus[]> AllowedStatusTransitions = new()
@@ -29,12 +30,14 @@ public class OrderService : IOrderService
         IOrderRepository orderRepository, 
         ICartRepository cartRepository, 
         IDrinkRepository drinkRepository,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork,
+        IEmailService emailService)
     {
         _orderRepository = orderRepository;
         _cartRepository = cartRepository;
         _drinkRepository = drinkRepository;
         _unitOfWork = unitOfWork;
+        _emailService = emailService;
     }
 
     private static OrderDto MapToOrderDto(Order order)
@@ -169,8 +172,15 @@ public class OrderService : IOrderService
                 }
             }
 
-        // Crear la orden
-        var order = new Order(userId, createOrderDto.Notes);
+        // Crear la orden con datos extendidos
+        var order = new Order(
+            userId,
+            createOrderDto.Notes,
+            createOrderDto.Direccion,
+            createOrderDto.MetodoPago,
+            createOrderDto.Tarjeta,
+            createOrderDto.CodigoVerif
+        );
 
         // Crear los items de la orden
         foreach (var cartItem in cart.Items)
@@ -196,6 +206,12 @@ public class OrderService : IOrderService
         var orderDto = MapToOrderDto(createdOrder);
 
         await _unitOfWork.CommitAsync();
+
+        // Enviar email de confirmación al usuario
+        if (createdOrder.User?.Email != null)
+        {
+            await _emailService.SendOrderConfirmationAsync(orderDto, createdOrder.User.Email);
+        }
 
         return new ApiResponse<OrderDto>
         {
@@ -229,6 +245,12 @@ public class OrderService : IOrderService
         var updatedOrder = await _orderRepository.UpdateAsync(order);
 
         var orderDto = MapToOrderDto(updatedOrder);
+
+        // Si el estado es 'Completed', enviar email de pago realizado
+        if (updateStatusDto.NewStatus == OrderStatus.Completed && updatedOrder.User?.Email != null)
+        {
+            await _emailService.SendOrderPaidEmailAsync(orderDto, updatedOrder.User.Email);
+        }
 
         return new ApiResponse<OrderDto>
         {

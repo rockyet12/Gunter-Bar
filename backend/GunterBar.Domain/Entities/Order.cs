@@ -24,8 +24,24 @@ public class Order : EntityBase
     [Required]
     public OrderStatus Status { get; private set; }
 
+
     [MaxLength(500)]
     public string? Notes { get; private set; }
+
+    [Required]
+    [MaxLength(200)]
+    public string Direccion { get; set; } = string.Empty;
+
+    [Required]
+    [MaxLength(20)]
+    public string MetodoPago { get; set; } = string.Empty;
+
+    [MaxLength(30)]
+    public string? Tarjeta { get; set; }
+
+    [Required]
+    [MaxLength(4)]
+    public string CodigoVerif { get; set; } = string.Empty;
 
     [Required]
     public DateTime OrderDate { get; private set; }
@@ -54,7 +70,7 @@ public class Order : EntityBase
         Status = OrderStatus.Pending;
     }
 
-    public Order(int userId, string? notes = null) : this()
+    public Order(int userId, string? notes = null, string direccion = "", string metodoPago = "", string? tarjeta = null, string codigoVerif = "") : this()
     {
         if (userId <= 0)
             throw new ArgumentException("El ID del usuario debe ser mayor a 0", nameof(userId));
@@ -62,8 +78,21 @@ public class Order : EntityBase
         if (notes?.Length > 500)
             throw new ArgumentException("Las notas no pueden exceder los 500 caracteres", nameof(notes));
 
+        if (string.IsNullOrWhiteSpace(direccion))
+            throw new ArgumentException("La dirección es obligatoria", nameof(direccion));
+
+        if (string.IsNullOrWhiteSpace(metodoPago))
+            throw new ArgumentException("El método de pago es obligatorio", nameof(metodoPago));
+
+        if (string.IsNullOrWhiteSpace(codigoVerif) || codigoVerif.Length != 4)
+            throw new ArgumentException("El código de verificación debe tener 4 caracteres", nameof(codigoVerif));
+
         UserId = userId;
         Notes = notes?.Trim();
+        Direccion = direccion.Trim();
+        MetodoPago = metodoPago.Trim();
+        Tarjeta = tarjeta?.Trim();
+        CodigoVerif = codigoVerif.Trim();
     }
 
     public void AddItem(OrderItem item)

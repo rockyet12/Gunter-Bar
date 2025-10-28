@@ -35,6 +35,7 @@ public static class DependencyInjection
         services.AddScoped<ICacheService, CacheService>();
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IEmailService, EmailService>();
+        services.AddScoped<ISmsService, SmsService>();
 
         // Cache
         services.AddMemoryCache();

@@ -8,6 +8,52 @@ namespace GunterBar.Infrastructure.Services;
 
 public class EmailService : IEmailService
 {
+    // ...existing code...
+
+    public async Task SendOrderPaidEmailAsync(OrderDto order, string userEmail)
+    {
+        if (order == null)
+            throw new ArgumentNullException(nameof(order));
+        if (string.IsNullOrWhiteSpace(userEmail))
+            throw new ArgumentException("User email is required", nameof(userEmail));
+
+        var subject = "Pago recibido - Gunter Bar";
+        var body = GenerateOrderPaidEmail(order);
+        await SendEmailAsync(userEmail, subject, body);
+    }
+
+    private string GenerateOrderPaidEmail(OrderDto order)
+    {
+        var userInfo = $@"
+            <h2>Información del cliente</h2>
+            <ul>
+                <li><strong>Nombre:</strong> {order.UserName}</li>
+                <li><strong>ID Usuario:</strong> {order.UserId}</li>
+                <li><strong>Fecha del pedido:</strong> {order.OrderDate:dd/MM/yyyy HH:mm}</li>
+            </ul>
+        ";
+
+        var itemsInfo = "<h2>Detalle del pedido</h2><ul>";
+        foreach (var item in order.Items)
+        {
+            itemsInfo += $"<li>{item.Quantity} x {item.DrinkName} - ${item.Subtotal:F2}</li>";
+        }
+        itemsInfo += "</ul>";
+
+        var totalInfo = $"<p><strong>Total pagado:</strong> ${order.Total:F2}</p>";
+
+        var thanks = "<h3>¡Gracias por tu pago!</h3><p>Tu compra ha sido procesada exitosamente. Pronto recibirás tu pedido.</p>";
+
+        return $@"
+            <h1>Confirmación de pago</h1>
+            <p>Hemos recibido tu pago y tu orden está siendo preparada.</p>
+            <p>Número de orden: {order.Id}</p>
+            {userInfo}
+            {itemsInfo}
+            {totalInfo}
+            {thanks}
+        ";
+    }
     private readonly string _smtpServer;
     private readonly int _smtpPort;
     private readonly string _smtpUsername;
@@ -83,12 +129,35 @@ public class EmailService : IEmailService
 
     private string GenerateOrderConfirmationEmail(OrderDto order)
     {
-        // Implementa la plantilla HTML para el correo de confirmación de orden
+        // Plantilla HTML mejorada con información del usuario y agradecimiento
+        var userInfo = $@"
+            <h2>Información del cliente</h2>
+            <ul>
+                <li><strong>Nombre:</strong> {order.UserName}</li>
+                <li><strong>ID Usuario:</strong> {order.UserId}</li>
+                <li><strong>Fecha del pedido:</strong> {order.OrderDate:dd/MM/yyyy HH:mm}</li>
+            </ul>
+        ";
+
+        var itemsInfo = "<h2>Detalle del pedido</h2><ul>";
+        foreach (var item in order.Items)
+        {
+            itemsInfo += $"<li>{item.Quantity} x {item.DrinkName} - ${item.Subtotal:F2}</li>";
+        }
+        itemsInfo += "</ul>";
+
+        var totalInfo = $"<p><strong>Total:</strong> ${order.Total:F2}</p>";
+
+        var thanks = "<h3>¡Gracias por tu compra en Gunter Bar!</h3><p>Esperamos que disfrutes tu pedido. Si tienes dudas, responde a este correo.</p>";
+
         return $@"
-            <h1>¡Gracias por tu orden!</h1>
-            <p>Tu orden ha sido confirmada.</p>
+            <h1>Confirmación de tu pedido</h1>
+            <p>Tu orden ha sido confirmada y está en proceso.</p>
             <p>Número de orden: {order.Id}</p>
-            <!-- Más detalles de la orden -->
+            {userInfo}
+            {itemsInfo}
+            {totalInfo}
+            {thanks}
         ";
     }
 

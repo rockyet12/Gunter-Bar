@@ -2,6 +2,7 @@ using GunterBar.Application.Common.Models;
 using GunterBar.Application.DTOs.User;
 using GunterBar.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace GunterBar.Presentation.Controllers;
 
@@ -74,7 +75,7 @@ namespace GunterBar.Presentation.Controllers;
     [HttpGet("profile")]
     public async Task<ActionResult<ApiResponse<UserDto>>> GetProfile()
     {
-        var userIdClaim = User.FindFirst("sub") ?? User.FindFirst("nameid");
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
         if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
         {
             return Unauthorized(new ApiResponse<UserDto>
@@ -86,7 +87,7 @@ namespace GunterBar.Presentation.Controllers;
         }
 
         var result = await _authService.GetProfileAsync(userId);
-        
+
         if (!result.Success)
         {
             return NotFound(result);

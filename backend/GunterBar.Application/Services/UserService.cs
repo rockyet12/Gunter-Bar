@@ -28,13 +28,15 @@ public class UserService : IUserService
         {
             Id = user.Id,
             Name = user.Name,
+            LastName = user.LastName,
             Email = user.Email,
             Role = user.Role,
             PhoneNumber = user.PhoneNumber,
             Address = user.Address,
             ProfileImageUrl = user.ProfileImageUrl,
             DeliveryDescription = user.DeliveryDescription,
-            BirthDate = user.BirthDate
+            BirthDate = user.BirthDate,
+            Dni = user.Dni
         };
     }
 
@@ -163,10 +165,12 @@ public class UserService : IUserService
             }
 
             user.Name = updateUserDto.Name;
+            user.LastName = updateUserDto.LastName;
             user.PhoneNumber = updateUserDto.PhoneNumber;
             user.Address = updateUserDto.Address;
             user.DeliveryDescription = updateUserDto.DeliveryDescription;
             user.BirthDate = updateUserDto.BirthDate;
+            user.Dni = updateUserDto.Dni;
 
             var updatedUser = await _userRepository.UpdateAsync(user);
             return ApiResponse<UserDto>.Succeed(MapToDto(updatedUser), "Usuario actualizado exitosamente");
@@ -301,5 +305,81 @@ public class UserService : IUserService
         {
             return ApiResponse<bool>.Fail($"Error al cambiar la contraseña: {ex.Message}");
         }
+    }
+
+    public async Task<ApiResponse<bool>> SetPasswordResetCodeAsync(string email, string code)
+    {
+        if (!IsValidEmail(email))
+            return ApiResponse<bool>.Fail("Email inválido");
+        if (string.IsNullOrWhiteSpace(code) || code.Length < 4)
+            return ApiResponse<bool>.Fail("Código inválido");
+        var user = await _userRepository.GetByEmailAsync(email);
+        if (user == null)
+            return ApiResponse<bool>.Fail("Usuario no encontrado");
+        user.PasswordResetCode = code;
+        user.PasswordResetCodeGeneratedAt = DateTime.UtcNow;
+        await _userRepository.UpdateAsync(user);
+        return ApiResponse<bool>.Succeed(true, "Código de recuperación guardado");
+    }
+
+    public async Task<ApiResponse<bool>> ResetPasswordWithCodeAsync(string email, string code, string newPassword)
+    {
+        if (!IsValidEmail(email))
+            return ApiResponse<bool>.Fail("Email inválido");
+        if (string.IsNullOrWhiteSpace(code) || code.Length < 4)
+            return ApiResponse<bool>.Fail("Código inválido");
+        if (!IsValidPassword(newPassword))
+            return ApiResponse<bool>.Fail($"La contraseña debe tener al menos {MinPasswordLength} caracteres");
+        var user = await _userRepository.GetByEmailAsync(email);
+        if (user == null)
+            return ApiResponse<bool>.Fail("Usuario no encontrado");
+        if (user.PasswordResetCode == null || user.PasswordResetCode.ToUpper() != code.ToUpper())
+            return ApiResponse<bool>.Fail("Código incorrecto");
+        if (user.PasswordResetCodeGeneratedAt == null || (DateTime.UtcNow - user.PasswordResetCodeGeneratedAt.Value).TotalMinutes > 30)
+            return ApiResponse<bool>.Fail("El código ha expirado");
+        user.PasswordHash = HashPassword(newPassword);
+        user.PasswordResetCode = null;
+        user.PasswordResetCodeGeneratedAt = null;
+        await _userRepository.UpdateAsync(user);
+        return ApiResponse<bool>.Succeed(true, "Contraseña actualizada correctamente");
+    }
+
+    public async Task<ApiResponse<bool>> GenerateSmsVerificationCodeAsync(int userId, string phoneNumber)
+    {
+        var user = await _userRepository.GetByIdAsync(userId);
+        if (user == null)
+            return ApiResponse<bool>.Fail("Usuario no encontrado");
+        if (string.IsNullOrWhiteSpace(phoneNumber))
+            return ApiResponse<bool>.Fail("Número de teléfono requerido");
+
+        var code = GenerateRandomCode(6);
+        user.SmsVerificationCode = code;
+        user.SmsVerificationCodeGeneratedAt = DateTime.UtcNow;
+        user.PhoneNumber = phoneNumber; // Actualizar el número de teléfono
+        await _userRepository.UpdateAsync(user);
+        return ApiResponse<bool>.Succeed(true, "Código generado correctamente");
+    }
+
+    public async Task<ApiResponse<bool>> VerifySmsCodeAsync(int userId, string code)
+    {
+        var user = await _userRepository.GetByIdAsync(userId);
+        if (user == null)
+            return ApiResponse<bool>.Fail("Usuario no encontrado");
+        if (user.SmsVerificationCode == null || user.SmsVerificationCode != code)
+            return ApiResponse<bool>.Fail("Código incorrecto");
+        if (user.SmsVerificationCodeGeneratedAt == null || (DateTime.UtcNow - user.SmsVerificationCodeGeneratedAt.Value).TotalMinutes > 10)
+            return ApiResponse<bool>.Fail("El código ha expirado");
+
+        user.SmsVerificationCode = null;
+        user.SmsVerificationCodeGeneratedAt = null;
+        await _userRepository.UpdateAsync(user);
+        return ApiResponse<bool>.Succeed(true, "Código verificado correctamente");
+    }
+
+    private static string GenerateRandomCode(int length)
+    {
+        const string chars = "0123456789";
+        var random = new Random();
+        return new string(Enumerable.Repeat(chars, length).Select(s => s[random.Next(s.Length)]).ToArray());
     }
 }

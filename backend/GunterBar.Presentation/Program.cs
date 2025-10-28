@@ -125,17 +125,10 @@ public class Program
         {
             options.AddPolicy("AllowFrontend", policy =>
             {
-                policy.WithOrigins(
-                    "http://localhost:3000",
-                    "https://localhost:3000",
-                    "http://127.0.0.1:3000",
-                    "https://127.0.0.1:3000",
-                    "http://localhost:5221",
-                    "https://localhost:5221"
-                )
+                policy.WithOrigins("http://localhost:5173") // Frontend Vite dev server
                 .AllowAnyHeader()
                 .AllowAnyMethod()
-                .AllowCredentials();
+                .AllowCredentials(); // Importante: permitir credenciales (cookies)
             });
         });
     }

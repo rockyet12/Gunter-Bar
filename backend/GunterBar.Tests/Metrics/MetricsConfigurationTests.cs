@@ -1,6 +1,5 @@
 using GunterBar.Presentation.Extensions;
-using GunterBar.Presentation.Infrastructure;
-using GunterBar.Presentation.Infrastructure;
+using GunterBar.Presentation.Metrics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;

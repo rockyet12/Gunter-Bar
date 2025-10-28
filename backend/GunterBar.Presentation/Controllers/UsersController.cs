@@ -20,11 +20,13 @@ public class UsersController : ControllerBase
 {
     private readonly IUserService _userService;
     private readonly ILogger<UsersController> _logger;
+    private readonly IEmailService _emailService;
 
-    public UsersController(IUserService userService, ILogger<UsersController> logger)
+    public UsersController(IUserService userService, ILogger<UsersController> logger, IEmailService emailService)
     {
         _userService = userService ?? throw new ArgumentNullException(nameof(userService));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
     }
 
     /// <summary>
@@ -362,5 +364,51 @@ public class UsersController : ControllerBase
             return StatusCode((int)HttpStatusCode.InternalServerError,
                 ApiResponse<UserDto>.Fail("An error occurred while uploading the image"));
         }
+    }
+
+    /// <summary>
+    /// Solicita recuperación de contraseña (envía email con link y código)
+    /// </summary>
+    /// <param name="email">Email del usuario</param>
+    /// <returns>Resultado de la operación</returns>
+    [HttpPost("request-password-reset")]
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(ApiResponse<bool>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    public async Task<ActionResult<ApiResponse<bool>>> RequestPasswordReset([FromBody] string email)
+    {
+        if (string.IsNullOrWhiteSpace(email))
+            return BadRequest(ApiResponse<bool>.Fail("Email es requerido"));
+
+        // Generar código de seguridad único
+        var code = Guid.NewGuid().ToString("N").Substring(0, 6).ToUpper();
+        // Guardar el código en la base de datos asociado al usuario (implementa en UserService)
+        var result = await _userService.SetPasswordResetCodeAsync(email, code);
+        if (!result.Success)
+            return BadRequest(result);
+
+        // Enviar email con link y código
+        var resetLink = $"https://gunterbar.com/reset-password?email={email}&code={code}";
+        await _emailService.SendPasswordResetAsync(email, code + "\nLink: " + resetLink);
+    return Ok(ApiResponse<bool>.Succeed(true, "Email de recuperación enviado"));
+    }
+
+    /// <summary>
+    /// Restablece la contraseña usando email y código de seguridad
+    /// </summary>
+    /// <param name="dto">Datos para el reseteo</param>
+    /// <returns>Resultado de la operación</returns>
+    [HttpPost("reset-password")]
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(ApiResponse<bool>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    public async Task<ActionResult<ApiResponse<bool>>> ResetPassword([FromBody] ResetPasswordDto dto)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ApiResponse<bool>.Fail("Datos inválidos"));
+        var result = await _userService.ResetPasswordWithCodeAsync(dto.Email, dto.Code, dto.NewPassword);
+        if (!result.Success)
+            return BadRequest(result);
+        return Ok(result);
     }
 }

@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using Xunit;
 using Moq;
 using GunterBar.Presentation.Infrastructure;
 

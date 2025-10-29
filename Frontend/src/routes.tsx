@@ -37,6 +37,7 @@ const AppRoutes: React.FC = () => {
       }>
         {/* User-specific pages can go here */}
         <Route index element={<Home />} />
+        <Route path="manage-products" element={<Menu />} />
       </Route>
 
       {/* Profile routes - separate layout */}

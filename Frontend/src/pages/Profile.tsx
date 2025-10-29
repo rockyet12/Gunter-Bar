@@ -7,7 +7,7 @@ interface UserProfile {
   name: string;
   lastName?: string;
   email: string;
-  role: 'Admin' | 'Employee' | 'SalesManager' | 'Client';
+  role: 'User' | 'Seller';
   phoneNumber?: string;
   address?: string;
   dni?: string;
@@ -178,6 +178,9 @@ const Profile: React.FC = () => {
               </p>
               <p className="text-text-muted text-base font-normal leading-normal font-display">
                 {profile?.email}
+              </p>
+              <p className="text-text-muted text-sm font-normal leading-normal font-display">
+                Rol: {profile?.role === 'User' ? 'Usuario' : 'Vendedor'}
               </p>
             </div>
           </div>

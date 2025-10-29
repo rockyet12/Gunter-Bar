@@ -30,17 +30,35 @@ const Home: React.FC = () => {
   const { isAuthenticated } = useAuth();
   const { addItem } = useCart();
   const { ref: productsRef, isIntersecting: productsVisible } = useIntersectionObserver();
+  const { ref: extravagantRef, isIntersecting: extravagantVisible } = useIntersectionObserver();
 
   // Estado para el modal de reseñas
   const [reviewModalOpen, setReviewModalOpen] = React.useState(false);
   const [selectedProduct, setSelectedProduct] = React.useState<Product | null>(null);
 
-  // Debug: mostrar cuando las animaciones se activan
+    // Estado para controlar animaciones con fallback
+  const [animationsEnabled, setAnimationsEnabled] = React.useState(false);
+
+  // Estado para el acordeón de bebidas extravagantes
+  const [extravagantExpanded, setExtravagantExpanded] = React.useState(false);
+  // Estado para el acordeón de productos destacados
+  const [featuredExpanded, setFeaturedExpanded] = React.useState(true);
+
+  // Activar animaciones cuando los productos son visibles o después de un delay
   React.useEffect(() => {
-    if (productsVisible) {
-      console.log('Productos visibles - animaciones activadas');
+    if (productsVisible || extravagantVisible) {
+      setAnimationsEnabled(true);
     }
-  }, [productsVisible]);
+  }, [productsVisible, extravagantVisible]);
+
+  // Fallback: activar animaciones automáticamente después de 500ms
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      setAnimationsEnabled(true);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   // Productos destacados
   const featuredProducts: Product[] = [
@@ -102,6 +120,7 @@ const Home: React.FC = () => {
       alcoholContent: 6.5,
       volume: "330ml",
       origin: "Colombia",
+      featured: true,
       recommendations: [
         {
           id: 6,
@@ -181,6 +200,7 @@ const Home: React.FC = () => {
       alcoholContent: 13.5,
       volume: "750ml",
       origin: "Chile",
+      featured: true,
       recommendations: [
         {
           id: 8,
@@ -220,6 +240,7 @@ const Home: React.FC = () => {
       alcoholContent: 15,
       volume: "300ml",
       origin: "México",
+      featured: true,
       recommendations: [
         {
           id: 1,
@@ -259,6 +280,7 @@ const Home: React.FC = () => {
       alcoholContent: 5,
       volume: "330ml",
       origin: "Colombia",
+      featured: true,
       recommendations: [
         {
           id: 2,
@@ -298,6 +320,7 @@ const Home: React.FC = () => {
       alcoholContent: 40,
       volume: "750ml",
       origin: "Caribe",
+      featured: true,
       recommendations: [
         {
           id: 3,
@@ -337,6 +360,7 @@ const Home: React.FC = () => {
       alcoholContent: 12.5,
       volume: "750ml",
       origin: "Chile",
+      featured: true,
       recommendations: [
         {
           id: 4,
@@ -412,6 +436,10 @@ const Home: React.FC = () => {
           Desde cócteles artesanales preparados por expertos bartenders, hasta una selección exclusiva de 
           whiskies añejos, vinos finos y cervezas artesanales. Cada bebida cuenta una historia y está 
           diseñada para crear momentos inolvidables.
+          <br /><br />
+          <strong>¿Qué nos hace especiales?</strong> Nuestra colección incluye bebidas importadas de las mejores 
+          destilerías del mundo, cócteles innovadores creados por nuestros mixólogos profesionales, y un 
+          ambiente perfecto para disfrutar con amigos o en pareja. ¡Descubre el arte de beber bien!
         </p>
         <div className="hero-highlights">
           <div className="highlight-item">
@@ -453,6 +481,33 @@ const Home: React.FC = () => {
         </div>
       </section>
 
+      {/* Announcements Section */}
+      <section className="announcements-section">
+        <div className="announcements-container">
+          <div className="announcement-banner slide-in-left">
+            <div className="announcement-icon">🎉</div>
+            <div className="announcement-content">
+              <h4>¡Nueva Colección de Verano!</h4>
+              <p>Descubre nuestros cócteles refrescantes perfectos para el calor</p>
+            </div>
+          </div>
+          <div className="announcement-banner slide-in-right">
+            <div className="announcement-icon">🥂</div>
+            <div className="announcement-content">
+              <h4>Degustación Gratuita</h4>
+              <p>Prueba nuestros vinos premium este fin de semana</p>
+            </div>
+          </div>
+          <div className="announcement-banner slide-in-left">
+            <div className="announcement-icon">⭐</div>
+            <div className="announcement-content">
+              <h4>Whisky del Mes</h4>
+              <p>Escocés 18 años a precio especial por tiempo limitado</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="features">
         <h3>¿Por qué elegir Gunter Bar?</h3>
         <div className="features-grid">
@@ -471,101 +526,143 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      <section className="extravagant-products">
-        <h3>✨ Bebidas Extravagantes</h3>
-        <p className="section-subtitle">Descubre nuestras creaciones más exclusivas y sofisticadas</p>
-        <div className="products-grid extravagant-grid">
-          {featuredProducts.filter(product => product.featured).map((product, index) => (
-            <div
-              key={product.id}
-              className={`product-card extravagant-card animate-on-scroll ${productsVisible ? 'visible' : ''}`}
-              style={{ animationDelay: `${index * 0.15}s` }}
-              onClick={() => handleProductClick(product)}
-            >
-              <div className="product-badge">EXTRAVAGANTE</div>
-              <div className="product-image">
-                <img src={product.image} alt={product.name} />
-                <div className="product-category">{product.category}</div>
+      <section className="extravagant-products" ref={extravagantRef}>
+        <div className="section-header">
+          <h3>✨ Bebidas Extravagantes</h3>
+          <button
+            className="expand-toggle"
+            onClick={() => setExtravagantExpanded(!extravagantExpanded)}
+            aria-label={extravagantExpanded ? "Colapsar sección" : "Expandir sección"}
+          >
+            {extravagantExpanded ? "🔽 Colapsar" : "🔼 Expandir"}
+          </button>
+        </div>
+        <div className={`extravagant-content ${extravagantExpanded ? 'expanded' : 'collapsed'}`}>
+          <p className="section-subtitle">Descubre nuestras creaciones más exclusivas y sofisticadas</p>
+          <div className="products-grid extravagant-grid">
+            {featuredProducts.filter(product => product.featured).map((product, index) => (
+              <div
+                key={product.id}
+                className={`product-card extravagant-card animate-fade-in-bottom ${animationsEnabled ? 'visible' : ''}`}
+                style={{ animationDelay: `${index * 0.2}s` }}
+                onClick={() => handleProductClick(product)}
+              >
+                <div className="aura-effect"></div>
+                <div className="floating-particles"></div>
+                <div className="product-badge">EXTRAVAGANTE</div>
+                <div className="product-image">
+                  <img src={product.image} alt={product.name} />
+                  <div className="product-category">{product.category}</div>
+                </div>
+                <div className="product-info">
+                  <h4 className="product-name">{product.name}</h4>
+                  <p className="product-description">{product.description}</p>
+                  <div className="product-rating">
+                    {renderStars(product.rating)}
+                    <span className="rating-number">({product.rating})</span>
+                  </div>
+                  <div className="product-price extravagant-price">
+                    {formatPrice(product.price)}
+                  </div>
+                  <div className="product-actions">
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      className="buy-button extravagant-button"
+                      onClick={() => addItem({
+                        id: product.id,
+                        name: product.name,
+                        price: product.price,
+                        image: product.image
+                      })}
+                    >
+                      ¡Pedir Ahora!
+                    </Button>
+                  </div>
+                </div>
               </div>
-              <div className="product-info">
-                <h4 className="product-name">{product.name}</h4>
-                <p className="product-description">{product.description}</p>
-                <div className="product-rating">
-                  {renderStars(product.rating)}
-                  <span className="rating-number">({product.rating})</span>
-                </div>
-                <div className="product-price extravagant-price">
-                  {formatPrice(product.price)}
-                </div>
-                <div className="product-actions">
-                  <Button
-                    variant="primary"
-                    size="sm"
-                    className="buy-button extravagant-button"
-                    onClick={() => addItem({
-                      id: product.id,
-                      name: product.name,
-                      price: product.price,
-                      image: product.image
-                    })}
-                  >
-                    ¡Pedir Ahora!
-                  </Button>
-                </div>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </section>
 
       <section className="featured-products" ref={productsRef}>
-        <h3>🌟 Productos Destacados</h3>
-        <p className="section-subtitle">Descubre nuestras bebidas más populares y apreciadas</p>
-        <div className="products-grid">
-          {featuredProducts.map((product, index) => (
-            <div
-              key={product.id}
-              className={`product-card animate-on-scroll ${productsVisible ? 'visible' : ''}`}
-              style={{ animationDelay: `${index * 0.1}s` }}
-              onClick={() => handleProductClick(product)}
-            >
-              <div className="product-image">
-                <img src={product.image} alt={product.name} />
-                <div className="product-category">{product.category}</div>
-              </div>
-              <div className="product-info">
-                <h4 className="product-name">{product.name}</h4>
-                <p className="product-description">{product.description}</p>
-                <div className="product-rating">
-                  {renderStars(product.rating)}
-                  <span className="rating-number">({product.rating})</span>
+        <div className="section-header">
+          <h3>🌟 Productos Destacados</h3>
+          <button
+            className="expand-toggle"
+            onClick={() => setFeaturedExpanded(!featuredExpanded)}
+            aria-label={featuredExpanded ? "Ocultar productos destacados" : "Mostrar productos destacados"}
+          >
+            {featuredExpanded ? "🔽 Ocultar" : "🔼 Mostrar"}
+          </button>
+        </div>
+        <div className={`featured-content ${featuredExpanded ? 'expanded' : 'collapsed'}`}>
+          <p className="section-subtitle">Descubre nuestras bebidas más populares y apreciadas</p>
+          <div className="products-grid">
+          {(() => {
+            console.log('Total featured products:', featuredProducts.length);
+            console.log('Featured products array:', featuredProducts);
+            return featuredProducts.length > 0 && featuredProducts.map((product, index) => {
+              console.log('Rendering product:', product.name, product.id, 'Index:', index);
+              return (
+                <div
+                  key={product.id}
+                  className="product-card extravagant-card animate-zoom-fade featured-glow featured-entrance visible"
+                  style={{ animationDelay: `${index * 0.13}s` }}
+                  onClick={() => handleProductClick(product)}
+                >
+                  <div className="aura-effect"></div>
+                  <div className="floating-particles"></div>
+                  <div className="product-badge">DESTACADO</div>
+                  <div className="product-image">
+                    <img 
+                      src={product.image} 
+                      alt={product.name}
+                      onError={(e) => {
+                        console.error('Image failed to load for product:', product.name, product.image);
+                        e.currentTarget.style.display = 'none';
+                      }}
+                      onLoad={() => console.log('Image loaded successfully for:', product.name)}
+                    />
+                    <div className="product-category">{product.category}</div>
+                  </div>
+                  <div className="product-info">
+                    <h4 className="product-name">{product.name}</h4>
+                    <p className="product-description">{product.description}</p>
+                    <div className="product-rating">
+                      {renderStars(product.rating)}
+                      <span className="rating-number">({product.rating})</span>
+                    </div>
+                    <div className="product-price extravagant-price">
+                      {formatPrice(product.price)}
+                    </div>
+                    <div className="product-actions">
+                      <Button
+                        variant="primary"
+                        size="sm"
+                        className="buy-button extravagant-button"
+                        onClick={() => addItem({
+                          id: product.id,
+                          name: product.name,
+                          price: product.price,
+                          image: product.image
+                        })}
+                      >
+                        Agregar al Carrito
+                      </Button>
+                      <Link to="/menu">
+                        <Button variant="outline" size="sm">
+                          Ver Más
+                        </Button>
+                      </Link>
+                    </div>
+                  </div>
                 </div>
-                <div className="product-price">
-                  {formatPrice(product.price)}
-                </div>
-                <div className="product-actions">
-                  <Button
-                    variant="primary"
-                    size="sm"
-                    className="buy-button"
-                    onClick={() => addItem({
-                      id: product.id,
-                      name: product.name,
-                      price: product.price,
-                      image: product.image
-                    })}
-                  >
-                    Agregar al Carrito
-                  </Button>
-                  <Link to="/menu">
-                    <Button variant="outline" size="sm">
-                      Ver Más
-                    </Button>
-                  </Link>
-                </div>
-              </div>
-            </div>
-          ))}
+              );
+            });
+          })()}
+        </div>
         </div>
       </section>
 

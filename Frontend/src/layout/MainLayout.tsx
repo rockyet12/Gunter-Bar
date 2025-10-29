@@ -73,6 +73,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           <ul>
             <li><Link to="/" onClick={closeMenu}>Inicio</Link></li>
             {isAuthenticated && <li><Link to="/menu" onClick={closeMenu}>Productos</Link></li>}
+            {isAuthenticated && user?.role === 'Seller' && <li><Link to="/dashboard/manage-products" onClick={closeMenu}>Administrar Productos</Link></li>}
             {isAuthenticated && <li><Link to="/profile" onClick={closeMenu}>Mi Perfil</Link></li>}
             {isAuthenticated ? (
               <li>

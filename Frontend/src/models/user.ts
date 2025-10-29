@@ -3,7 +3,7 @@ export interface User {
   name: string;
   lastName?: string;
   email: string;
-  role: 'Admin' | 'Employee' | 'SalesManager' | 'Client';
+  role: 'User' | 'Seller';
   phoneNumber?: string;
   address?: string;
   profileImageUrl?: string;
@@ -16,6 +16,7 @@ export interface CreateUserDto {
   lastName?: string;
   email: string;
   password: string;
+  role: 'User' | 'Seller';
   phoneNumber?: string;
   address?: string;
   profileImageUrl?: string;

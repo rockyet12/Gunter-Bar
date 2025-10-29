@@ -16,6 +16,7 @@ interface Drink {
   image?: string;
   rating: number;
   featured?: boolean;
+  tags?: string[];
 }
 
 const Menu: React.FC = () => {
@@ -25,6 +26,13 @@ const Menu: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('Todos');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [priceFilter, setPriceFilter] = useState<string>('');
+  const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
+
+  // Sugerencias de búsqueda populares
+  const searchSuggestions = [
+    'mojito', 'cerveza', 'vino tinto', 'whisky', 'artesanal', 'premium', 
+    'refrescante', 'clásico', 'IPA', 'ron', 'menta', 'cítrico'
+  ];
 
   // Estado para el modal de reseñas
   const [reviewModalOpen, setReviewModalOpen] = React.useState(false);
@@ -49,7 +57,8 @@ const Menu: React.FC = () => {
       price: 5500,
       category: "Cerveza",
       image: "https://images.unsplash.com/photo-1608270586620-248524c67de9?w=300&h=300&fit=crop&crop=center",
-      rating: 4.2
+      rating: 4.2,
+      tags: ["lager", "refrescante", "clásica", "cerveza"]
     },
     {
       id: 2,
@@ -59,7 +68,8 @@ const Menu: React.FC = () => {
       category: "Cerveza",
       image: "https://images.unsplash.com/photo-1608270586620-248524c67de9?w=300&h=300&fit=crop&crop=center",
       rating: 4.7,
-      featured: true
+      featured: true,
+      tags: ["artesanal", "IPA", "cítrica", "lúpulo", "premium"]
     },
     {
       id: 3,
@@ -89,7 +99,8 @@ const Menu: React.FC = () => {
       category: "Vino",
       image: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=300&h=300&fit=crop&crop=center",
       rating: 4.6,
-      featured: true
+      featured: true,
+      tags: ["tinto", "cabernet", "robusto", "frutas rojas", "taninos"]
     },
     {
       id: 6,
@@ -129,7 +140,8 @@ const Menu: React.FC = () => {
       category: "Cóctel",
       image: "https://images.unsplash.com/photo-1551538827-9c037cb4f32a?w=300&h=300&fit=crop&crop=center",
       rating: 4.8,
-      featured: true
+      featured: true,
+      tags: ["mojito", "clásico", "ron", "menta", "refrescante", "verano"]
     },
     {
       id: 10,
@@ -177,7 +189,8 @@ const Menu: React.FC = () => {
       category: "Whisky",
       image: "https://images.unsplash.com/photo-1528823872057-9c018a7a7553?w=300&h=300&fit=crop&crop=center",
       rating: 4.9,
-      featured: true
+      featured: true,
+      tags: ["escocés", "12 años", "añejado", "vainilla", "roble", "miel", "premium"]
     },
     {
       id: 15,
@@ -278,7 +291,9 @@ const Menu: React.FC = () => {
     const matchesCategory = selectedCategory === 'Todos' || drink.category === selectedCategory;
     const matchesSearch = !searchQuery || 
       drink.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-      drink.description.toLowerCase().includes(searchQuery.toLowerCase());
+      drink.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      drink.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (drink.tags && drink.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase())));
     const matchesPrice = !priceFilter || (() => {
       switch (priceFilter) {
         case 'Hasta $10.000': return drink.price <= 10000;
@@ -292,106 +307,180 @@ const Menu: React.FC = () => {
   });
 
   return (
-    <div className="menu-page">
-      <div className="menu-header">
-        <h2>Nuestros Productos</h2>
-        <p>Descubre nuestra selección completa de bebidas premium organizada por categorías</p>
-      </div>
-
-      {/* Filtros por categoría */}
-      <div className="category-filters">
-        {categories.map(category => (
-          <button
-            key={category}
-            className={`category-filter ${selectedCategory === category ? 'active' : ''}`}
-            onClick={() => setSelectedCategory(category)}
-          >
-            {category}
-          </button>
-        ))}
-      </div>
-
-      {!isAuthenticated && (
-        <div className="auth-banner">
-          <p>👋 ¿Quieres hacer un pedido? <Link to="/login">Inicia sesión</Link> o <Link to="/register">crea una cuenta</Link> para comenzar!</p>
+    <div className="review-modal-overlay" onClick={() => window.history.back()}>
+      <div className="review-modal-content large-modal menu-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="review-modal-header">
+          <h3>Nuestros Productos</h3>
+          <button className="close-btn" onClick={() => window.history.back()}>✕</button>
         </div>
-      )}
 
-      {/* Productos destacados */}
-      {selectedCategory === 'Todos' && (
-        <section className="featured-section">
-          <h3>✨ Productos Destacados</h3>
-          <div className="featured-grid">
-            {drinks
-              .filter(drink => drink.featured)
-              .map(drink => (
-                <div key={drink.id} className="drink-card featured" onClick={() => handleProductClick(drink)}>
-                  {drink.image && (
-                    <div className="drink-image">
-                      <img src={drink.image} alt={drink.name} />
-                      <div className="featured-badge">⭐ Destacado</div>
-                    </div>
-                  )}
-                  <div className="drink-info">
-                    <h4>{drink.name}</h4>
-                    <p>{drink.description}</p>
-                    <div className="drink-rating">
-                      {renderStars(drink.rating || 0)}
-                      <span className="rating-number">({drink.rating})</span>
-                    </div>
-                    <span className="price">{formatPrice(drink.price)}</span>
-                  </div>
-                  <Button
-                    variant={isAuthenticated ? "primary" : "outline"}
-                    size="sm"
-                    onClick={() => addToCart(drink)}
-                  >
-                    {isAuthenticated ? "Agregar al Carrito" : "Inicia Sesión"}
-                  </Button>
-                </div>
-              ))}
+        <div className="menu-content">
+          <p className="menu-description">Descubre nuestra selección completa de bebidas premium organizada por categorías</p>
+
+          {/* Filtros por categoría */}
+          <div className="category-filters">
+            {categories.map(category => (
+              <button
+                key={category}
+                className={`category-filter ${selectedCategory === category ? 'active' : ''}`}
+                onClick={() => setSelectedCategory(category)}
+              >
+                {category}
+              </button>
+            ))}
           </div>
-        </section>
-      )}
 
-      {/* Grid de productos */}
-      <div className="drinks-grid">
-        {filteredDrinks.map(drink => (
-          <div key={drink.id} className="drink-card" onClick={() => handleProductClick(drink)}>
-            {drink.image && (
-              <div className="drink-image">
-                <img src={drink.image} alt={drink.name} />
+          {/* Buscador inteligente */}
+          <div className="smart-search-container">
+            <div className="search-input-wrapper">
+              <input
+                type="text"
+                placeholder="🔍 Busca por nombre, descripción, categoría..."
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setShowSuggestions(e.target.value.length > 0);
+                }}
+                onFocus={() => searchQuery && setShowSuggestions(true)}
+                onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+                className="smart-search-input"
+              />
+              {searchQuery && (
+                <button
+                  className="clear-search-btn"
+                  onClick={() => {
+                    setSearchQuery('');
+                    setShowSuggestions(false);
+                  }}
+                  title="Limpiar búsqueda"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+
+            {/* Sugerencias de búsqueda */}
+            {showSuggestions && searchQuery && (
+              <div className="search-suggestions">
+                <div className="suggestions-header">Sugerencias populares:</div>
+                <div className="suggestions-list">
+                  {searchSuggestions
+                    .filter(suggestion => 
+                      suggestion.toLowerCase().includes(searchQuery.toLowerCase()) &&
+                      suggestion.toLowerCase() !== searchQuery.toLowerCase()
+                    )
+                    .slice(0, 5)
+                    .map((suggestion, index) => (
+                      <button
+                        key={index}
+                        className="suggestion-item"
+                        onClick={() => {
+                          setSearchQuery(suggestion);
+                          setShowSuggestions(false);
+                        }}
+                      >
+                        {suggestion}
+                      </button>
+                    ))}
+                </div>
               </div>
             )}
-            <div className="drink-info">
-              <h4>{drink.name}</h4>
-              <p>{drink.description}</p>
-              {drink.rating && (
-                <div className="drink-rating">
-                  {renderStars(drink.rating)}
-                  <span className="rating-number">({drink.rating})</span>
-                </div>
-              )}
-              <span className="price">{formatPrice(drink.price)}</span>
-            </div>
-            <Button
-              variant={isAuthenticated ? "primary" : "outline"}
-              size="sm"
-              onClick={() => addToCart(drink)}
-            >
-              {isAuthenticated ? "Agregar al Carrito" : "Inicia Sesión"}
-            </Button>
-          </div>
-        ))}
-      </div>
 
-      <Cart />
-      <ProductReviewModal
-        product={selectedProduct}
-        isOpen={reviewModalOpen}
-        onClose={() => setReviewModalOpen(false)}
-        onSubmit={handleReviewSubmit}
-      />
+            {searchQuery && (
+              <div className="search-results-info">
+                <span className="search-results-count">
+                  {filteredDrinks.length} producto{filteredDrinks.length !== 1 ? 's' : ''} encontrado{filteredDrinks.length !== 1 ? 's' : ''}
+                </span>
+                {filteredDrinks.length === 0 && (
+                  <span className="no-results">No se encontraron productos para "{searchQuery}"</span>
+                )}
+              </div>
+            )}
+          </div>
+
+          {!isAuthenticated && (
+            <div className="auth-banner">
+              <p>👋 ¿Quieres hacer un pedido? <Link to="/login">Inicia sesión</Link> o <Link to="/register">crea una cuenta</Link> para comenzar!</p>
+            </div>
+          )}
+
+          {/* Productos destacados */}
+          {selectedCategory === 'Todos' && (
+            <section className="featured-section">
+              <h3>✨ Productos Destacados</h3>
+              <div className="featured-grid">
+                {drinks
+                  .filter(drink => drink.featured)
+                  .map(drink => (
+                    <div key={drink.id} className="drink-card featured" onClick={() => handleProductClick(drink)}>
+                      {drink.image && (
+                        <div className="drink-image">
+                          <img src={drink.image} alt={drink.name} />
+                          <div className="featured-badge">⭐ Destacado</div>
+                        </div>
+                      )}
+                      <div className="drink-info">
+                        <h4>{drink.name}</h4>
+                        <p>{drink.description}</p>
+                        <div className="drink-rating">
+                          {renderStars(drink.rating || 0)}
+                          <span className="rating-number">({drink.rating})</span>
+                        </div>
+                        <span className="price">{formatPrice(drink.price)}</span>
+                      </div>
+                      <Button
+                        variant={isAuthenticated ? "primary" : "outline"}
+                        size="sm"
+                        onClick={() => addToCart(drink)}
+                      >
+                        {isAuthenticated ? "Agregar al Carrito" : "Inicia Sesión"}
+                      </Button>
+                    </div>
+                  ))}
+              </div>
+            </section>
+          )}
+
+          {/* Grid de productos */}
+          <div className="drinks-grid">
+            {filteredDrinks.map(drink => (
+              <div key={drink.id} className="drink-card" onClick={() => handleProductClick(drink)}>
+                {drink.image && (
+                  <div className="drink-image">
+                    <img src={drink.image} alt={drink.name} />
+                  </div>
+                )}
+                <div className="drink-info">
+                  <h4>{drink.name}</h4>
+                  <p>{drink.description}</p>
+                  {drink.rating && (
+                    <div className="drink-rating">
+                      {renderStars(drink.rating)}
+                      <span className="rating-number">({drink.rating})</span>
+                    </div>
+                  )}
+                  <span className="price">{formatPrice(drink.price)}</span>
+                </div>
+                <Button
+                  variant={isAuthenticated ? "primary" : "outline"}
+                  size="sm"
+                  onClick={() => addToCart(drink)}
+                >
+                  {isAuthenticated ? "Agregar al Carrito" : "Inicia Sesión"}
+                </Button>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <Cart />
+        <ProductReviewModal
+          product={selectedProduct}
+          isOpen={reviewModalOpen}
+          onClose={() => setReviewModalOpen(false)}
+          onSubmit={handleReviewSubmit}
+        />
+      </div>
     </div>
   );
 };

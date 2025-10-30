@@ -7,6 +7,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   user: User | null;
   login: (email: string, password: string) => Promise<void>;
+  register: (userData: { name: string; email: string; role: string; password: string }) => Promise<void>;
   logout: () => void;
   loading: boolean;
   refreshUser: () => Promise<void>;
@@ -120,6 +121,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const register = async (userData: { name: string; email: string; role: string; password: string }) => {
+    try {
+      // Aquí iría la lógica para registrar al usuario, por ejemplo, llamar a una API
+      console.log('Registrando usuario:', userData);
+      // Simular registro exitoso
+      // await api.register(userData);
+      // setUser(userData); // o lo que corresponda
+    } catch (error) {
+      throw new Error('Error en el registro');
+    }
+  };
+
   const refreshUser = async () => {
     try {
       const response = await apiService.get<{ success: boolean; message: string; data: User }>('/auth/profile');
@@ -149,8 +162,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setUser(null);
   };
 
+  const value: AuthContextType = {
+    login,
+    register,
+    logout,
+    user,
+    isAuthenticated,
+    loading,
+    refreshUser,
+    updateUser
+  };
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, login, logout, loading, refreshUser, updateUser }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );

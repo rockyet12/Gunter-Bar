@@ -5273,11 +5273,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/roque/Bar-Gunter/backend/GunterBar.Infrastructure/GunterBar.Infrastructure.csproj",
+      "projectUniqueName": "/home/roque/Proyect-Bar/backend/GunterBar.Infrastructure/GunterBar.Infrastructure.csproj",
       "projectName": "GunterBar.Infrastructure",
-      "projectPath": "/home/roque/Bar-Gunter/backend/GunterBar.Infrastructure/GunterBar.Infrastructure.csproj",
+      "projectPath": "/home/roque/Proyect-Bar/backend/GunterBar.Infrastructure/GunterBar.Infrastructure.csproj",
       "packagesPath": "/home/roque/.nuget/packages/",
-      "outputPath": "/home/roque/Bar-Gunter/backend/GunterBar.Infrastructure/obj/",
+      "outputPath": "/home/roque/Proyect-Bar/backend/GunterBar.Infrastructure/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/home/roque/.nuget/NuGet/NuGet.Config"
@@ -5292,11 +5292,11 @@
         "net9.0": {
           "targetAlias": "net9.0",
           "projectReferences": {
-            "/home/roque/Bar-Gunter/backend/GunterBar.Application/GunterBar.Application.csproj": {
-              "projectPath": "/home/roque/Bar-Gunter/backend/GunterBar.Application/GunterBar.Application.csproj"
+            "/home/roque/Proyect-Bar/backend/GunterBar.Application/GunterBar.Application.csproj": {
+              "projectPath": "/home/roque/Proyect-Bar/backend/GunterBar.Application/GunterBar.Application.csproj"
             },
-            "/home/roque/Bar-Gunter/backend/GunterBar.Domain/GunterBar.Domain.csproj": {
-              "projectPath": "/home/roque/Bar-Gunter/backend/GunterBar.Domain/GunterBar.Domain.csproj"
+            "/home/roque/Proyect-Bar/backend/GunterBar.Domain/GunterBar.Domain.csproj": {
+              "projectPath": "/home/roque/Proyect-Bar/backend/GunterBar.Domain/GunterBar.Domain.csproj"
             }
           }
         }

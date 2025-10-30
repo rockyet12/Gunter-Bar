@@ -1,20 +1,17 @@
 import React, { useState } from 'react';
 import { useAuth } from './AuthContext';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
-import { Mail, Lock, Eye, EyeOff, LogIn } from 'lucide-react';
-import './Auth.css';
+import { Mail, Lock } from 'lucide-react';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const [showPassword, setShowPassword] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Get the page user was trying to access before login
   const from = location.state?.from?.pathname || '/';
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -32,84 +29,46 @@ const Login: React.FC = () => {
     }
   };
 
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
-
   return (
-    <div className="auth-container">
-      <div className="auth-card">
-        <div className="auth-header">
-          <h1 className="auth-title">Bienvenido de vuelta</h1>
-          <p className="auth-subtitle">Inicia sesión para continuar</p>
-        </div>
-
-        <form className="auth-form" onSubmit={handleSubmit}>
-          {error && <div className="error-message">{error}</div>}
-
-          <div className="form-group">
-            <label htmlFor="email" className="form-label">Correo electrónico</label>
-            <div className="input-wrapper">
-              <input
-                type="email"
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="form-input"
-                placeholder="tu@email.com"
-                required
-                autoComplete="email"
-              />
-              <Mail className="input-icon" size={20} />
-            </div>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#181820] to-[#2d1b69] p-4">
+      <div className="w-[700px] h-[500px] bg-white p-6 rounded-lg shadow-2xl border border-gray-300 overflow-y-auto">
+        <h1 className="text-xl font-bold text-center mb-4 text-gray-800">Iniciar Sesión</h1>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {error && <p className="text-red-500 text-sm">{error}</p>}
+          <div className="relative">
+            <Mail className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 transition duration-300"
+              placeholder="Email"
+              required
+            />
           </div>
-
-          <div className="form-group">
-            <label htmlFor="password" className="form-label">Contraseña</label>
-            <div className="input-wrapper">
-              <input
-                type={showPassword ? 'text' : 'password'}
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="form-input"
-                placeholder="Tu contraseña"
-                required
-                autoComplete="current-password"
-              />
-              <Lock className="input-icon" size={20} />
-              <button
-                type="button"
-                className="password-toggle"
-                onClick={togglePasswordVisibility}
-                aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
-              >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
-            </div>
+          <div className="relative">
+            <Lock className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 transition duration-300"
+              placeholder="Contraseña"
+              required
+            />
           </div>
-
           <button
             type="submit"
-            className="auth-submit-btn"
+            className="w-full bg-gradient-to-r from-purple-500 to-purple-600 text-white py-2 rounded-md hover:from-purple-600 hover:to-purple-700 disabled:opacity-50 transition duration-300 shadow-md"
             disabled={loading}
           >
-            {loading ? (
-              <>
-                <span className="loading-spinner"></span>
-                Iniciando sesión...
-              </>
-            ) : (
-              <>
-                <LogIn size={18} style={{ marginRight: '0.5rem' }} />
-                Iniciar Sesión
-              </>
-            )}
+            {loading ? 'Cargando...' : 'Iniciar Sesión'}
           </button>
         </form>
-
-        <div className="auth-footer">
-          <p>¿No tienes una cuenta? <Link to="/register" className="auth-link">Regístrate aquí</Link></p>
+        <div className="text-center mt-4">
+          <p className="text-sm text-gray-600">
+            ¿No tienes cuenta? <Link to="/register" className="text-purple-500 hover:text-purple-600 transition duration-300 underline">Regístrate</Link>
+          </p>
         </div>
       </div>
     </div>

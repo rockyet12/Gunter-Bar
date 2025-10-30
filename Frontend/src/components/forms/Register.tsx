@@ -1,219 +1,113 @@
 import React, { useState } from 'react';
+import { useAuth } from './AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
-import { apiService } from '../../utils/api';
-import { CreateUserDto } from '../../models/user';
-import { User, UserCheck, Mail, Phone, Shield, Lock, Eye, EyeOff, UserPlus } from 'lucide-react';
-import './Auth.css';
+import { User, Mail, Lock } from 'lucide-react';
 
 const Register: React.FC = () => {
-  const [formData, setFormData] = useState<CreateUserDto>({
-    name: '',
-    lastName: '',
-    email: '',
-    password: '',
-    role: 'User',
-    phoneNumber: '',
-  });
-  const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [error, setError] = useState<string>('');
+  const [name, setName] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
+  const [role, setRole] = useState<string>('Cliente');
+  const [password, setPassword] = useState<string>('');
+  const [confirmPassword, setConfirmPassword] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
-  const [acceptTerms, setAcceptTerms] = useState<boolean>(false);
+  const [error, setError] = useState<string>('');
+  const { register } = useAuth();
   const navigate = useNavigate();
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
-    if (!acceptTerms) {
-      setError('Debes aceptar los términos y condiciones');
+    if (password !== confirmPassword) {
+      setError('Las contraseñas no coinciden');
       setLoading(false);
       return;
     }
 
     try {
-      const response = await apiService.post<{ success: boolean; message: string; data: any; errors: string[] }>('/auth/register', formData);
-      if (response.data.success) {
-        navigate('/login');
-      } else {
-        setError(response.data.message || 'Error en el registro');
-      }
+      await register({ name, email, role, password });
+      navigate('/');
     } catch (err: any) {
-      setError(err.response?.data?.message || err.response?.data?.errors?.[0] || 'Error en el registro');
+      setError(err.message || 'Error al registrarse');
     } finally {
       setLoading(false);
     }
   };
 
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
-
   return (
-    <div className="auth-container">
-      <div className="auth-card">
-        <div className="auth-header">
-          <h1 className="auth-title">Únete a nosotros</h1>
-          <p className="auth-subtitle">Crea tu cuenta en Gunter Bar</p>
-        </div>
-
-        <form className="auth-form" onSubmit={handleSubmit}>
-          {error && <div className="error-message">{error}</div>}
-
-          <div className="form-group">
-            <label htmlFor="name" className="form-label">Nombre</label>
-            <div className="input-wrapper">
-              <input
-                type="text"
-                id="name"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                className="form-input"
-                placeholder="Tu nombre"
-                required
-              />
-              <User className="input-icon" size={20} />
-            </div>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#181820] to-[#2d1b69] p-4">
+      <div className="w-[700px] h-[500px] bg-white p-6 rounded-lg shadow-2xl border border-gray-300 overflow-y-auto">
+        <h1 className="text-xl font-bold text-center mb-4 text-gray-800">Registrarse</h1>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {error && <p className="text-red-500 text-sm">{error}</p>}
+          <div className="relative">
+            <User className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 transition duration-300"
+              placeholder="Nombre"
+              required
+            />
           </div>
-
-          <div className="form-group">
-            <label htmlFor="lastName" className="form-label">Apellido</label>
-            <div className="input-wrapper">
-              <input
-                type="text"
-                id="lastName"
-                name="lastName"
-                value={formData.lastName}
-                onChange={handleChange}
-                className="form-input"
-                placeholder="Tu apellido"
-              />
-              <UserCheck className="input-icon" size={20} />
-            </div>
+          <div className="relative">
+            <Mail className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 transition duration-300"
+              placeholder="Email"
+              required
+            />
           </div>
-
-          <div className="form-group">
-            <label htmlFor="email" className="form-label">Correo electrónico</label>
-            <div className="input-wrapper">
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                className="form-input"
-                placeholder="tu@email.com"
-                required
-              />
-              <Mail className="input-icon" size={20} />
-            </div>
+          <div>
+            <select
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 transition duration-300"
+              required
+            >
+              <option value="Cliente">Cliente</option>
+              <option value="Vendedor">Vendedor</option>
+            </select>
           </div>
-
-          <div className="form-group">
-            <label htmlFor="phoneNumber" className="form-label">Número de teléfono</label>
-            <div className="input-wrapper">
-              <input
-                type="tel"
-                id="phoneNumber"
-                name="phoneNumber"
-                value={formData.phoneNumber}
-                onChange={handleChange}
-                className="form-input"
-                placeholder="+54 11 1234-5678"
-              />
-              <Phone className="input-icon" size={20} />
-            </div>
+          <div className="relative">
+            <Lock className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 transition duration-300"
+              placeholder="Contraseña"
+              required
+            />
           </div>
-
-          <div className="form-group">
-            <label htmlFor="role" className="form-label">Tipo de cuenta</label>
-            <div className="input-wrapper">
-              <select
-                id="role"
-                name="role"
-                value={formData.role}
-                onChange={handleChange}
-                className="form-input"
-                required
-              >
-                <option value="User">Cliente</option>
-                <option value="Seller">Vendedor</option>
-              </select>
-              <Shield className="input-icon" size={20} />
-            </div>
+          <div className="relative">
+            <Lock className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+            <input
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 transition duration-300"
+              placeholder="Confirmar Contraseña"
+              required
+            />
           </div>
-
-          <div className="form-group">
-            <label htmlFor="password" className="form-label">Contraseña</label>
-            <div className="input-wrapper">
-              <input
-                type={showPassword ? 'text' : 'password'}
-                id="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                className="form-input"
-                placeholder="Mínimo 6 caracteres"
-                required
-                minLength={6}
-              />
-              <Lock className="input-icon" size={20} />
-              <button
-                type="button"
-                className="password-toggle"
-                onClick={togglePasswordVisibility}
-                aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
-              >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
-            </div>
-          </div>
-
-          <div className="form-group">
-            <label className="checkbox-label">
-              <input
-                type="checkbox"
-                id="acceptTerms"
-                checked={acceptTerms}
-                onChange={(e) => setAcceptTerms(e.target.checked)}
-                className="checkbox-input"
-                required
-              />
-              <span className="checkmark"></span>
-              Acepto los <a href="#" className="terms-link">términos y condiciones</a>
-            </label>
-          </div>
-
           <button
             type="submit"
-            className="auth-submit-btn"
+            className="w-full bg-gradient-to-r from-purple-500 to-purple-600 text-white py-2 rounded-md hover:from-purple-600 hover:to-purple-700 disabled:opacity-50 transition duration-300 shadow-md"
             disabled={loading}
           >
-            {loading ? (
-              <>
-                <span className="loading-spinner"></span>
-                Creando cuenta...
-              </>
-            ) : (
-              <>
-                <UserPlus size={18} style={{ marginRight: '0.5rem' }} />
-                Crear Cuenta
-              </>
-            )}
+            {loading ? 'Cargando...' : 'Registrarse'}
           </button>
         </form>
-
-        <div className="auth-footer">
-          <p>¿Ya tienes una cuenta? <Link to="/login" className="auth-link">Inicia sesión aquí</Link></p>
+        <div className="text-center mt-4">
+          <p className="text-sm text-gray-600">
+            ¿Ya tienes cuenta? <Link to="/login" className="text-purple-500 hover:text-purple-600 transition duration-300 underline">Inicia Sesión</Link>
+          </p>
         </div>
       </div>
     </div>

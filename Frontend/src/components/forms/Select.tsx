@@ -1,23 +1,23 @@
 import React from 'react';
 import { FieldError } from 'react-hook-form';
 
-interface InputProps {
+interface SelectProps {
   label?: string;
-  type: string;
   placeholder?: string;
   error?: FieldError;
   icon?: React.ReactNode;
   className?: string;
+  children: React.ReactNode;
   [key: string]: any;
 }
 
-const Input: React.FC<InputProps> = ({
+const Select: React.FC<SelectProps> = ({
   label,
-  type,
   placeholder,
   error,
   icon,
   className = '',
+  children,
   ...props
 }) => {
   return (
@@ -28,15 +28,20 @@ const Input: React.FC<InputProps> = ({
           {label}
         </label>
       )}
-      <input
-        type={type}
-        className={`auth-form-control ${error ? 'border-yellow-500' : ''} ${className}`}
-        placeholder={placeholder}
+      <select
+        className={`auth-form-control ${error ? 'border-red-500' : ''} ${className}`}
         {...props}
-      />
-      {error && <p className="text-yellow-400 text-sm mt-1">{error.message}</p>}
+      >
+        {placeholder && (
+          <option value="" disabled>
+            {placeholder}
+          </option>
+        )}
+        {children}
+      </select>
+      {error && <p className="text-red-400 text-sm mt-1">{error.message}</p>}
     </div>
   );
 };
 
-export default Input;
+export default Select;

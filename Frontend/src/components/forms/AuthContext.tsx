@@ -7,7 +7,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   user: User | null;
   login: (email: string, password: string) => Promise<void>;
-  register: (userData: { name: string; email: string; role: string; password: string }) => Promise<void>;
+  register: (userData: { firstName: string; lastName: string; email: string; phone: string; role: string; password: string }) => Promise<void>;
   logout: () => void;
   loading: boolean;
   refreshUser: () => Promise<void>;
@@ -121,15 +121,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const register = async (userData: { name: string; email: string; role: string; password: string }) => {
+  const register = async (userData: { firstName: string; lastName: string; email: string; phone: string; role: string; password: string }) => {
     try {
-      // Aquí iría la lógica para registrar al usuario, por ejemplo, llamar a una API
-      console.log('Registrando usuario:', userData);
-      // Simular registro exitoso
-      // await api.register(userData);
-      // setUser(userData); // o lo que corresponda
-    } catch (error) {
-      throw new Error('Error en el registro');
+      const response = await apiService.auth.register(userData);
+
+      if (response.data.success) {
+        // Registration successful, but user needs to login
+        console.log('Usuario registrado exitosamente:', response.data);
+        // Optionally auto-login after registration
+        // await login(userData.email, userData.password);
+      } else {
+        throw new Error(response.data.message || 'Error en el registro');
+      }
+    } catch (error: any) {
+      console.error('Error en registro:', error);
+      throw new Error(error.response?.data?.message || 'Error en el registro');
     }
   };
 

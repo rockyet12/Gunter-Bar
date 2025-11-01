@@ -1,6 +1,7 @@
 using System.Text.RegularExpressions;
 using BCrypt.Net;
 using GunterBar.Application.Common.Models;
+using GunterBar.Application.DTOs.Bar;
 using GunterBar.Application.DTOs.User;
 using GunterBar.Application.Interfaces;
 using GunterBar.Domain.Entities;
@@ -12,14 +13,16 @@ namespace GunterBar.Application.Services;
 public class UserService : IUserService
 {
     private readonly IUserRepository _userRepository;
+    private readonly IBarRepository _barRepository;
     private const int MaxLoginAttempts = 5;
     private const int MinPasswordLength = 6;
     private static readonly TimeSpan LockoutDuration = TimeSpan.FromMinutes(30);
     private static readonly Regex EmailRegex = new(@"^[^@\s]+@[^@\s]+\.[^@\s]+$", RegexOptions.Compiled);
 
-    public UserService(IUserRepository userRepository)
+    public UserService(IUserRepository userRepository, IBarRepository barRepository)
     {
         _userRepository = userRepository;
+        _barRepository = barRepository;
     }
 
     private static UserDto MapToDto(User user)
@@ -27,8 +30,8 @@ public class UserService : IUserService
         return new UserDto
         {
             Id = user.Id,
-            Name = user.Name,
-            LastName = user.LastName,
+            FirstName = user.Name,
+            LastName = user.LastName ?? string.Empty,
             Email = user.Email,
             Role = user.Role,
             PhoneNumber = user.PhoneNumber,
@@ -36,7 +39,28 @@ public class UserService : IUserService
             ProfileImageUrl = user.ProfileImageUrl,
             DeliveryDescription = user.DeliveryDescription,
             BirthDate = user.BirthDate,
-            Dni = user.Dni
+            CreatedAt = user.CreatedAt,
+            Bar = user.Bar != null ? new BarDto
+            {
+                Id = user.Bar.Id,
+                Name = user.Bar.Name,
+                Description = user.Bar.Description,
+                OwnerId = user.Bar.OwnerId,
+                OwnerName = user.Bar.Owner.Name,
+                Address = user.Bar.Address,
+                City = user.Bar.City,
+                PostalCode = user.Bar.PostalCode,
+                Country = user.Bar.Country,
+                Latitude = user.Bar.Latitude,
+                Longitude = user.Bar.Longitude,
+                PhoneNumber = user.Bar.PhoneNumber,
+                Email = user.Bar.Email,
+                ImageUrl = user.Bar.ImageUrl,
+                OpeningHours = user.Bar.OpeningHours,
+                IsActive = user.Bar.IsActive,
+                CreatedAt = user.Bar.CreatedAt,
+                DrinksCount = user.Bar.Drinks.Count
+            } : null
         };
     }
 
@@ -114,7 +138,7 @@ public class UserService : IUserService
     {
         try
         {
-            if (string.IsNullOrWhiteSpace(createUserDto.Name))
+            if (string.IsNullOrWhiteSpace(createUserDto.FirstName))
             {
                 return ApiResponse<UserDto>.Fail("El nombre es requerido");
             }
@@ -136,17 +160,48 @@ public class UserService : IUserService
                 return ApiResponse<UserDto>.Fail("El email ya está registrado");
             }
 
+            // Crear el usuario
             var user = new User(
-                createUserDto.Name.Trim(),
+                createUserDto.FirstName.Trim(),
+                createUserDto.LastName?.Trim() ?? string.Empty,
                 createUserDto.Email.Trim().ToLower(),
-                HashPassword(createUserDto.Password))
+                HashPassword(createUserDto.Password),
+                createUserDto.Role)
             {
                 PhoneNumber = createUserDto.PhoneNumber?.Trim(),
-                Address = createUserDto.Address?.Trim()
+                Address = createUserDto.Address?.Trim(),
+                BirthDate = createUserDto.BirthDate
             };
 
             var createdUser = await _userRepository.CreateAsync(user);
-            return ApiResponse<UserDto>.Succeed(MapToDto(createdUser), "Usuario creado exitosamente");
+
+            // Si es vendor y tiene información del bar, crear el bar
+            if (createUserDto.Role == UserRole.Vendor && createUserDto.BarInfo != null)
+            {
+                var bar = new Bar
+                {
+                    Name = createUserDto.BarInfo.Name.Trim(),
+                    Description = createUserDto.BarInfo.Description?.Trim(),
+                    OwnerId = createdUser.Id,
+                    Address = createUserDto.BarInfo.Address?.Trim(),
+                    City = createUserDto.BarInfo.City?.Trim(),
+                    PostalCode = createUserDto.BarInfo.PostalCode?.Trim(),
+                    Country = createUserDto.BarInfo.Country?.Trim(),
+                    Latitude = createUserDto.BarInfo.Latitude,
+                    Longitude = createUserDto.BarInfo.Longitude,
+                    PhoneNumber = createUserDto.BarInfo.PhoneNumber?.Trim(),
+                    Email = createUserDto.BarInfo.Email?.Trim().ToLower(),
+                    ImageUrl = createUserDto.BarInfo.ImageUrl?.Trim(),
+                    OpeningHours = createUserDto.BarInfo.OpeningHours?.Trim(),
+                    IsActive = true
+                };
+
+                await _barRepository.CreateAsync(bar);
+            }
+
+            // Obtener el usuario con el bar incluido si fue creado
+            var userWithBar = await _userRepository.GetByIdAsync(createdUser.Id);
+            return ApiResponse<UserDto>.Succeed(MapToDto(userWithBar!), "Usuario creado exitosamente");
         }
         catch (Exception ex)
         {

@@ -25,9 +25,14 @@ public class CreateUserUseCase : UseCase<CreateUserRequest, UserDto>
                 return ApiResponse<UserDto>.Fail("Datos de usuario no proporcionados");
             }
 
-            if (string.IsNullOrWhiteSpace(request.UserData.Name))
+            if (string.IsNullOrWhiteSpace(request.UserData.FirstName))
             {
                 return ApiResponse<UserDto>.Fail("El nombre es requerido");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.UserData.LastName))
+            {
+                return ApiResponse<UserDto>.Fail("El apellido es requerido");
             }
 
             if (string.IsNullOrWhiteSpace(request.UserData.Email))

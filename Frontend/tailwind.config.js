@@ -26,6 +26,26 @@ export default {
         "xl": "0.75rem",
         "full": "9999px"
       },
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0', transform: 'translateY(20px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        shake: {
+          '0%, 100%': { transform: 'translateX(0)' },
+          '25%': { transform: 'translateX(-5px)' },
+          '75%': { transform: 'translateX(5px)' },
+        },
+        scaleIn: {
+          '0%': { opacity: '0', transform: 'scale(0.8)' },
+          '100%': { opacity: '1', transform: 'scale(1)' },
+        },
+      },
+      animation: {
+        fadeIn: 'fadeIn 0.8s ease-out',
+        shake: 'shake 0.5s ease-in-out',
+        scaleIn: 'scaleIn 0.6s ease-out',
+      },
     },
   },
   plugins: [

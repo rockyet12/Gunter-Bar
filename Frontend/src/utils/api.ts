@@ -43,6 +43,21 @@ export const apiService = {
   post: <T>(url: string, data?: any): Promise<AxiosResponse<T>> => api.post(url, data),
   put: <T>(url: string, data?: any): Promise<AxiosResponse<T>> => api.put(url, data),
   delete: <T>(url: string): Promise<AxiosResponse<T>> => api.delete(url),
+
+  // Auth endpoints
+  auth: {
+    login: (credentials: { email: string; password: string }) =>
+      api.post('/auth/login', credentials),
+    register: (userData: {
+      firstName: string;
+      lastName: string;
+      email: string;
+      phone: string;
+      role: string;
+      password: string;
+    }) =>
+      api.post('/users', userData),
+  },
 };
 
 export default api;

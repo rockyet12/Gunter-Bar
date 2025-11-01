@@ -22,3 +22,15 @@
 /home/roque/Proyect-Bar/backend/GunterBar.Domain/obj/Debug/net9.0/refint/GunterBar.Domain.dll
 /home/roque/Proyect-Bar/backend/GunterBar.Domain/obj/Debug/net9.0/GunterBar.Domain.pdb
 /home/roque/Proyect-Bar/backend/GunterBar.Domain/obj/Debug/net9.0/ref/GunterBar.Domain.dll
+/tmp/Gunter-Bar/backend/GunterBar.Domain/bin/Debug/net9.0/GunterBar.Domain.deps.json
+/tmp/Gunter-Bar/backend/GunterBar.Domain/bin/Debug/net9.0/GunterBar.Domain.dll
+/tmp/Gunter-Bar/backend/GunterBar.Domain/bin/Debug/net9.0/GunterBar.Domain.pdb
+/tmp/Gunter-Bar/backend/GunterBar.Domain/obj/Debug/net9.0/GunterBar.Domain.GeneratedMSBuildEditorConfig.editorconfig
+/tmp/Gunter-Bar/backend/GunterBar.Domain/obj/Debug/net9.0/GunterBar.Domain.AssemblyInfoInputs.cache
+/tmp/Gunter-Bar/backend/GunterBar.Domain/obj/Debug/net9.0/GunterBar.Domain.AssemblyInfo.cs
+/tmp/Gunter-Bar/backend/GunterBar.Domain/obj/Debug/net9.0/GunterBar.Domain.csproj.CoreCompileInputs.cache
+/tmp/Gunter-Bar/backend/GunterBar.Domain/obj/Debug/net9.0/GunterBar.Domain.sourcelink.json
+/tmp/Gunter-Bar/backend/GunterBar.Domain/obj/Debug/net9.0/GunterBar.Domain.dll
+/tmp/Gunter-Bar/backend/GunterBar.Domain/obj/Debug/net9.0/refint/GunterBar.Domain.dll
+/tmp/Gunter-Bar/backend/GunterBar.Domain/obj/Debug/net9.0/GunterBar.Domain.pdb
+/tmp/Gunter-Bar/backend/GunterBar.Domain/obj/Debug/net9.0/ref/GunterBar.Domain.dll

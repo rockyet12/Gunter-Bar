@@ -49,6 +49,15 @@ public class User
 
     public DateTime? BirthDate { get; set; }
 
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    public DateTime? UpdatedAt { get; set; }
+
+    // Navigation properties
+    public Bar? Bar { get; set; } // Only for vendors
+    public ICollection<Order> Orders { get; set; } = new List<Order>();
+    public ICollection<Cart> Carts { get; set; } = new List<Cart>();
+
     [MaxLength(20)]
     public string? Dni { get; set; }
 
@@ -66,16 +75,13 @@ public class User
 
     public DateTime? SmsVerificationCodeGeneratedAt { get; set; }
 
-    // Navigation properties
-    public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
-
     // Constructor
     public User(string name, string email, string passwordHash)
     {
         Name = name;
         Email = email;
         PasswordHash = passwordHash;
-        Role = UserRole.Client;
+        Role = UserRole.Customer;
         LoginAttempts = 0;
     }
 
@@ -86,7 +92,18 @@ public class User
         LastName = lastName;
         Email = email;
         PasswordHash = passwordHash;
-        Role = UserRole.Client;
+        Role = UserRole.Customer;
+        LoginAttempts = 0;
+    }
+
+    // Constructor con apellido y rol
+    public User(string name, string lastName, string email, string passwordHash, UserRole role)
+    {
+        Name = name;
+        LastName = lastName;
+        Email = email;
+        PasswordHash = passwordHash;
+        Role = role;
         LoginAttempts = 0;
     }
 

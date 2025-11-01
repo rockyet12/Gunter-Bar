@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using GunterBar.Domain.Common;
+using GunterBar.Domain.Enums;
 
 namespace GunterBar.Domain.Entities;
 
@@ -24,7 +25,14 @@ public class Drink : EntityBase
     [MaxLength(2000)]
     public string? ImageUrl { get; set; }
 
-    public string Category { get; set; } = "Sin categoría";
+    [Required]
+    public DrinkType Type { get; set; }
+
+    [Required]
+    public int BarId { get; set; }
+
+    [ForeignKey("BarId")]
+    public Bar Bar { get; set; } = null!;
 
     // Navigation properties
     public virtual ICollection<DrinkIngredient> Ingredients { get; set; } = new List<DrinkIngredient>();
@@ -34,7 +42,7 @@ public class Drink : EntityBase
     // Constructor
     protected Drink() { }
 
-    public Drink(string name, decimal price, int stock, string? description = null)
+    public Drink(string name, decimal price, int stock, DrinkType type, string? description = null)
     {
         if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentException("El nombre es requerido", nameof(name));
@@ -48,6 +56,7 @@ public class Drink : EntityBase
         Name = name.Trim();
         Price = price;
         Stock = stock;
+        Type = type;
         Description = description?.Trim() ?? string.Empty;
         IsAvailable = stock > 0;
     }

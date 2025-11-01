@@ -26,7 +26,7 @@ public class UpdateDrinkUseCase
         drink.Name = drinkDto.Name;
         drink.Description = drinkDto.Description;
         drink.Price = drinkDto.Price;
-        drink.Category = drinkDto.Type.ToString();
+        drink.Type = drinkDto.Type;
         drink.ImageUrl = drinkDto.ImageUrl;
         drink.IsAvailable = drinkDto.IsAvailable;
         drink.Stock = drinkDto.Stock;

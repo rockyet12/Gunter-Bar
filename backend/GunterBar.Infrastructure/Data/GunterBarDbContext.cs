@@ -11,6 +11,7 @@ public class GunterBarDbContext : DbContext
     }
 
     public DbSet<User> Users { get; set; } = null!;
+    public DbSet<Bar> Bars { get; set; } = null!;
     public DbSet<Drink> Drinks { get; set; } = null!;
     public DbSet<DrinkIngredient> DrinkIngredients { get; set; } = null!;
     public DbSet<Order> Orders { get; set; } = null!;

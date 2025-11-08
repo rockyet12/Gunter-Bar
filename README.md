@@ -243,13 +243,29 @@ Frontend/
 
 ## 🎯 Funcionalidades Técnicas Implementadas
 
-### 🔐 Sistema de Autenticación JWT
-- **Registro de usuarios** con validación de email y contraseña fuerte
+### 🔐 Sistema de Autenticación JWT Avanzado
+- **Registro de usuarios** con validación completa (Yup + React Hook Form)
 - **Login seguro** con JWT tokens y refresh tokens
-- **Roles de usuario** (Admin, Cliente) con autorización basada en claims
-- **Protección de rutas** con guards de autenticación
-- **Persistencia de sesión** con localStorage y auto-refresh de tokens
-- **Logout seguro** con limpieza de tokens y estado
+- **Roles de usuario diferenciados**: Customer (Comprador) y Vendor (Vendedor)
+- **Protección de rutas** con guards de autenticación por rol
+- **Persistencia de sesión** con cookies seguras y auto-refresh
+- **Logout seguro** con limpieza completa de estado
+- **Sistema de emails de bienvenida** automático con descuentos del 10%
+
+### 👥 Gestión de Roles y Usuarios
+- **Registro con roles** (Comprador/Vendedor) desde el frontend
+- **Navegación diferenciada** según el rol del usuario
+- **Panel de vendedor** exclusivo para usuarios con rol Vendor
+- **Protección de rutas** específicas por rol (VendorRoute, ProtectedRoute)
+- **Interfaz adaptativa** que muestra opciones según el rol
+
+### 📧 Sistema de Comunicación Automatizada
+- **Emails de bienvenida** con plantilla HTML profesional
+- **Descuentos automáticos** del 10% para nuevos usuarios
+- **Código promocional** WELCOME10 incluido en el email
+- **Servicio SMTP** configurado con Gmail/Outlook
+- **Plantillas responsivas** con diseño moderno
+- **Manejo de errores** que no interrumpe el registro
 
 ### 🍻 Gestión Avanzada de Productos
 - **CRUD completo** de bebidas con validaciones
@@ -275,10 +291,11 @@ Frontend/
 - **Información de entrega** con direcciones y horarios
 - **Notificaciones** de cambios de estado
 
-### 🎨 Interfaz de Usuario Moderna
+### 🎨 Interfaz de Usuario Moderna y Adaptativa
 - **Diseño responsive** con Tailwind CSS
 - **Componentes reutilizables** con TypeScript
 - **Animaciones suaves** con CSS y Intersection Observer
+- **Navegación inteligente** que se adapta al rol del usuario
 - **Modo oscuro/claro** con theme switching
 - **Accesibilidad** con ARIA labels y navegación por teclado
 - **PWA features** con service workers y manifest
@@ -932,7 +949,108 @@ dotnet test --collect:"XPlat Code Coverage"
 
 3. **Configurar servidor web** (IIS, Nginx, etc.)
 
-## 👥 Equipo de Desarrollo
+## � Próximos Objetivos y Roadmap
+
+### 🎯 **Fase 1: Funcionalidades de Vendedor (Próximas 2 semanas)**
+- [ ] **Panel de Administración de Productos** para vendedores
+  - Formulario para agregar nuevos productos
+  - Edición de productos existentes
+  - Gestión de inventario y precios
+  - Subida de imágenes de productos
+- [ ] **Dashboard de Vendedor** con métricas
+  - Ventas totales por período
+  - Productos más vendidos
+  - Pedidos pendientes
+  - Estadísticas de rendimiento
+- [ ] **Gestión de Pedidos** desde perspectiva de vendedor
+  - Ver pedidos entrantes
+  - Cambiar estados de pedidos
+  - Comunicación con compradores
+
+### 🎯 **Fase 2: Sistema de Pagos (Próximas 4 semanas)**
+- [ ] **Integración con Pasarelas de Pago**
+  - MercadoPago, PayPal, o Stripe
+  - Procesamiento seguro de pagos
+  - Webhooks para confirmaciones
+- [ ] **Sistema de Facturación**
+  - Generación automática de facturas
+  - Envío por email de comprobantes
+  - Historial de transacciones
+- [ ] **Métodos de Pago Múltiples**
+  - Tarjetas de crédito/débito
+  - Transferencias bancarias
+  - Efectivo contra entrega
+
+### 🎯 **Fase 3: Sistema de Delivery (Próximas 6 semanas)**
+- [ ] **Gestión de Domicilios**
+  - Sistema de zonas de entrega
+  - Cálculo automático de costos de envío
+  - Estimación de tiempos de entrega
+- [ ] **Tracking en Tiempo Real**
+  - Seguimiento GPS de pedidos
+  - Notificaciones push al cliente
+  - Estados detallados de entrega
+- [ ] **Integración con Servicios de Delivery**
+  - Rappi, Uber Eats, o sistema propio
+  - API de terceros para entregas
+
+### 🎯 **Fase 4: Funcionalidades Avanzadas (Próximas 8 semanas)**
+- [ ] **Sistema de Reviews y Calificaciones**
+  - Reviews de productos por compradores
+  - Sistema de estrellas y comentarios
+  - Moderación de contenido
+- [ ] **Programa de Fidelización**
+  - Sistema de puntos por compras
+  - Descuentos por acumulación
+  - Niveles de membresía
+- [ ] **Notificaciones Push**
+  - Notificaciones en tiempo real
+  - Recordatorios de pedidos
+  - Ofertas personalizadas
+
+### 🎯 **Fase 5: Optimización y Escalabilidad (Próximas 12 semanas)**
+- [ ] **Optimización de Performance**
+  - Implementación de Redis para cache
+  - Optimización de consultas a BD
+  - Compresión de assets estáticos
+- [ ] **Sistema de Recomendaciones**
+  - Algoritmos de recomendación
+  - Machine Learning básico
+  - Personalización de experiencia
+- [ ] **Internacionalización (i18n)**
+  - Soporte multi-idioma
+  - Monedas múltiples
+  - Adaptación cultural
+
+### 🎯 **Fase 6: Producción y Monitoreo (Próximas 16 semanas)**
+- [ ] **Despliegue en Producción**
+  - Configuración de servidores en la nube
+  - CI/CD con GitHub Actions
+  - Environment de producción
+- [ ] **Monitoreo Avanzado**
+  - Alertas automáticas
+  - Dashboards en tiempo real
+  - Análisis de logs centralizado
+- [ ] **Seguridad Avanzada**
+  - Auditorías de seguridad
+  - Encriptación end-to-end
+  - Cumplimiento con normativas
+
+### 🎯 **Fase 7: Expansión y Crecimiento (Próximas 24 semanas)**
+- [ ] **Aplicación Móvil**
+  - App React Native
+  - Sincronización con web
+  - Funcionalidades offline
+- [ ] **Sistema Multi-Tienda**
+  - Múltiples bares/restaurantes
+  - Panel de administración central
+  - Analytics cross-tenant
+- [ ] **Integración con Redes Sociales**
+  - Login con Google/Facebook
+  - Compartir pedidos
+  - Reviews sociales
+
+## �👥 Equipo de Desarrollo
 
 **Desarrollador Principal**: Roque Rivas  
 **Institución**: ET12 - Escuela Técnica N° 12 D.E. 1°  

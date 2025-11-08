@@ -40,27 +40,27 @@ public class UserService : IUserService
             DeliveryDescription = user.DeliveryDescription,
             BirthDate = user.BirthDate,
             CreatedAt = user.CreatedAt,
-            Bar = user.Bar != null ? new BarDto
-            {
-                Id = user.Bar.Id,
-                Name = user.Bar.Name,
-                Description = user.Bar.Description,
-                OwnerId = user.Bar.OwnerId,
-                OwnerName = user.Bar.Owner.Name,
-                Address = user.Bar.Address,
-                City = user.Bar.City,
-                PostalCode = user.Bar.PostalCode,
-                Country = user.Bar.Country,
-                Latitude = user.Bar.Latitude,
-                Longitude = user.Bar.Longitude,
-                PhoneNumber = user.Bar.PhoneNumber,
-                Email = user.Bar.Email,
-                ImageUrl = user.Bar.ImageUrl,
-                OpeningHours = user.Bar.OpeningHours,
-                IsActive = user.Bar.IsActive,
-                CreatedAt = user.Bar.CreatedAt,
-                DrinksCount = user.Bar.Drinks.Count
-            } : null
+            // Bar = user.Bar != null ? new BarDto
+            // {
+            //     Id = user.Bar.Id,
+            //     Name = user.Bar.Name,
+            //     Description = user.Bar.Description,
+            //     OwnerId = user.Bar.OwnerId,
+            //     OwnerName = user.Bar.Owner.Name,
+            //     Address = user.Bar.Address,
+            //     City = user.Bar.City,
+            //     PostalCode = user.Bar.PostalCode,
+            //     Country = user.Bar.Country,
+            //     Latitude = user.Bar.Latitude,
+            //     Longitude = user.Bar.Longitude,
+            //     PhoneNumber = user.Bar.PhoneNumber,
+            //     Email = user.Bar.Email,
+            //     ImageUrl = user.Bar.ImageUrl,
+            //     OpeningHours = user.Bar.OpeningHours,
+            //     IsActive = user.Bar.IsActive,
+            //     CreatedAt = user.Bar.CreatedAt,
+            //     DrinksCount = user.Bar.Drinks.Count
+            // } : null
         };
     }
 

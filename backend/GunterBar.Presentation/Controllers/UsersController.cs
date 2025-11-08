@@ -61,7 +61,6 @@ public class UsersController : ControllerBase
 
     /// <summary>
     /// Gets a specific user by their ID
-    /// </summary>
     /// <param name="id">The ID of the user</param>
     /// <returns>The user details</returns>
     /// <response code="200">Returns the user details</response>
@@ -236,15 +235,10 @@ public class UsersController : ControllerBase
     {
         try
         {
-            // Solo el jefe de ventas puede asignar el rol de vendedor
-            if (role == UserRole.Employee && !User.IsInRole("SalesManager"))
+            // Solo el admin puede asignar el rol de vendedor
+            if (role == UserRole.Vendor && !User.IsInRole("Admin"))
             {
-                return Forbid("Solo el jefe de ventas puede asignar el rol de vendedor.");
-            }
-            // Solo el admin puede asignar el rol de jefe de ventas
-            if (role == UserRole.SalesManager && !User.IsInRole("Admin"))
-            {
-                return Forbid("Solo el administrador puede asignar el rol de jefe de ventas.");
+                return Forbid("Solo el administrador puede asignar el rol de vendedor.");
             }
             var result = await _userService.UpdateRoleAsync(id, role);
             if (!result.Success)

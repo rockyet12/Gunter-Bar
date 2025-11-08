@@ -73,7 +73,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           <ul>
             <li><Link to="/" onClick={closeMenu}>Inicio</Link></li>
             {isAuthenticated && <li><Link to="/menu" onClick={closeMenu}>Productos</Link></li>}
-            {isAuthenticated && user?.role === 'Seller' && <li><Link to="/dashboard/manage-products" onClick={closeMenu}>Administrar Productos</Link></li>}
+            {isAuthenticated && user?.role === 'Seller' && <li><Link to="/vendor" onClick={closeMenu}>Panel de Vendedor</Link></li>}
             {isAuthenticated && <li><Link to="/profile" onClick={closeMenu}>Mi Perfil</Link></li>}
             {isAuthenticated ? (
               <li>
@@ -104,6 +104,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
             <ul>
               <li><Link to="/">Inicio</Link></li>
               <li><Link to="/menu">Productos</Link></li>
+              {isAuthenticated && user?.role === 'Seller' && <li><Link to="/vendor">Panel de Vendedor</Link></li>}
               <li><Link to="/profile">Mi Perfil</Link></li>
               <li><Link to="/contact">Contacto</Link></li>
             </ul>

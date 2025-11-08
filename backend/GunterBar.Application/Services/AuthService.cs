@@ -12,11 +12,13 @@ public class AuthService : IAuthService
 {
     private readonly IUserRepository _userRepository;
     private readonly IJwtService _jwtService;
+    private readonly IEmailService _emailService;
 
-    public AuthService(IUserRepository userRepository, IJwtService jwtService)
+    public AuthService(IUserRepository userRepository, IJwtService jwtService, IEmailService emailService)
     {
         _userRepository = userRepository;
         _jwtService = jwtService;
+        _emailService = emailService;
     }
 
     public async Task<ApiResponse<AuthResponseDto>> RegisterAsync(RegisterDto registerDto)
@@ -28,23 +30,38 @@ public class AuthService : IAuthService
                 return ApiResponse<AuthResponseDto>.Fail("El email ya está registrado");
             }
 
+            if (!Enum.TryParse<UserRole>(registerDto.Role, out var userRole))
+            {
+                userRole = UserRole.Customer; // default to Customer if invalid
+            }
+
             var user = new User(
-                registerDto.Name,
+                registerDto.FirstName,
+                registerDto.LastName ?? string.Empty,
                 registerDto.Email,
-                BCrypt.Net.BCrypt.HashPassword(registerDto.Password)
+                BCrypt.Net.BCrypt.HashPassword(registerDto.Password),
+                userRole
             )
             {
-                Role = UserRole.Client,
                 PhoneNumber = registerDto.PhoneNumber,
                 Address = registerDto.Address,
                 ProfileImageUrl = registerDto.ProfileImageUrl
             };
 
-            // Set LastName separately to ensure it's properly assigned
-            user.LastName = registerDto.LastName;
-
             var createdUser = await _userRepository.CreateAsync(user);
             var token = _jwtService.GenerateToken(createdUser.Id, createdUser.Email, createdUser.Role.ToString());
+
+            // Send welcome email with discount information
+            try
+            {
+                await _emailService.SendWelcomeEmailAsync(createdUser.Email, createdUser.Name);
+            }
+            catch (Exception emailEx)
+            {
+                // Log email error but don't fail registration
+                // TODO: Add proper logging here
+                Console.WriteLine($"Failed to send welcome email: {emailEx.Message}");
+            }
 
             var response = new AuthResponseDto
             {
@@ -53,7 +70,7 @@ public class AuthService : IAuthService
                 User = new UserDto
                 {
                     Id = createdUser.Id,
-                    Name = createdUser.Name,
+                    FirstName = createdUser.Name,
                     LastName = createdUser.LastName,
                     Email = createdUser.Email,
                     Role = createdUser.Role,
@@ -91,7 +108,7 @@ public class AuthService : IAuthService
                 User = new UserDto
                 {
                     Id = user.Id,
-                    Name = user.Name,
+                    FirstName = user.Name,
                     Email = user.Email,
                     Role = user.Role,
                     PhoneNumber = user.PhoneNumber,
@@ -120,7 +137,7 @@ public class AuthService : IAuthService
             var userDto = new UserDto
             {
                 Id = user.Id,
-                Name = user.Name,
+                FirstName = user.Name,
                 Email = user.Email,
                 Role = user.Role,
                 PhoneNumber = user.PhoneNumber,
@@ -161,7 +178,7 @@ public class AuthService : IAuthService
                 User = new UserDto
                 {
                     Id = user.Id,
-                    Name = user.Name,
+                    FirstName = user.Name,
                     Email = user.Email,
                     Role = user.Role,
                     PhoneNumber = user.PhoneNumber,

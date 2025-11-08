@@ -50,7 +50,8 @@ public class Program
     private static void ConfigureServices(WebApplicationBuilder builder)
     {
         // Servicios principales
-        builder.Services.AddControllers();
+        builder.Services.AddControllers().AddJsonOptions(options =>
+            options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter()));
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddCustomSwagger();
         
@@ -147,17 +148,13 @@ public class Program
         }
 
         // Seguridad básica
-        app.UseHttpsRedirection();
+        // app.UseHttpsRedirection(); // Removido para desarrollo con localhost
+
+        // CORS debe ir lo más temprano posible
+        app.UseCors("AllowFrontend");
+
         app.UseMiddleware<ErrorHandlingMiddleware>();
         app.UseMiddleware<RequestLoggingMiddleware>();
-
-                // Monitoreo y métricas
-        ((IApplicationBuilder)app).UseCustomMetrics();
-        app.UseCustomHealthChecks();
-        app.UseCustomRateLimiting();
-
-        // CORS y autenticación
-        app.UseCors("AllowFrontend");
         app.UseAuthentication();
         app.UseAuthorization();
 

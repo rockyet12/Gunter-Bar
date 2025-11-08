@@ -335,13 +335,74 @@ GunterBar.Solution/
 
 ## 🎯 Funcionalidades Técnicas Implementadas
 
-### 🔐 Sistema de Autenticación JWT Avanzado
+### � Sistema de Roles y Usuarios Diferenciados
+
+#### Gestión de Roles Avanzada
+- **Roles Definidos**: Customer (Comprador) y Vendor (Vendedor)
+- **Registro con Roles**: Selección de rol durante el registro
+- **Autorización Basada en Roles**: Guards específicos por funcionalidad
+- **Navegación Adaptativa**: UI que se adapta según el rol del usuario
+- **Protección de Endpoints**: Autorización a nivel de controlador y método
+
+#### Implementación de Roles
+```csharp
+public enum UserRole
+{
+    Customer = 1,  // Comprador - puede ver productos y hacer pedidos
+    Vendor = 2     // Vendedor - puede gestionar productos y ver pedidos
+}
+
+// En el registro
+public async Task<ApiResponse<AuthResponseDto>> RegisterAsync(RegisterDto registerDto)
+{
+    // Validación y parsing del rol
+    if (!Enum.TryParse<UserRole>(registerDto.Role, out var userRole))
+    {
+        userRole = UserRole.Customer; // Default
+    }
+    
+    var user = new User(registerDto.FirstName, registerDto.LastName ?? "", 
+                       registerDto.Email, hashedPassword, userRole);
+}
+```
+
+### 📧 Sistema de Comunicación Automatizada
+
+#### Emails de Bienvenida con Descuentos
+- **Envío Automático**: Email enviado inmediatamente después del registro
+- **Descuentos Especiales**: 10% de descuento para nuevos usuarios
+- **Código Promocional**: WELCOME10 incluido en el email
+- **Plantillas HTML**: Diseño profesional y responsive
+- **Servicio SMTP**: Configurado con Gmail/Outlook
+- **Manejo de Errores**: No interrumpe el flujo de registro
+
+#### Implementación del Servicio de Email
+```csharp
+public interface IEmailService
+{
+    Task SendWelcomeEmailAsync(string email, string userName);
+    Task SendOrderConfirmationAsync(OrderDto order, string userEmail);
+    Task SendPasswordResetAsync(string email, string resetToken);
+}
+
+public class EmailService : IEmailService
+{
+    public async Task SendWelcomeEmailAsync(string email, string userName)
+    {
+        var subject = "¡Bienvenido a Gunter Bar - 10% de descuento en tu primera compra!";
+        var body = GenerateWelcomeEmail(userName);
+        await SendEmailAsync(email, subject, body);
+    }
+}
+```
+
+### �🔐 Sistema de Autenticación JWT Avanzado
 
 #### Características de Seguridad
 - **JWT Stateless**: Tokens sin estado para escalabilidad
 - **Refresh Tokens**: Rotación automática de tokens
 - **BCrypt Hashing**: Hashing seguro de contraseñas (costo 12)
-- **Role-Based Authorization**: Autorización basada en roles (Admin/Cliente)
+- **Role-Based Authorization**: Autorización basada en roles (Customer/Vendor)
 - **Password Policies**: Validación de fortaleza de contraseñas
 - **Account Lockout**: Protección contra ataques de fuerza bruta
 - **Session Management**: Manejo inteligente de sesiones

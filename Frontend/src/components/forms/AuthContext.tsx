@@ -87,7 +87,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       });
 
       if (response.data.success && response.data.data) {
-        const { token, user: userData } = response.data.data;
+        const { token, user: backendUser } = response.data.data;
+
+        const userData = {
+          ...backendUser,
+          role: backendUser.role === 'Customer' ? 'User' : 'Seller'
+        };
 
         // Save token in cookie (expires in 7 days)
         // In development, don't use secure flag since we use HTTP

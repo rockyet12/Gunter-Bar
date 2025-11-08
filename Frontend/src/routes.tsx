@@ -3,7 +3,8 @@ import { Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import Menu from './pages/Menu';
 import Profile from './pages/Profile';
-import { Login, Register, ProtectedRoute, PublicRoute } from './components/forms';
+import Vendor from './pages/Vendor';
+import { Login, Register, ProtectedRoute, PublicRoute, VendorRoute } from './components/forms';
 import PublicLayout from './layout/PublicLayout';
 import ProtectedLayout from './layout/ProtectedLayout';
 import ProfileLayout from './layout/ProfileLayout';
@@ -39,6 +40,13 @@ const AppRoutes: React.FC = () => {
         <Route index element={<Home />} />
         <Route path="manage-products" element={<Menu />} />
       </Route>
+
+      {/* Vendor routes - require vendor role */}
+      <Route path="/vendor" element={
+        <VendorRoute>
+          <Vendor />
+        </VendorRoute>
+      } />
 
       {/* Profile routes - separate layout */}
       <Route path="/dashboard/profile" element={

@@ -19,5 +19,5 @@ public class UserDto
     public DateTime CreatedAt { get; set; }
 
     // Bar information (only for vendors)
-    public BarDto? Bar { get; set; }
+    // public BarDto? Bar { get; set; }
 }

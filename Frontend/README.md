@@ -343,6 +343,110 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
 };
 ```
 
+## 🎯 Funcionalidades Implementadas
+
+### 👥 Sistema de Roles y Navegación Diferenciada
+
+#### Roles de Usuario
+- **Customer (Comprador)**: Acceso completo a catálogo, carrito y pedidos
+- **Vendor (Vendedor)**: Panel dedicado para gestión de productos
+- **Registro Inteligente**: Selección de rol durante el registro
+- **Navegación Adaptativa**: Menú que se ajusta según el rol del usuario
+
+#### Implementación de Roles en Frontend
+```typescript
+// Context de autenticación con roles
+interface AuthContextType {
+  user: User | null;
+  isAuthenticated: boolean;
+  login: (email: string, password: string) => Promise<void>;
+  register: (userData: RegisterData) => Promise<void>;
+  logout: () => void;
+}
+
+// Componente de ruta protegida para vendedores
+export const VendorRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { isAuthenticated, user } = useAuth();
+
+  if (!isAuthenticated || user?.role !== 'Seller') {
+    return <Navigate to="/login" replace />;
+  }
+
+  return <>{children}</>;
+};
+```
+
+### 📧 Sistema de Bienvenida Automatizada
+
+#### Emails de Registro
+- **Envío Automático**: Email enviado inmediatamente después del registro
+- **Descuentos Especiales**: 10% de descuento para nuevos usuarios
+- **Código Promocional**: WELCOME10 incluido en el email
+- **Plantillas Profesionales**: Diseño HTML responsive y moderno
+
+#### Integración con Backend
+```typescript
+// Servicio de registro con envío de email automático
+const registerUser = async (userData: RegisterData): Promise<void> => {
+  try {
+    const response = await apiService.post('/auth/register', {
+      firstName: userData.firstName,
+      lastName: userData.lastName,
+      email: userData.email,
+      password: userData.password,
+      role: userData.role,
+      phone: userData.phone
+    });
+
+    // El backend automáticamente envía el email de bienvenida
+    alert('Usuario registrado exitosamente. Revisa tu email para el descuento especial.');
+    
+    return response.data;
+  } catch (error) {
+    throw new Error('Error en el registro');
+  }
+};
+```
+
+### 🔐 Autenticación y Autorización Avanzada
+
+#### Sistema JWT Completo
+- **Login Seguro**: Autenticación con email y contraseña
+- **Registro con Validación**: Formularios con Yup validation
+- **Persistencia de Sesión**: Cookies seguras con httpOnly
+- **Refresh Tokens**: Rotación automática de tokens
+- **Protección de Rutas**: Guards para rutas autenticadas y por rol
+
+#### Implementación de Formularios
+```typescript
+// Formulario de registro con validación completa
+const Register: React.FC = () => {
+  const { register: registerUser } = useAuth();
+  const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
+    resolver: yupResolver(schema), // Validación con Yup
+  });
+
+  const onSubmit = async (data: FormData) => {
+    setIsLoading(true);
+    try {
+      await registerUser({
+        firstName: data.firstName,
+        lastName: data.lastName || '',
+        email: data.email,
+        phone: '',
+        role: data.role,
+        password: data.password,
+      });
+      alert('Usuario registrado exitosamente. Ahora puedes iniciar sesión.');
+    } catch (error: any) {
+      console.error('Registration error:', error);
+      alert(error.message || 'Error en el registro');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+```
+
 ### 🍻 Catálogo de Productos Interactivo
 
 #### Características Técnicas

@@ -1,3 +1,5 @@
+using GunterBar.Domain.Enums;
+
 namespace GunterBar.Application.DTOs.User;
 
 public class RegisterDto
@@ -9,4 +11,5 @@ public class RegisterDto
     public string? PhoneNumber { get; set; }
     public string? Address { get; set; }
     public string? ProfileImageUrl { get; set; }
+    public string Role { get; set; } = string.Empty;
 }

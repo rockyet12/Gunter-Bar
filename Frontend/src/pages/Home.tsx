@@ -600,68 +600,61 @@ const Home: React.FC = () => {
         <div className={`featured-content ${featuredExpanded ? 'expanded' : 'collapsed'}`}>
           <p className="section-subtitle">Descubre nuestras bebidas más populares y apreciadas</p>
           <div className="products-grid">
-          {(() => {
-            console.log('Total featured products:', featuredProducts.length);
-            console.log('Featured products array:', featuredProducts);
-            return featuredProducts.length > 0 && featuredProducts.map((product, index) => {
-              console.log('Rendering product:', product.name, product.id, 'Index:', index);
-              return (
-                <div
-                  key={product.id}
-                  className="product-card extravagant-card animate-zoom-fade featured-glow featured-entrance visible"
-                  style={{ animationDelay: `${index * 0.13}s` }}
-                  onClick={() => handleProductClick(product)}
-                >
-                  <div className="aura-effect"></div>
-                  <div className="floating-particles"></div>
-                  <div className="product-badge">DESTACADO</div>
-                  <div className="product-image">
-                    <img 
-                      src={product.image} 
-                      alt={product.name}
-                      onError={(e) => {
-                        console.error('Image failed to load for product:', product.name, product.image);
-                        e.currentTarget.style.display = 'none';
-                      }}
-                      onLoad={() => console.log('Image loaded successfully for:', product.name)}
-                    />
-                    <div className="product-category">{product.category}</div>
+            {featuredProducts.map((product, index) => (
+              <div
+                key={product.id}
+                className="product-card extravagant-card animate-zoom-fade featured-glow featured-entrance visible"
+                style={{ animationDelay: `${index * 0.13}s` }}
+                onClick={() => handleProductClick(product)}
+              >
+                <div className="aura-effect"></div>
+                <div className="floating-particles"></div>
+                <div className="product-badge">DESTACADO</div>
+                <div className="product-image">
+                  <img 
+                    src={product.image} 
+                    alt={product.name}
+                    onError={(e) => {
+                      console.error('Image failed to load for product:', product.name, product.image);
+                      e.currentTarget.style.display = 'none';
+                    }}
+                    onLoad={() => console.log('Image loaded successfully for:', product.name)}
+                  />
+                  <div className="product-category">{product.category}</div>
+                </div>
+                <div className="product-info">
+                  <h4 className="product-name">{product.name}</h4>
+                  <p className="product-description">{product.description}</p>
+                  <div className="product-rating">
+                    {renderStars(product.rating)}
+                    <span className="rating-number">({product.rating})</span>
                   </div>
-                  <div className="product-info">
-                    <h4 className="product-name">{product.name}</h4>
-                    <p className="product-description">{product.description}</p>
-                    <div className="product-rating">
-                      {renderStars(product.rating)}
-                      <span className="rating-number">({product.rating})</span>
-                    </div>
-                    <div className="product-price extravagant-price">
-                      {formatPrice(product.price)}
-                    </div>
-                    <div className="product-actions">
-                      <Button
-                        variant="primary"
-                        size="sm"
-                        className="buy-button extravagant-button"
-                        onClick={() => addItem({
-                          id: product.id,
-                          name: product.name,
-                          price: product.price,
-                          image: product.image
-                        })}
-                      >
-                        Agregar al Carrito
+                  <div className="product-price extravagant-price">
+                    {formatPrice(product.price)}
+                  </div>
+                  <div className="product-actions">
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      className="buy-button extravagant-button"
+                      onClick={() => addItem({
+                        id: product.id,
+                        name: product.name,
+                        price: product.price,
+                        image: product.image
+                      })}
+                    >
+                      Agregar al Carrito
+                    </Button>
+                    <Link to="/menu">
+                      <Button variant="outline" size="sm">
+                        Ver Más
                       </Button>
-                      <Link to="/menu">
-                        <Button variant="outline" size="sm">
-                          Ver Más
-                        </Button>
-                      </Link>
-                    </div>
+                    </Link>
                   </div>
                 </div>
-              );
-            });
-          })()}
+              </div>
+            ))}
         </div>
         </div>
       </section>

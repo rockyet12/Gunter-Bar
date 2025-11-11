@@ -22,7 +22,7 @@ const Login: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [message, setMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
-  const { login } = useAuth();
+  const { login, isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
@@ -41,14 +41,23 @@ const Login: React.FC = () => {
     }
   }, [location, navigate]);
 
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      if (user.role === 'Seller') {
+        navigate('/seller');
+      } else {
+        navigate('/dashboard');
+      }
+    }
+  }, [isAuthenticated, user, navigate]);
+
   const onSubmit = async (data: FormData) => {
     setIsLoading(true);
     setMessage(null);
 
     try {
       await login(data.email, data.password);
-      // Login successful - redirect will be handled by the auth context
-      navigate('/dashboard');
+      // Login successful - redirect will be handled by useEffect based on role
     } catch (error: any) {
       console.error('Login error:', error);
       setMessage({

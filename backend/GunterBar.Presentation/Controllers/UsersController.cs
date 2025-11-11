@@ -405,4 +405,29 @@ public class UsersController : ControllerBase
             return BadRequest(result);
         return Ok(result);
     }
+
+    /// <summary>
+    /// Gets a vendor's profile including bar information
+    /// </summary>
+    /// <param name="id">Vendor ID</param>
+    /// <returns>Vendor profile with bar details</returns>
+    [HttpGet("vendor/{id:int}")]
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(ApiResponse<VendorProfileDto>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType((int)HttpStatusCode.NotFound)]
+    public async Task<ActionResult<ApiResponse<VendorProfileDto>>> GetVendorProfile(int id)
+    {
+        try
+        {
+            var result = await _userService.GetVendorProfileAsync(id);
+            if (!result.Success)
+                return NotFound(result);
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting vendor profile for user {UserId}", id);
+            return StatusCode(500, ApiResponse<VendorProfileDto>.Fail("Error interno del servidor"));
+        }
+    }
 }

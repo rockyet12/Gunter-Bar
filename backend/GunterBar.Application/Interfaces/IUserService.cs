@@ -39,4 +39,7 @@ public interface IUserService
     // SMS Verification
     Task<ApiResponse<bool>> GenerateSmsVerificationCodeAsync(int userId, string phoneNumber);
     Task<ApiResponse<bool>> VerifySmsCodeAsync(int userId, string code);
+
+    // Vendor
+    Task<ApiResponse<VendorProfileDto>> GetVendorProfileAsync(int vendorId);
 }

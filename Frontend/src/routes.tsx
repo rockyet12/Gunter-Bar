@@ -3,7 +3,10 @@ import { Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import Menu from './pages/Menu';
 import Profile from './pages/Profile';
-import Vendor from './pages/Vendor';
+import VendorPage from './pages/VendorPage';
+import VendorProfile from './pages/VendorProfile';
+import UserPage from './pages/UserPage';
+import SellerPage from './pages/SellerPage';
 import { Login, Register, ProtectedRoute, PublicRoute, VendorRoute } from './components/forms';
 import PublicLayout from './layout/PublicLayout';
 import ProtectedLayout from './layout/ProtectedLayout';
@@ -37,16 +40,26 @@ const AppRoutes: React.FC = () => {
         </ProtectedRoute>
       }>
         {/* User-specific pages can go here */}
-        <Route index element={<Home />} />
+        <Route index element={<UserPage />} />
         <Route path="manage-products" element={<Menu />} />
       </Route>
 
       {/* Vendor routes - require vendor role */}
       <Route path="/vendor" element={
         <VendorRoute>
-          <Vendor />
+          <VendorPage />
         </VendorRoute>
       } />
+
+      {/* Special seller page - totally different from buyer pages */}
+      <Route path="/seller" element={
+        <VendorRoute>
+          <SellerPage />
+        </VendorRoute>
+      } />
+
+      {/* Public vendor profile */}
+      <Route path="/vendor/:id" element={<VendorProfile />} />
 
       {/* Profile routes - separate layout */}
       <Route path="/dashboard/profile" element={

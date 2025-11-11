@@ -34,6 +34,7 @@ public static class DependencyInjection
         services.AddScoped<IDrinkService, DrinkService>();
         services.AddScoped<ICartService, CartService>();
         services.AddScoped<IOrderService, OrderService>();
+        services.AddScoped<IReviewService, ReviewService>();
 
         // Registrar casos de uso del Carrito
         services.AddScoped<AddToCartUseCase>();

@@ -50,7 +50,7 @@ public class TokenService : ITokenService
             new Claim("uid", user.Id.ToString()),
             new Claim("email", user.Email),
             new Claim("role", user.Role.ToString()),
-            new Claim("name", user.Name ?? string.Empty),
+            new Claim("name", user.FirstName ?? string.Empty),
             new Claim("jti", Guid.NewGuid().ToString()),
             new Claim("iat", DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString())
         };

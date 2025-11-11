@@ -18,6 +18,7 @@
 - **Performance**: Optimización de consultas, caching y lazy loading
 - **Mantenibilidad**: Código bien estructurado con documentación completa
 - **Testing**: Cobertura completa con pruebas unitarias e integración
+- **Multi-frontend**: Interfaces especializadas por rol de usuario
 
 ## 🚀 Stack Tecnológico
 
@@ -40,14 +41,33 @@
 }
 ```
 
-### Frontend (React + TypeScript)
+### Frontend - Arquitectura Multi-aplicación
 ```json
 {
-  "Framework": "React 18.2.0 con TypeScript 5.2.2",
-  "BuildTool": "Vite 7.1.12",
-  "Routing": "React Router DOM 6.8.0",
-  "StateManagement": "React Context + useReducer + Custom Hooks",
-  "HTTPClient": "Axios 1.6.0 con interceptores",
+  "Cliente": {
+    "Framework": "React 18.2.0 con TypeScript 5.2.2",
+    "BuildTool": "Vite 7.1.12",
+    "Routing": "React Router DOM 6.8.0",
+    "StateManagement": "React Context + useReducer + Custom Hooks",
+    "HTTPClient": "Axios 1.6.0 con interceptores",
+    "UI": "Tailwind CSS + Lucide Icons",
+    "Puerto": 5173,
+    "Rol": "Clientes (User)",
+    "Características": "Tienda online, carrito, pedidos, reseñas"
+  },
+  "Vendedor": {
+    "Framework": "React 18.2.0 con TypeScript 5.2.2",
+    "BuildTool": "Vite 7.2.2",
+    "Routing": "React Router DOM 6.8.0",
+    "StateManagement": "React Context + Auth Provider",
+    "HTTPClient": "Axios con interceptores JWT",
+    "UI": "Tailwind CSS + Lucide Icons",
+    "Puerto": 5174,
+    "Rol": "Vendedores (Seller)",
+    "Características": "Dashboard, gestión productos, pedidos, analytics"
+  }
+}
+```
   "Forms": "React Hook Form 7.43.0 + Yup validation",
   "UI": "CSS Modules + Tailwind CSS 3.3.0",
   "Icons": "React Icons + Material Symbols",
@@ -373,9 +393,13 @@ dotnet run --project GunterBar.Presentation
 ```
 
 #### Frontend Setup
+
+**Gunter Bar cuenta con dos aplicaciones frontend separadas:**
+
+##### 👥 Frontend de Clientes (Puerto 5173)
 ```bash
-# 1. Navegar al directorio frontend
-cd ../Frontend
+# 1. Navegar al directorio frontend de clientes
+cd Frontend
 
 # 2. Instalar dependencias
 npm install
@@ -388,9 +412,126 @@ VITE_APP_ENV=development
 
 # 4. Iniciar servidor de desarrollo
 npm run dev
+# Acceder en: http://localhost:5173
 ```
 
-## 📚 Documentación de API
+##### 🏪 Frontend de Vendedores (Puerto 5174)
+```bash
+# 1. Navegar al directorio frontend de vendedores
+cd seller-frontend
+
+# 2. Instalar dependencias
+npm install
+
+# 3. Configurar variables de entorno
+cp .env.example .env.local
+# Editar .env.local
+VITE_API_URL=http://localhost:5221/api
+VITE_APP_ENV=development
+
+# 4. Iniciar servidor de desarrollo
+npm run dev
+# Acceder en: http://localhost:5174
+```
+
+##### 🚀 Ejecutar Ambos Frontends Simultáneamente
+```bash
+# Opción automática (recomendada)
+./start-frontends.sh
+
+# Opción manual:
+# Terminal 1: cd Frontend && npm run dev        # 👥 Clientes: http://localhost:5173
+# Terminal 2: cd seller-frontend && npm run dev # 🏪 Vendedores: http://localhost:5174
+```
+
+##### 🔨 Construir Ambos Frontends para Producción
+```bash
+# Opción automática
+./build-frontends.sh
+
+# Opción manual:
+# cd Frontend && npm run build
+# cd ../seller-frontend && npm run build
+```
+
+### 📁 Estructura del Proyecto
+
+```
+Gunter-Bar/
+├── backend/                          # 🔧 Backend .NET 9.0 (API)
+│   ├── GunterBar.API/               # 🚀 API RESTful
+│   ├── GunterBar.Application/       # 💼 Lógica de negocio
+│   ├── GunterBar.Domain/            # 🎯 Dominio y entidades
+│   ├── GunterBar.Infrastructure/    # 🔌 Infraestructura
+│   └── GunterBar.Tests/             # 🧪 Pruebas unitarias
+├── Frontend/                        # 👥 Frontend de Clientes
+│   ├── src/
+│   │   ├── components/              # Componentes React
+│   │   ├── pages/                   # Páginas de la aplicación
+│   │   ├── utils/                   # Utilidades y API
+│   │   └── models/                  # Interfaces TypeScript
+│   ├── dist/                        # Build de producción
+│   └── package.json                 # Dependencias
+├── seller-frontend/                 # 🏪 Frontend de Vendedores
+│   ├── src/
+│   │   ├── components/              # Componentes React
+│   │   ├── pages/                   # Dashboard administrativo
+│   │   ├── utils/                   # Utilidades y API
+│   │   └── models/                  # Interfaces TypeScript
+│   ├── dist/                        # Build de producción
+│   └── package.json                 # Dependencias
+├── logs/                            # 📊 Logs de ejecución
+│   ├── customer-frontend.log        # Logs frontend clientes
+│   └── seller-frontend.log          # Logs frontend vendedores
+├── docker-compose.yml               # 🐳 Orquestación de contenedores
+├── start-frontends.sh              # 🚀 Script inicio frontends
+├── build-frontends.sh              # 🔨 Script build frontends
+└── README.md                       # 📖 Documentación principal
+```
+
+#### 🎯 Arquitectura Multi-frontend
+- **👥 Frontend de Clientes**: Tienda online, catálogo, carrito, pedidos
+- **🏪 Frontend de Vendedores**: Dashboard administrativo, gestión productos
+- **🔧 Backend Compartido**: API única para ambos frontends
+- **📊 Logs Centralizados**: Monitoreo de todos los componentes
+
+### 📁 Estructura de Logs y Automatización
+
+```
+Gunter-Bar/
+├── logs/                     # 📊 Logs de ejecución
+│   ├── customer-frontend.log # Logs del frontend de clientes
+│   └── seller-frontend.log   # Logs del frontend de vendedores
+├── start-frontends.sh        # 🚀 Script para iniciar ambos frontends
+└── build-frontends.sh        # 🔨 Script para construir ambos frontends
+```
+
+**¿Para qué sirven los logs?**
+- 📊 **Monitoreo**: Ver el estado de los servidores en tiempo real
+- 🐛 **Debugging**: Investigar errores durante el desarrollo
+- 📈 **Auditoría**: Mantener registro de la actividad del sistema
+- 🔍 **Análisis**: Revisar performance y comportamiento
+
+## � Despliegue y Producción
+
+### 🌐 URLs de Producción
+- **👥 Tienda de Clientes**: `https://gunterbar-clientes.vercel.app`
+- **🏪 Panel de Vendedores**: `https://gunterbar-vendedores.vercel.app`
+- **🔧 API Backend**: `https://gunterbar-api.vercel.app`
+- **📚 Documentación API**: `https://gunterbar-api.vercel.app/swagger`
+
+### 🔨 Build para Producción
+```bash
+# Construir todos los componentes
+./build-frontends.sh
+
+# Builds generados en:
+# - Frontend/dist/
+# - seller-frontend/dist/
+# - backend/publish/ (después de dotnet publish)
+```
+
+## �📚 Documentación de API
 
 ### Endpoints Principales
 
@@ -1080,6 +1221,147 @@ Este es un proyecto educativo. Las contribuciones están limitadas a los estudia
 Para consultas sobre este proyecto:
 - **GitHub**: [@rockyet12](https://github.com/rockyet12)
 - **Institución**: ET12 - http://et12.edu.ar
+
+---
+
+## 🐙 Guía de Git - Commit y Push
+
+### 📋 Verificar Estado del Repositorio
+```bash
+# Ver estado de archivos
+git status
+
+# Ver cambios en archivos rastreados
+git diff
+
+# Ver cambios en archivos nuevos/no rastreados
+git diff --cached
+```
+
+### ➕ Agregar Archivos al Staging Area
+```bash
+# Agregar todos los archivos modificados
+git add .
+
+# Agregar archivos específicos
+git add README.md
+git add Frontend/src/
+git add seller-frontend/
+
+# Agregar archivos por patrón
+git add "*.md"
+git add "*/package.json"
+```
+
+### 💾 Crear Commit
+```bash
+# Commit con mensaje descriptivo
+git commit -m "feat: implementar arquitectura multi-frontend
+
+- Agregar frontend separado para vendedores
+- Crear dashboard administrativo completo
+- Implementar sistema de roles y autenticación
+- Agregar scripts de automatización
+- Actualizar documentación completa
+
+BREAKING CHANGE: Separación de frontends por roles"
+
+# Commit más detallado (abre editor)
+git commit
+```
+
+### 📤 Push a Repositorio Remoto
+```bash
+# Push a rama main
+git push origin main
+
+# Push a rama específica
+git push origin feature/multi-frontend
+
+# Forzar push (usar con cuidado)
+git push --force origin main
+```
+
+### 🌿 Manejo de Ramas
+```bash
+# Crear nueva rama
+git checkout -b feature/nueva-funcionalidad
+
+# Cambiar a rama existente
+git checkout main
+
+# Ver todas las ramas
+git branch -a
+
+# Fusionar rama
+git merge feature/nueva-funcionalidad
+```
+
+### 📦 Archivos Incluidos en el Commit
+
+#### ✅ **Archivos a Incluir:**
+```
+├── backend/                          # API completa
+├── Frontend/                         # Frontend de clientes
+├── seller-frontend/                  # Frontend de vendedores
+├── docker-compose.yml               # Configuración Docker
+├── start-frontends.sh              # Script de inicio
+├── build-frontends.sh              # Script de build
+├── README.md                       # Documentación actualizada
+├── API-README.md                   # Documentación API
+├── .gitignore                      # Exclusiones Git
+└── *.md                           # Archivos de documentación
+```
+
+#### ❌ **Archivos Excluidos (.gitignore):**
+```
+├── logs/                           # Logs de ejecución
+├── */node_modules/                 # Dependencias
+├── */dist/                        # Builds de producción
+├── */bin/                         # Binarios .NET
+├── */obj/                         # Objetos .NET
+├── .env*                          # Variables de entorno
+├── *.log                          # Archivos de log
+└── .vscode/                       # Configuración VS Code
+```
+
+### 🏷️ Convención de Commits
+```bash
+# Tipos de commit
+feat:     Nueva funcionalidad
+fix:      Corrección de bug
+docs:     Cambios en documentación
+style:    Cambios de estilo (formato, etc.)
+refactor: Refactorización de código
+test:     Agregar o modificar tests
+chore:    Cambios en herramientas, configuración
+
+# Ejemplos
+git commit -m "feat: agregar dashboard de vendedores"
+git commit -m "fix: corregir autenticación en frontend"
+git commit -m "docs: actualizar README con nueva arquitectura"
+```
+
+### 🔄 Workflow Recomendado
+```bash
+# 1. Verificar estado
+git status
+
+# 2. Agregar cambios
+git add .
+
+# 3. Verificar cambios
+git diff --cached
+
+# 4. Crear commit
+git commit -m "feat: descripción clara del cambio"
+
+# 5. Push a repositorio
+git push origin main
+
+# 6. Verificar en GitHub
+# https://github.com/rockyet12/Gunter-Bar
+```
 
 ---
 

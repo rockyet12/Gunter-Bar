@@ -49,13 +49,17 @@ const Register: React.FC = () => {
       const { confirmPassword, ...userData } = data;
       await registerUser(userData);
 
-      // Registration successful - redirect to login with success message
-      navigate('/login', {
-        state: {
-          message: '¡Registro exitoso! Ahora puedes iniciar sesión.',
-          type: 'success'
-        }
-      });
+      // Registration successful - redirect based on role
+      if (data.role === 'SalesManager') {
+        navigate('/seller');
+      } else {
+        navigate('/login', {
+          state: {
+            message: '¡Registro exitoso! Ahora puedes iniciar sesión.',
+            type: 'success'
+          }
+        });
+      }
     } catch (error: any) {
       console.error('Registration error:', error);
       setError(error.message || 'Error al registrar usuario. Inténtalo de nuevo.');

@@ -58,10 +58,10 @@ public class DrinksController : ControllerBase
     }
 
     /// <summary>
-    /// Crea una nueva bebida (Solo Admin)
+    /// Crea una nueva bebida (Solo Admin y Seller)
     /// </summary>
     [HttpPost]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Seller")]
     public async Task<ActionResult<ApiResponse<DrinkDto>>> Create([FromBody] CreateDrinkDto createDrinkDto)
     {
         if (!ModelState.IsValid)
@@ -88,7 +88,7 @@ public class DrinksController : ControllerBase
     /// Actualiza una bebida existente (Solo Admin)
     /// </summary>
     /// <summary>
-    /// Actualiza una bebida existente
+    /// Actualiza una bebida existente (Solo Admin y Seller)
     /// </summary>
     /// <param name="id">ID de la bebida a actualizar</param>
     /// <param name="updateDto">Datos de actualización de la bebida</param>
@@ -98,7 +98,7 @@ public class DrinksController : ControllerBase
     /// <response code="404">Bebida no encontrada</response>
     /// <response code="409">Conflicto con datos existentes</response>
     [HttpPut("{id}")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Seller")]
     [ProducesResponseType(typeof(ApiResponse<DrinkDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<DrinkDto>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse<DrinkDto>), StatusCodes.Status404NotFound)]
@@ -145,10 +145,10 @@ public class DrinksController : ControllerBase
     }
 
     /// <summary>
-    /// Elimina una bebida (Solo Admin)
+    /// Elimina una bebida (Solo Admin y Seller)
     /// </summary>
     [HttpDelete("{id}")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Seller")]
     public async Task<ActionResult<ApiResponse<bool>>> Delete(int id)
     {
         var result = await _drinkService.DeleteAsync(id);

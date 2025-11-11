@@ -18,15 +18,15 @@
 
 .btn:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.3);
+  box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.3);
 }
 
-/* Primary Button - Dark purple gradient (main action) */
+/* Primary Button - Gold gradient (main action) */
 .btn-primary {
-  background: linear-gradient(135deg, #4c2889 0%, #7c3aed 100%);
-  color: white;
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  color: #000000;
   box-shadow:
-    0 4px 15px rgba(76, 40, 137, 0.3),
+    0 4px 15px rgba(255, 215, 0, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
   position: relative;
   overflow: hidden;
@@ -48,10 +48,10 @@
 }
 
 .btn-primary:hover {
-  background: linear-gradient(135deg, #3b1d6b 0%, #6b21a8 100%);
+  background: linear-gradient(135deg, #FFA500 0%, #FF8C00 100%);
   transform: translateY(-3px) scale(1.02);
   box-shadow:
-    0 8px 25px rgba(76, 40, 137, 0.5),
+    0 8px 25px rgba(255, 215, 0, 0.5),
     inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
@@ -79,8 +79,8 @@
 /* Outline Button - Transparent with border */
 .btn-outline {
   background: transparent;
-  color: #7c3aed;
-  border: 2px solid #7c3aed;
+  color: #FFD700;
+  border: 2px solid #FFD700;
   position: relative;
   overflow: hidden;
 }
@@ -92,7 +92,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, #7c3aed, #a855f7);
+  background: linear-gradient(135deg, #FFD700, #FFA500);
   opacity: 0;
   transition: opacity 0.3s ease;
   z-index: -1;

@@ -1,6 +1,6 @@
 /* Custom styles for authentication components */
 .auth-container {
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 25%, #0f3460 50%, #16213e 75%, #1a1a2e 100%);
+  background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -18,9 +18,9 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: radial-gradient(circle at 50% 50%, rgba(138, 43, 226, 0.15) 0%, transparent 70%),
-              radial-gradient(circle at 20% 80%, rgba(75, 0, 130, 0.1) 0%, transparent 50%),
-              radial-gradient(circle at 80% 20%, rgba(106, 90, 205, 0.1) 0%, transparent 50%);
+  background: radial-gradient(circle at 50% 50%, rgba(255, 215, 0, 0.15) 0%, transparent 70%),
+              radial-gradient(circle at 20% 80%, rgba(255, 165, 0, 0.1) 0%, transparent 50%),
+              radial-gradient(circle at 80% 20%, rgba(255, 140, 0, 0.1) 0%, transparent 50%);
   animation: backgroundShift 20s ease-in-out infinite alternate;
 }
 
@@ -65,9 +65,9 @@
 .auth-card {
   background: rgba(26, 26, 46, 0.95);
   backdrop-filter: blur(20px);
-  border: 1px solid rgba(138, 43, 226, 0.3);
+  border: 1px solid rgba(255, 215, 0, 0.3);
   border-radius: 25px;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(138, 43, 226, 0.2);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 215, 0, 0.2);
   color: white;
   max-width: 450px;
   width: 100%;
@@ -88,7 +88,7 @@
 }
 
 .auth-card-header {
-  background: linear-gradient(135deg, #8A2BE2 0%, #4B0082 50%, #6A5ACD 100%);
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
   border-radius: 25px 25px 0 0;
   padding: 30px;
   text-align: center;
@@ -114,7 +114,7 @@
 }
 
 .auth-card-header h3 {
-  color: #FFFFFF;
+  color: #000000;
   font-weight: bold;
   margin: 0;
   font-size: 1.6rem;

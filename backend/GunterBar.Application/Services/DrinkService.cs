@@ -113,10 +113,7 @@ public class DrinkService : IDrinkService
     {
         try
         {
-            var drink = new Drink(createDrinkDto.Name, createDrinkDto.Price, createDrinkDto.Stock)
-            {
-                Description = createDrinkDto.Description
-            };
+            var drink = new Drink(createDrinkDto.Name, createDrinkDto.Price, createDrinkDto.Stock, createDrinkDto.Type, createDrinkDto.Description);
 
             var createdDrink = await _drinkRepository.CreateAsync(drink);
 

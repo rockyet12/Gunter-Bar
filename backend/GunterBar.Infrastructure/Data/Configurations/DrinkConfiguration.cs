@@ -22,10 +22,9 @@ public class DrinkConfiguration : EntityBaseConfiguration<Drink>
             .IsRequired()
             .HasColumnType("decimal(18,2)");
 
-        builder.Property(d => d.Category)
+        builder.Property(d => d.Type)
             .IsRequired()
-            .HasMaxLength(50)
-            .HasDefaultValue("Sin categoría");
+            .HasConversion<string>();
 
         builder.Property(d => d.ImageUrl)
             .HasMaxLength(2048);

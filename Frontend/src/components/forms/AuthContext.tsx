@@ -44,8 +44,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           const response = await apiService.get<{ success: boolean; message: string; data: User }>('/auth/profile');
 
           if (response.data.success && response.data.data) {
+            const backendUser = response.data.data;
+            const userData = {
+              ...backendUser,
+              role: (backendUser.role === 'Client' || backendUser.role === 'Customer') ? 'User' : 'Seller'
+            };
             setIsAuthenticated(true);
-            setUser(response.data.data);
+            setUser(userData);
           } else {
             // Token is invalid, remove it
             Cookies.remove('token');
@@ -91,7 +96,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
         const userData = {
           ...backendUser,
-          role: backendUser.role === 'Customer' ? 'User' : 'Seller'
+          role: (backendUser.role === 'Client' || backendUser.role === 'Customer') ? 'User' : 'Seller'
         };
 
         // Save token in cookie (expires in 7 days)
@@ -149,7 +154,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const response = await apiService.get<{ success: boolean; message: string; data: User }>('/auth/profile');
 
       if (response.data.success && response.data.data) {
-        setUser(response.data.data);
+        const backendUser = response.data.data;
+        const userData = {
+          ...backendUser,
+          role: (backendUser.role === 'Client' || backendUser.role === 'Customer') ? 'User' : 'Seller'
+        };
+        setUser(userData);
       }
     } catch (error: any) {
       // Only logout if it's an authentication error (401)

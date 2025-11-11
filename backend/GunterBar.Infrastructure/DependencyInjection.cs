@@ -31,6 +31,7 @@ public static class DependencyInjection
         services.AddScoped<IDrinkRepository, DrinkRepository>();
         services.AddScoped<ICartRepository, CartRepository>();
         services.AddScoped<IOrderRepository, OrderRepository>();
+        services.AddScoped<IReviewRepository, ReviewRepository>();
 
         // Services
         services.AddScoped<ICacheService, CacheService>();

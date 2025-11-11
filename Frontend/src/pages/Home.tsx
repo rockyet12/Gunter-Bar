@@ -532,9 +532,9 @@ const Home: React.FC = () => {
           <button
             className="expand-toggle"
             onClick={() => setExtravagantExpanded(!extravagantExpanded)}
-            aria-label={extravagantExpanded ? "Colapsar sección" : "Expandir sección"}
+            aria-label={extravagantExpanded ? "Colapsar sección" : "Mostrar sección"}
           >
-            {extravagantExpanded ? "🔽 Colapsar" : "🔼 Expandir"}
+            {extravagantExpanded ? "🔽 Colapsar" : "🔼 Mostrar"}
           </button>
         </div>
         <div className={`extravagant-content ${extravagantExpanded ? 'expanded' : 'collapsed'}`}>

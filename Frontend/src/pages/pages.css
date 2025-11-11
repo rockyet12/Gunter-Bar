@@ -81,9 +81,7 @@
 .hero {
   text-align: center;
   padding: 4rem 2rem;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #2d3748 50%, #374151 75%, #0f172a 100%);
-  background-size: 400% 400%;
-  animation: backgroundShift 8s ease-in-out infinite;
+  background: #0f172a;
   color: #f1f5f9;
   border-radius: 12px;
   margin-bottom: 3rem;
@@ -102,26 +100,19 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-image:
-    radial-gradient(circle at 25% 25%, rgba(96, 165, 250, 0.15) 0%, transparent 50%),
-    radial-gradient(circle at 75% 75%, rgba(236, 72, 153, 0.15) 0%, transparent 50%),
-    radial-gradient(circle at 50% 50%, rgba(168, 85, 247, 0.1) 0%, transparent 50%);
-  animation: particleFloat 10s ease-in-out infinite;
+  background: radial-gradient(circle at 50% 50%, rgba(147, 51, 234, 0.1) 0%, transparent 70%);
+  animation: purpleAura 8s ease-in-out infinite;
   pointer-events: none;
 }
 
-@keyframes particleFloat {
+@keyframes purpleAura {
   0%, 100% {
-    transform: translateY(0px) rotate(0deg) scale(1);
-  }
-  25% {
-    transform: translateY(-20px) rotate(90deg) scale(1.1);
+    opacity: 0.1;
+    transform: scale(1);
   }
   50% {
-    transform: translateY(-10px) rotate(180deg) scale(0.9);
-  }
-  75% {
-    transform: translateY(-30px) rotate(270deg) scale(1.05);
+    opacity: 0.2;
+    transform: scale(1.05);
   }
 }
 
@@ -144,12 +135,7 @@
   font-size: 3.5rem;
   margin: 0;
   font-weight: 800;
-  background: linear-gradient(45deg, #60a5fa, #a855f7, #ec4899, #f59e0b, #60a5fa);
-  background-size: 300% 300%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: gradientShift 4s ease-in-out infinite;
+  color: #f1f5f9;
   text-shadow: 0 0 40px rgba(96, 165, 250, 0.5);
   position: relative;
   z-index: 2;
@@ -159,9 +145,7 @@
   margin-bottom: 4rem;
   position: relative;
   padding: 4rem 2rem;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #2d3748 50%, #1e293b 75%, #0f172a 100%);
-  background-size: 400% 400%;
-  animation: extravagantBackground 12s ease-in-out infinite;
+  background: #0f172a;
   border-radius: 20px;
   overflow: hidden;
   border: 2px solid rgba(251, 191, 36, 0.3);
@@ -177,51 +161,15 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background:
-    radial-gradient(circle at 20% 20%, rgba(251, 191, 36, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(236, 72, 153, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 60% 40%, rgba(168, 85, 247, 0.1) 0%, transparent 50%);
-  animation: extravagantParticles 8s ease-in-out infinite;
+  background: rgba(251, 191, 36, 0.05);
   pointer-events: none;
-}
-
-@keyframes extravagantBackground {
-  0%, 100% {
-    background-position: 0% 50%;
-  }
-  25% {
-    background-position: 100% 0%;
-  }
-  50% {
-    background-position: 100% 100%;
-  }
-  75% {
-    background-position: 0% 100%;
-  }
-}
-
-@keyframes extravagantParticles {
-  0%, 100% {
-    transform: translateY(0px) rotate(0deg) scale(1);
-  }
-  33% {
-    transform: translateY(-30px) rotate(120deg) scale(1.1);
-  }
-  66% {
-    transform: translateY(20px) rotate(240deg) scale(0.9);
-  }
 }
 
 .extravagant-products h3 {
   text-align: center;
   font-size: 2.5rem;
   margin-bottom: 0.5rem;
-  background: linear-gradient(45deg, #fbbf24, #f59e0b, #ec4899, #a855f7, #60a5fa);
-  background-size: 300% 300%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: gradientShift 3s ease-in-out infinite;
+  color: #fbbf24;
   text-shadow: 0 0 30px rgba(251, 191, 36, 0.3);
   font-weight: 800;
   position: relative;
@@ -1534,22 +1482,51 @@
 
 /* Featured Products Section */
 .featured-products {
-  margin-top: 4rem;
-  padding: 2rem 0;
+  margin-bottom: 4rem;
+  position: relative;
+  padding: 4rem 2rem;
+  background: #0f172a;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 2px solid rgba(96, 165, 250, 0.3);
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.featured-products::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(96, 165, 250, 0.05);
+  pointer-events: none;
 }
 
 .featured-products h3 {
   text-align: center;
   font-size: 2.5rem;
   margin-bottom: 0.5rem;
-  background: linear-gradient(45deg, #60a5fa, #a855f7, #ec4899);
-  background-size: 200% 200%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: gradientShift 3s ease-in-out infinite;
+  color: #60a5fa;
   text-shadow: 0 0 30px rgba(96, 165, 250, 0.3);
   font-weight: 800;
+  position: relative;
+}
+
+.featured-products h3::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 4px;
+  background: linear-gradient(90deg, #60a5fa, #a855f7, #ec4899, #f59e0b, #fbbf24);
+  background-size: 200% 100%;
+  animation: titleUnderline 2s ease-in-out infinite;
+  border-radius: 2px;
 }
 
 .section-subtitle {
@@ -1619,21 +1596,21 @@
   left: -3px;
   right: -3px;
   bottom: -3px;
-  background: linear-gradient(45deg, #60a5fa, #a855f7, #ec4899, #f59e0b, #60a5fa);
+  background: linear-gradient(45deg, #B8860B, #8B6914, #654321, #B8860B);
   background-size: 400% 400%;
   border-radius: 15px;
   opacity: 0;
   z-index: -1;
-  animation: rainbowGlow 4s ease-in-out infinite;
-  filter: blur(8px);
+  animation: goldGlow 4s ease-in-out infinite;
+  filter: blur(4px);
 }
 
 .product-card.featured-glow:hover::after {
-  opacity: 1;
+  opacity: 0.6;
   animation-duration: 2s;
 }
 
-@keyframes rainbowGlow {
+@keyframes goldGlow {
   0%, 100% {
     background-position: 0% 50%;
   }
@@ -1742,21 +1719,7 @@
 
 /* Texto con gradiente */
 .gradient-text {
-  background: linear-gradient(45deg, #60a5fa, #a855f7, #ec4899, #f59e0b);
-  background-size: 300% 300%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: gradientShift 3s ease-in-out infinite;
-}
-
-@keyframes gradientShift {
-  0%, 100% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
+  color: #60a5fa;
 }
 
 @keyframes fadeInUpScale {

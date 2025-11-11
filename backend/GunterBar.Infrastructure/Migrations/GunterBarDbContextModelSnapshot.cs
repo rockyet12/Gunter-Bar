@@ -22,6 +22,86 @@ namespace GunterBar.Infrastructure.Migrations
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
+            modelBuilder.Entity("GunterBar.Domain.Entities.Bar", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)");
+
+                    b.Property<string>("City")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("Country")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("varchar(1000)");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("ImageUrl")
+                        .HasMaxLength(1000)
+                        .HasColumnType("varchar(1000)");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("tinyint(1)")
+                        .HasDefaultValue(true);
+
+                    b.Property<decimal?>("Latitude")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal?>("Longitude")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<string>("OpeningHours")
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)");
+
+                    b.Property<int>("OwnerId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)");
+
+                    b.Property<string>("PostalCode")
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.HasIndex("OwnerId")
+                        .IsUnique();
+
+                    b.ToTable("Bars");
+                });
+
             modelBuilder.Entity("GunterBar.Domain.Entities.Cart", b =>
                 {
                     b.Property<int>("Id")
@@ -104,12 +184,8 @@ namespace GunterBar.Infrastructure.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Category")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)")
-                        .HasDefaultValue("Sin categoría");
+                    b.Property<int>("BarId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
@@ -140,10 +216,16 @@ namespace GunterBar.Infrastructure.Migrations
                     b.Property<int>("Stock")
                         .HasColumnType("int");
 
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BarId");
 
                     b.ToTable("Drinks");
                 });
@@ -183,6 +265,9 @@ namespace GunterBar.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("BarId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("CancelledDate")
                         .HasColumnType("datetime(6)");
@@ -235,6 +320,8 @@ namespace GunterBar.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BarId");
 
                     b.HasIndex("UserId");
 
@@ -306,6 +393,9 @@ namespace GunterBar.Infrastructure.Migrations
                     b.Property<DateTime?>("BirthDate")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
                     b.Property<string>("DeliveryDescription")
                         .HasMaxLength(500)
                         .HasColumnType("varchar(500)");
@@ -367,6 +457,9 @@ namespace GunterBar.Infrastructure.Migrations
                     b.Property<DateTime?>("SmsVerificationCodeGeneratedAt")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Email")
@@ -375,10 +468,21 @@ namespace GunterBar.Infrastructure.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("GunterBar.Domain.Entities.Bar", b =>
+                {
+                    b.HasOne("GunterBar.Domain.Entities.User", "Owner")
+                        .WithOne("Bar")
+                        .HasForeignKey("GunterBar.Domain.Entities.Bar", "OwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Owner");
+                });
+
             modelBuilder.Entity("GunterBar.Domain.Entities.Cart", b =>
                 {
                     b.HasOne("GunterBar.Domain.Entities.User", "User")
-                        .WithMany()
+                        .WithMany("Carts")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -411,6 +515,17 @@ namespace GunterBar.Infrastructure.Migrations
                     b.Navigation("Drink");
                 });
 
+            modelBuilder.Entity("GunterBar.Domain.Entities.Drink", b =>
+                {
+                    b.HasOne("GunterBar.Domain.Entities.Bar", "Bar")
+                        .WithMany("Drinks")
+                        .HasForeignKey("BarId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Bar");
+                });
+
             modelBuilder.Entity("GunterBar.Domain.Entities.DrinkIngredient", b =>
                 {
                     b.HasOne("GunterBar.Domain.Entities.Drink", "Drink")
@@ -424,6 +539,10 @@ namespace GunterBar.Infrastructure.Migrations
 
             modelBuilder.Entity("GunterBar.Domain.Entities.Order", b =>
                 {
+                    b.HasOne("GunterBar.Domain.Entities.Bar", null)
+                        .WithMany("Orders")
+                        .HasForeignKey("BarId");
+
                     b.HasOne("GunterBar.Domain.Entities.User", null)
                         .WithMany("Orders")
                         .HasForeignKey("UserId")
@@ -464,6 +583,13 @@ namespace GunterBar.Infrastructure.Migrations
                     b.Navigation("Order");
                 });
 
+            modelBuilder.Entity("GunterBar.Domain.Entities.Bar", b =>
+                {
+                    b.Navigation("Drinks");
+
+                    b.Navigation("Orders");
+                });
+
             modelBuilder.Entity("GunterBar.Domain.Entities.Cart", b =>
                 {
                     b.Navigation("Items");
@@ -485,6 +611,10 @@ namespace GunterBar.Infrastructure.Migrations
 
             modelBuilder.Entity("GunterBar.Domain.Entities.User", b =>
                 {
+                    b.Navigation("Bar");
+
+                    b.Navigation("Carts");
+
                     b.Navigation("Orders");
                 });
 #pragma warning restore 612, 618

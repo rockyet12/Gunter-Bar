@@ -431,6 +431,50 @@ public class UserService : IUserService
         return ApiResponse<bool>.Succeed(true, "Código verificado correctamente");
     }
 
+    public async Task<ApiResponse<VendorProfileDto>> GetVendorProfileAsync(int vendorId)
+    {
+        try
+        {
+            var user = await _userRepository.GetByIdWithBarAsync(vendorId);
+            if (user == null || user.Role != UserRole.Vendor)
+            {
+                return ApiResponse<VendorProfileDto>.Fail("Vendedor no encontrado");
+            }
+
+            var vendorProfile = new VendorProfileDto
+            {
+                Id = user.Id,
+                Name = user.Name,
+                LastName = user.LastName,
+                PhoneNumber = user.PhoneNumber,
+                Address = user.Address,
+                ProfileImageUrl = user.ProfileImageUrl,
+                Bar = user.Bar != null ? new BarDto
+                {
+                    Id = user.Bar.Id,
+                    Name = user.Bar.Name,
+                    Description = user.Bar.Description,
+                    Address = user.Bar.Address,
+                    City = user.Bar.City,
+                    PostalCode = user.Bar.PostalCode,
+                    Country = user.Bar.Country,
+                    Latitude = user.Bar.Latitude,
+                    Longitude = user.Bar.Longitude,
+                    PhoneNumber = user.Bar.PhoneNumber,
+                    Email = user.Bar.Email,
+                    ImageUrl = user.Bar.ImageUrl,
+                    OpeningHours = user.Bar.OpeningHours
+                } : null
+            };
+
+            return ApiResponse<VendorProfileDto>.Succeed(vendorProfile);
+        }
+        catch (Exception ex)
+        {
+            return ApiResponse<VendorProfileDto>.Fail($"Error al obtener perfil del vendedor: {ex.Message}");
+        }
+    }
+
     private static string GenerateRandomCode(int length)
     {
         const string chars = "0123456789";

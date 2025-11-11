@@ -1,6 +1,6 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAuth } from '../forms/AuthContext';
+import { useAuth } from './AuthContext';
 
 interface VendorRouteProps {
   children: React.ReactNode;
@@ -17,8 +17,9 @@ const VendorRoute: React.FC<VendorRouteProps> = ({ children }) => {
     return <Navigate to="/login" replace />;
   }
 
+  // Only allow users with 'Seller' role to access vendor pages
   if (user.role !== 'Seller') {
-    return <Navigate to="/home" replace />;
+    return <Navigate to="/dashboard" replace />;
   }
 
   return <>{children}</>;

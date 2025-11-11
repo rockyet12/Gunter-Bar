@@ -6,6 +6,7 @@ namespace GunterBar.Domain.Interfaces;
 public interface IUserRepository
 {
     Task<User?> GetByIdAsync(int id);
+    Task<User?> GetByIdWithBarAsync(int id);
     Task<User?> GetByEmailAsync(string email);
     Task<IEnumerable<User>> GetAllAsync();
     Task<User> CreateAsync(User user);

@@ -22,6 +22,14 @@ public class UserRepository : IUserRepository
             .FirstOrDefaultAsync(u => u.Id == id);
     }
 
+    public async Task<User?> GetByIdWithBarAsync(int id)
+    {
+        return await _context.Users
+            .Include(u => u.Bar)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(u => u.Id == id);
+    }
+
     public async Task<User?> GetByEmailAsync(string email)
     {
         if (string.IsNullOrWhiteSpace(email))

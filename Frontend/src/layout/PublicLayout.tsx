@@ -53,7 +53,9 @@ const PublicLayout: React.FC = () => {
         <nav className={`nav-menu ${isMenuOpen ? 'open' : ''}`}>
           <ul>
             <li><Link to="/" onClick={closeMenu}>Inicio</Link></li>
-            <li><Link to="/menu" onClick={closeMenu}>Menú</Link></li>
+            {isAuthenticated && <li><Link to="/menu" onClick={closeMenu}>Menú</Link></li>}
+            {isAuthenticated && user?.role === 'Seller' && <li><Link to="/seller" onClick={closeMenu}>Panel de Vendedor</Link></li>}
+            {isAuthenticated && <li><Link to="/profile" onClick={closeMenu}>Mi Perfil</Link></li>}
             {isAuthenticated ? (
               <li>
                 <Button variant="outline" size="sm" onClick={() => { logout(); closeMenu(); }}>

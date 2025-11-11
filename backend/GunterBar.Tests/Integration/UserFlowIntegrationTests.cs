@@ -27,7 +27,7 @@ public class UserFlowIntegrationTests : IClassFixture<WebApplicationFactory<Prog
         // Paso 1: Registro
         var registerDto = new RegisterDto
         {
-            Name = $"Test User {System.Guid.NewGuid()} ",
+            FirstName = $"Test User {System.Guid.NewGuid()} ",
             Email = $"testuser_{System.Guid.NewGuid()}@gunterbar.com",
             Password = "Test1234!"
         };

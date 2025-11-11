@@ -18,6 +18,7 @@ public class GunterBarDbContext : DbContext
     public DbSet<OrderItem> OrderItems { get; set; } = null!;
     public DbSet<Cart> Carts { get; set; } = null!;
     public DbSet<CartItem> CartItems { get; set; } = null!;
+    public DbSet<Review> Reviews { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

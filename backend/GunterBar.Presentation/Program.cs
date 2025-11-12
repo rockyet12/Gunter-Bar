@@ -126,7 +126,7 @@ public class Program
         {
             options.AddPolicy("AllowFrontend", policy =>
             {
-                policy.WithOrigins("http://localhost:5173") // Frontend Vite dev server
+                policy.WithOrigins("http://localhost:5173", "http://localhost:5174") // Frontend Vite dev server and seller frontend
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials(); // Importante: permitir credenciales (cookies)

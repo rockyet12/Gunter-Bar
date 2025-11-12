@@ -51,6 +51,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             };
             setIsAuthenticated(true);
             setUser(userData);
+
+            // Redirect to seller frontend if user is a seller
+            if (userData.role === 'Seller') {
+              window.location.href = 'http://localhost:5174';
+            }
           } else {
             // Token is invalid, remove it
             Cookies.remove('token');
@@ -111,6 +116,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
         setIsAuthenticated(true);
         setUser(userData);
+
+        // Redirect to seller frontend if user is a seller
+        if (userData.role === 'Seller') {
+          window.location.href = 'http://localhost:5174';
+        }
       } else {
         const errorMessage = response.data.message || 'Error al iniciar sesión';
         throw new Error(errorMessage);
@@ -136,10 +146,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const response = await apiService.auth.register(userData);
 
       if (response.data.success) {
-        // Registration successful, but user needs to login
+        // Registration successful, auto-login
         console.log('Usuario registrado exitosamente:', response.data);
-        // Optionally auto-login after registration
-        // await login(userData.email, userData.password);
+        await login(userData.email, userData.password);
       } else {
         throw new Error(response.data.message || 'Error en el registro');
       }

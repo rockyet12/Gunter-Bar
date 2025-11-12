@@ -50,6 +50,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             };
             setIsAuthenticated(true);
             setUser(userData);
+
+            // Redirect to customer frontend if user is a customer
+            if (userData.role === 'User') {
+              window.location.href = 'http://localhost:5173';
+            }
           } else {
             // Token is invalid, remove it
             localStorage.removeItem('token');
@@ -97,6 +102,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
         setIsAuthenticated(true);
         setUser(userData);
+
+        // Redirect to customer frontend if user is a customer
+        if (userData.role === 'User') {
+          window.location.href = 'http://localhost:5173';
+        }
       } else {
         const errorMessage = response.data.message || 'Error al iniciar sesión';
         throw new Error(errorMessage);

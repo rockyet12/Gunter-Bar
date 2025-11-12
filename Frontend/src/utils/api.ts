@@ -42,6 +42,7 @@ export const apiService = {
   get: <T>(url: string): Promise<AxiosResponse<T>> => api.get(url),
   post: <T>(url: string, data?: any): Promise<AxiosResponse<T>> => api.post(url, data),
   put: <T>(url: string, data?: any): Promise<AxiosResponse<T>> => api.put(url, data),
+  patch: <T>(url: string, data?: any): Promise<AxiosResponse<T>> => api.patch(url, data),
   delete: <T>(url: string): Promise<AxiosResponse<T>> => api.delete(url),
 
   // Auth endpoints

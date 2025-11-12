@@ -449,7 +449,7 @@ public class UserService : IUserService
                 PhoneNumber = user.PhoneNumber,
                 Address = user.Address,
                 ProfileImageUrl = user.ProfileImageUrl,
-                Bar = user.Bar != null ? new BarDto
+                Bar = user.Bar != null ? new GunterBar.Application.DTOs.User.BarDto
                 {
                     Id = user.Bar.Id,
                     Name = user.Bar.Name,

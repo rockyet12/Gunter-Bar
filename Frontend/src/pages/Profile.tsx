@@ -23,6 +23,7 @@ interface UpdateProfileData {
   address?: string;
   dni?: string;
   deliveryDescription?: string;
+  role: 'User' | 'Seller';
 }
 
 const Profile: React.FC = () => {
@@ -40,7 +41,8 @@ const Profile: React.FC = () => {
     phoneNumber: '',
     address: '',
     dni: '',
-    deliveryDescription: ''
+    deliveryDescription: '',
+    role: 'User'
   });
 
   useEffect(() => {
@@ -59,7 +61,8 @@ const Profile: React.FC = () => {
           phoneNumber: userData.phoneNumber || '',
           address: userData.address || '',
           dni: userData.dni || '',
-          deliveryDescription: userData.deliveryDescription || ''
+          deliveryDescription: userData.deliveryDescription || '',
+          role: userData.role
         });
       }
     } catch (error) {
@@ -76,13 +79,39 @@ const Profile: React.FC = () => {
     setSuccess('');
 
     try {
-      const response = await apiService.put<{ success: boolean; data: UserProfile; message: string }>(`/users/${user?.id}`, profileData);
-      if (response.data.success) {
-        setProfile(response.data.data);
-        updateUser(response.data.data);
-        setSuccess('Perfil actualizado exitosamente');
-      } else {
+      // Update profile data (excluding role)
+      const { role, ...profileUpdateData } = profileData;
+      const response = await apiService.put<{ success: boolean; data: UserProfile; message: string }>(`/users/${user?.id}`, profileUpdateData);
+      if (!response.data.success) {
         setError(response.data.message || 'Error al actualizar el perfil');
+        return;
+      }
+
+      let updatedProfile = response.data.data;
+
+      // If role changed, update role
+      if (profileData.role !== profile?.role) {
+        const roleValue = profileData.role === 'Seller' ? 'Vendor' : 'Customer';
+        const roleResponse = await apiService.patch<{ success: boolean; data: UserProfile; message: string }>(`/users/${user?.id}/role`, { role: roleValue });
+        if (roleResponse.data.success) {
+          updatedProfile = roleResponse.data.data;
+        } else {
+          setError(roleResponse.data.message || 'Error al actualizar el rol');
+          return;
+        }
+      }
+
+      setProfile(updatedProfile);
+      updateUser(updatedProfile);
+      setSuccess('Perfil actualizado exitosamente');
+
+      // Redirect if role changed
+      if (profileData.role !== profile?.role) {
+        if (profileData.role === 'Seller') {
+          window.location.href = 'http://localhost:5174';
+        } else {
+          window.location.href = 'http://localhost:5173';
+        }
       }
     } catch (error: any) {
       setError(error.response?.data?.message || 'Error al actualizar el perfil');
@@ -92,6 +121,14 @@ const Profile: React.FC = () => {
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setProfileData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
     setProfileData(prev => ({
       ...prev,
@@ -261,15 +298,16 @@ const Profile: React.FC = () => {
           </label>
 
           <label className="flex flex-col">
-            <p className="text-text-light text-base font-medium leading-normal pb-2 font-display">Número de Teléfono</p>
-            <input
+            <p className="text-text-light text-base font-medium leading-normal pb-2 font-display">Rol</p>
+            <select
               className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-white/20 bg-background-dark focus:border-primary h-14 placeholder:text-text-muted p-[15px] text-base font-normal leading-normal font-display"
-              type="tel"
-              name="phoneNumber"
-              value={profileData.phoneNumber}
-              onChange={handleInputChange}
-              placeholder="+57 300 123 4567"
-            />
+              name="role"
+              value={profileData.role}
+              onChange={handleSelectChange}
+            >
+              <option value="User">Usuario</option>
+              <option value="Seller">Vendedor</option>
+            </select>
           </label>
 
           <label className="flex flex-col md:col-span-2">

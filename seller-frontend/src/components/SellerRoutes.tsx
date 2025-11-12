@@ -41,15 +41,13 @@ const SellerRoutes: React.FC = () => {
         }
       />
 
-      {/* Redirect root to dashboard if authenticated as seller, otherwise to login */}
+      {/* Redirect root to dashboard if authenticated as seller, otherwise to customer login */}
       <Route
         path="/"
         element={
           isAuthenticated ? (
-            user?.role === 'Seller' ? <Navigate to="/dashboard" replace /> : <Navigate to="/" replace />
-          ) : (
-            <Navigate to="/login" replace />
-          )
+            user?.role === 'Seller' ? <Navigate to="/dashboard" replace /> : (() => { window.location.href = 'http://localhost:5173'; return null; })()
+          ) : (() => { window.location.href = 'http://localhost:5173/login'; return null; })()
         }
       />
 

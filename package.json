@@ -1,0 +1,11 @@
+{
+  "name": "gunter-bar",
+  "scripts": {
+    "dev": "concurrently \"cd backend && dotnet watch run\" \"cd Frontend && npm run dev\" \"cd seller-frontend && npm run dev\"",
+    "frontend": "concurrently \"cd Frontend && npm run dev\" \"cd seller-frontend && npm run dev\"",
+    "backend": "cd backend && dotnet watch run"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

@@ -1,6 +1,7 @@
 using GunterBar.Application.Common.Models;
 using GunterBar.Application.DTOs.User;
 using GunterBar.Application.Interfaces;
+using GunterBar.Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -21,7 +22,7 @@ namespace GunterBar.Presentation.Controllers;
     /// Registra un nuevo usuario en el sistema
     /// </summary>
     [HttpPost("register")]
-    public async Task<ActionResult<ApiResponse<AuthResponseDto>>> Register([FromBody] RegisterDto registerDto)
+    public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
     {
         if (!ModelState.IsValid)
         {
@@ -40,14 +41,19 @@ namespace GunterBar.Presentation.Controllers;
             return BadRequest(result);
         }
 
-        return Ok(result);
+        return Ok(new
+        {
+            token = result.Data.Token,
+            role = result.Data.User.Role == Domain.Enums.UserRole.Vendor ? "seller" : "customer",
+            userId = result.Data.User.Id
+        });
     }
 
     /// <summary>
     /// Inicia sesión de usuario
     /// </summary>
     [HttpPost("login")]
-    public async Task<ActionResult<ApiResponse<AuthResponseDto>>> Login([FromBody] LoginDto loginDto)
+    public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
     {
         if (!ModelState.IsValid)
         {
@@ -66,7 +72,12 @@ namespace GunterBar.Presentation.Controllers;
             return Unauthorized(result);
         }
 
-        return Ok(result);
+        return Ok(new
+        {
+            token = result.Data.Token,
+            role = result.Data.User.Role == Domain.Enums.UserRole.Vendor ? "seller" : "customer",
+            userId = result.Data.User.Id
+        });
     }
 
     /// <summary>

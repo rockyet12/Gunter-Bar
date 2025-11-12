@@ -224,7 +224,7 @@ public class UsersController : ControllerBase
     /// <response code="404">If the user is not found</response>
     /// <response code="500">If there was an internal server error</response>
     [HttpPatch("{id:int}/role")]
-    [Authorize(Roles = "Admin,SalesManager")]
+    [Authorize]
     [ProducesResponseType(typeof(ApiResponse<UserDto>), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
@@ -235,11 +235,18 @@ public class UsersController : ControllerBase
     {
         try
         {
-            // Solo el admin puede asignar el rol de vendedor
-            if (role == UserRole.Vendor && !User.IsInRole("Admin"))
+            // Allow users to change their own role, but only admin can assign vendor role to others
+            var currentUserIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (currentUserIdClaim == null || !int.TryParse(currentUserIdClaim.Value, out int currentUserId))
             {
-                return Forbid("Solo el administrador puede asignar el rol de vendedor.");
+                return Unauthorized(new ApiResponse<UserDto> { Success = false, Message = "Usuario no autenticado" });
             }
+
+            if (role == UserRole.Vendor && id != currentUserId && !User.IsInRole("Admin"))
+            {
+                return Forbid("Solo el administrador puede asignar el rol de vendedor a otros usuarios.");
+            }
+
             var result = await _userService.UpdateRoleAsync(id, role);
             if (!result.Success)
             {

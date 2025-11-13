@@ -48,7 +48,7 @@ export const apiService = {
   // Auth endpoints
   auth: {
     login: (credentials: { email: string; password: string }) =>
-      api.post('/auth/login', credentials),
+      api.post<{ token: string; role: string; userId: number }>('/auth/login', credentials),
     register: (userData: {
       firstName: string;
       lastName: string;
@@ -57,7 +57,7 @@ export const apiService = {
       role: string;
       password: string;
     }) =>
-      api.post('/auth/register', userData),
+      api.post<{ token: string; role: string; userId: number }>('/auth/register', userData),
   },
 
   // Drinks endpoints

@@ -2,25 +2,19 @@ import { useEffect } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { AuthProvider } from './components/forms/AuthContext';
 import SellerRoutes from './components/SellerRoutes';
-import axios from 'axios';
 import './App.css';
 
 function App() {
   useEffect(() => {
     const token = localStorage.getItem('gunter_token');
-    const role = localStorage.getItem('gunter_role');
 
-    // Si no hay token o no es seller → lo echamos
-    if (!token || role !== 'seller') {
-      alert('Acceso denegado. Debes ser vendedor.');
-      window.location.href = 'http://localhost:5173'; // vuelve al frontend normal
+    // Si no hay token, redirigir al login del frontend principal
+    if (!token) {
+      window.location.href = 'http://localhost:5173/login';
       return;
     }
 
-    // Opcional: validar token con el backend
-    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-
-    // Aquí ya está logueado como vendedor → muestra el dashboard
+    // El check de rol se maneja en AuthContext
   }, []);
 
   return (

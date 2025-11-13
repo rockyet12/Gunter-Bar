@@ -5,7 +5,7 @@ import { BarChart3, Package, ShoppingCart, Users, TrendingUp, DollarSign, Clock,
 import type { Drink, Order } from '../models';
 
 const SellerDashboard: React.FC = () => {
-  const { user, logout } = useAuth();
+  const { logout } = useAuth();
   const [stats, setStats] = useState({
     totalProducts: 0,
     totalOrders: 0,
@@ -60,7 +60,7 @@ const SellerDashboard: React.FC = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
       </div>
     );
   }
@@ -68,20 +68,20 @@ const SellerDashboard: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
+      <div className="bg-primary-600 shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Panel de Vendedor</h1>
-              <p className="text-gray-600 mt-1">Bienvenido de vuelta, {user?.name || 'Vendedor'}</p>
+              <h1 className="text-3xl font-bold text-white">Panel de Vendedor</h1>
+              <p className="text-primary-100 mt-1">Gestiona tus productos y pedidos</p>
             </div>
             <div className="flex items-center space-x-4">
-              <button className="p-2 text-gray-400 hover:text-gray-600">
+              <button className="p-2 text-primary-200 hover:text-white">
                 <Settings className="h-6 w-6" />
               </button>
               <button
                 onClick={logout}
-                className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+                className="flex items-center px-4 py-2 text-sm font-medium text-primary-600 bg-white border border-primary-300 rounded-md hover:bg-primary-50"
               >
                 <LogOut className="h-4 w-4 mr-2" />
                 Cerrar Sesión
@@ -96,8 +96,8 @@ const SellerDashboard: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <div className="bg-white rounded-lg shadow-sm p-6">
             <div className="flex items-center">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <Package className="h-6 w-6 text-blue-600" />
+              <div className="p-2 bg-primary-100 rounded-lg">
+                <Package className="h-6 w-6 text-primary-600" />
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Productos Totales</p>
@@ -108,8 +108,8 @@ const SellerDashboard: React.FC = () => {
 
           <div className="bg-white rounded-lg shadow-sm p-6">
             <div className="flex items-center">
-              <div className="p-2 bg-green-100 rounded-lg">
-                <ShoppingCart className="h-6 w-6 text-green-600" />
+              <div className="p-2 bg-primary-100 rounded-lg">
+                <ShoppingCart className="h-6 w-6 text-primary-600" />
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Pedidos Totales</p>
@@ -120,8 +120,8 @@ const SellerDashboard: React.FC = () => {
 
           <div className="bg-white rounded-lg shadow-sm p-6">
             <div className="flex items-center">
-              <div className="p-2 bg-yellow-100 rounded-lg">
-                <DollarSign className="h-6 w-6 text-yellow-600" />
+              <div className="p-2 bg-secondary-100 rounded-lg">
+                <DollarSign className="h-6 w-6 text-secondary-600" />
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Ingresos Totales</p>
@@ -132,8 +132,8 @@ const SellerDashboard: React.FC = () => {
 
           <div className="bg-white rounded-lg shadow-sm p-6">
             <div className="flex items-center">
-              <div className="p-2 bg-purple-100 rounded-lg">
-                <Users className="h-6 w-6 text-purple-600" />
+              <div className="p-2 bg-primary-100 rounded-lg">
+                <Users className="h-6 w-6 text-primary-600" />
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Clientes Activos</p>

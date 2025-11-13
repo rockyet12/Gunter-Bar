@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import Cookies from 'js-cookie';
 import { apiService } from '../../utils/api';
-import { AuthResponseDto, User } from '../../models/user';
+import { User } from '../../models/user';
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -54,7 +54,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
             // Redirect to seller frontend if user is a seller
             if (userData.role === 'Seller') {
-              window.location.href = 'http://localhost:5174';
+              window.location.href = 'http://localhost:5174/dashboard';
             }
           } else {
             // Token is invalid, remove it
@@ -91,46 +91,44 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = async (email: string, password: string) => {
     try {
-      const response = await apiService.post<{ success: boolean; message: string; data: AuthResponseDto }>('/auth/login', {
+      const response = await apiService.post<{ token: string; role: string; userId: number }>('/auth/login', {
         email,
         password
       });
 
-      if (response.data.success && response.data.data) {
-        const { token, user: backendUser } = response.data.data;
+      const { token, role, userId } = response.data;
 
-        const userData = {
-          ...backendUser,
-          role: (backendUser.role === 'Client' || backendUser.role === 'Customer') ? 'User' : 'Seller'
-        };
+      // Save to localStorage for cross-frontend sharing
+      localStorage.setItem('gunter_token', token);
+      localStorage.setItem('gunter_role', role);
 
-        // Save token in cookie (expires in 7 days)
-        // In development, don't use secure flag since we use HTTP
-        const isProduction = import.meta.env.PROD;
-        Cookies.set('token', token, {
-          expires: 7,
-          secure: isProduction, // Only secure in production (HTTPS)
-          sameSite: 'lax', // Changed from 'strict' to 'lax' for cross-origin requests
-          path: '/' // Ensure cookie is available for all paths
-        });
+      // Also save to cookie for backward compatibility
+      const isProduction = import.meta.env.PROD;
+      Cookies.set('token', token, {
+        expires: 7,
+        secure: isProduction,
+        sameSite: 'lax',
+        path: '/'
+      });
 
-        setIsAuthenticated(true);
-        setUser(userData);
+      // Create user object from response
+      const userData: User = {
+        id: userId,
+        name: '', // We don't have the name from login response
+        email,
+        role: role === 'seller' ? 'Seller' : 'User'
+      };
 
-        // Redirect to seller frontend if user is a seller
-        if (userData.role === 'Seller') {
-          window.location.href = 'http://localhost:5174';
-        }
-      } else {
-        const errorMessage = response.data.message || 'Error al iniciar sesión';
-        throw new Error(errorMessage);
-      }
+      setIsAuthenticated(true);
+      setUser(userData);
+
+      // Redirection is handled by validateToken
     } catch (error: any) {
       // Handle different types of errors
       if (error.response?.status === 401) {
         throw new Error('Correo electrónico o contraseña inválidos');
       } else if (error.response?.status === 400) {
-        throw new Error(error.response.data?.message || 'Invalid login data');
+        throw new Error(error.response.data?.message || 'Datos de inicio de sesión inválidos');
       } else if (error.response?.data?.message) {
         throw new Error(error.response.data.message);
       } else if (error.message) {
@@ -145,12 +143,37 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       const response = await apiService.auth.register(userData);
 
-      if (response.data.success) {
-        // Registration successful, auto-login
-        console.log('Usuario registrado exitosamente:', response.data);
-        await login(userData.email, userData.password);
+      const { token, role, userId } = response.data;
+
+      // Save to localStorage for cross-frontend sharing
+      localStorage.setItem('gunter_token', token);
+      localStorage.setItem('gunter_role', userData.role);
+
+      // Also save to cookie for backward compatibility
+      const isProduction = import.meta.env.PROD;
+      Cookies.set('token', token, {
+        expires: 7,
+        secure: isProduction,
+        sameSite: 'lax',
+        path: '/'
+      });
+
+      // Create user object
+      const userObj: User = {
+        id: userId,
+        name: userData.firstName,
+        email: userData.email,
+        role: role === 'seller' ? 'Seller' : 'User'
+      };
+
+      setIsAuthenticated(true);
+      setUser(userObj);
+
+      // Redirect based on role
+      if (userData.role === 'seller') {
+        window.location.href = 'http://localhost:5174/dashboard';
       } else {
-        throw new Error(response.data.message || 'Error en el registro');
+        window.location.href = '/dashboard';
       }
     } catch (error: any) {
       console.error('Error en registro:', error);
